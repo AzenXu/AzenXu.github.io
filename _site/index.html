@@ -6,7 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>Azen - iOSer的技术博客</title>
+  <title>Azen`s Blog</title>
   <meta name="description" content="">
 
   <link rel="stylesheet" href="/assets/main.css">
@@ -37,7 +37,7 @@
       <div class="trigger">
         
           
-          <a class="page-link" href="/">Azen - iOSer的技术博客</a>
+        
           
         
           
@@ -57,15 +57,15 @@
         <div class="home">
 
   <h1 class="page-heading">Posts</h1>
-  
-  
 
+  
 
   <ul class="post-list">
+    <!-- 1. 通过当前分页判断可以显示的页码 -->
+    <!-- 2. 遍历这些页码，把相应文章取出来 -->
     
       <li>
         <span class="post-meta">Feb 16, 2017</span>
-
         <h2>
           <a class="post-link" href="/2017/02/16/data-struc-prim.html">听故事学算法 - 和李逍遥一起学「普里姆Prim」算法</a>
         </h2>
@@ -73,7 +73,6 @@
     
       <li>
         <span class="post-meta">Jul 3, 2016</span>
-
         <h2>
           <a class="post-link" href="/2016/07/03/cocoapods-note-part-three.html">Cocoa pods学习笔记（三）私有库管理和模块化管理</a>
         </h2>
@@ -81,7 +80,6 @@
     
       <li>
         <span class="post-meta">Jul 2, 2016</span>
-
         <h2>
           <a class="post-link" href="/2016/07/02/cocoapods-note-part-two.html">Cocoa pods学习笔记（二）Podsepc文件 &amp; 提交到CocoaPods</a>
         </h2>
@@ -89,7 +87,6 @@
     
       <li>
         <span class="post-meta">Jul 1, 2016</span>
-
         <h2>
           <a class="post-link" href="/2016/07/01/cocoapods-note-part-one.html">Cocoa pods学习笔记（一）Podfile文件剖析 &amp; Pod命令解析</a>
         </h2>
@@ -97,21 +94,33 @@
     
       <li>
         <span class="post-meta">Aug 5, 2015</span>
-
         <h2>
           <a class="post-link" href="/2015/08/05/about-muti-thread.html">听故事学iOS系列 - 屎壳郎老板和它的收费公厕(一个故事搞懂多线程)</a>
         </h2>
       </li>
     
-      <li>
-        <span class="post-meta">Aug 2, 2015</span>
-
-        <h2>
-          <a class="post-link" href="/2015/08/02/swift-learn-for-optional.html">听故事学Swift系列 - 小明与红包(optionals - 可选类型)</a>
-        </h2>
-      </li>
-    
   </ul>
+
+<!-- 分页 -->
+  <div id="pagination">
+    <div class="pagenavi">
+      <span class="page_number">第1页/共2页</span>
+    <a href="/">第一页</a>
+      
+        <span><<前一页</span>
+      
+      
+        
+          <a href="/page2">2</a>
+        
+      
+
+      
+        <a href="/page2">后一页>></a>
+      
+        <a href="/page2">最后一页</a>
+    </div>
+  </div>
 
   <p class="rss-subscribe">subscribe <a href="/feed.xml">via RSS</a></p>
 
