@@ -1,1 +1,17 @@
 
+title: 这，是一个标题
+email: azen.cell@foxmail.com
+github_username: AzenXu
+
+#Building setting
+markdown: kramdown
+#theme: minima
+
+gems:
+ - jekyll-feed
+exclude:
+  - Gemfile
+  - Gemfile.lock
+
+#Serve setting
+port: 3888
