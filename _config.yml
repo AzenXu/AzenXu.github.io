@@ -1,11 +1,10 @@
 
-title: 这，是一个标题
+title: Azen`s Blog
 email: azen.cell@foxmail.com
 github_username: AzenXu
 
 #Building setting
 markdown: kramdown
-#theme: minima
 
 gems:
  - jekyll-feed
