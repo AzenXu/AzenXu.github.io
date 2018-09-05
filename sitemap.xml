@@ -3,6 +3,14 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>http://azen.me/code/</loc>
+  </url>
+  
+  <url>
+    <loc>http://azen.me/gaga/</loc>
+  </url>
+  
+  <url>
     <loc>http://azen.me/categories/</loc>
     <priority>0</priority>
   </url>
