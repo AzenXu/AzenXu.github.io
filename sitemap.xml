@@ -3,7 +3,13 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>http://azen.me/code/%E5%90%AF%E7%A4%BA%E5%BD%95---%E4%BA%92%E8%81%94%E7%BD%91%E5%9B%A2%E9%98%9F%E6%9E%84%E6%88%90/</loc>
+    <lastmod>2018-09-05T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>http://azen.me/code/</loc>
+    <lastmod>2018-09-05T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -22,6 +28,7 @@
   
   <url>
     <loc>http://azen.me/</loc>
+    <lastmod>2018-09-05T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
