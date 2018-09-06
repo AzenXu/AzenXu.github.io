@@ -6,10 +6,36 @@
     <description>Recent content on 细胞的作战实验室</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 05 Sep 2018 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 06 Sep 2018 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="http://azen.me/code/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Golang与密码学</title>
+      <link>http://azen.me/code/golang%E4%B8%8E%E5%AF%86%E7%A0%81%E5%AD%A6/</link>
+      <pubDate>Thu, 06 Sep 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://azen.me/code/golang%E4%B8%8E%E5%AF%86%E7%A0%81%E5%AD%A6/</guid>
+      <description>&amp;nbsp;
+0x0 概述这篇文档主要聊聊三种加密方式与Golang实现
+哈希加密对称加密非对称加密0x1 哈希加密哈希算法我们知道，查找中，有「哈希查找」，是一种比「顺序查找」更快的查找方法。
+「哈希查找」的关键点，就是实现一种「哈希算法」，使得每个任意key，经过哈希算法计算后，可以获得一个定长的散列值。
+相同key经过相同哈希算法散列之后，获得相同的散列值不同key经过相同哈西算法散列之后，获得不同的散列值特点：
+可以把任意长度的「明文」，散列成固定长度的「指纹」正向计算简单快速，逆向推算困难，基本不可能逆推出明文明文有一点点变化，密文就会改变优秀的散列算法需要尽量避免两个不同的明文，加密出来是相同的指纹发展：
+ 取模操作 → 异或运算→ 位移操作
+密码学里面，一般都通过「位移操作」「取模操作」「异或操作」来实现加密 - 无论对称加密非对称加密、哈希散列加密
+成熟Hash算法MD5SHARIPEMDGolang相关hash代码片段MD5MD5加密结果为16字节串
+data := []byte(&#34;test string&#34;) s := fmt.Sprintf(&#34;%x&#34;, md5.Sum(data))m := md5.New() m.Write(content) s := hex.EncodeToString(m.Sum(nil))SHA256sha256加密方式，通常用在公链中，散列结果为32字节
+s := fmt.Sprintf(&#34;%x&#34;, sha256.Sum256(content))m := sha256.New() m.Write(content) fmt.Println(hex.EncodeToString(m.Sum(nil)))文件内容加密
+f,_ := os.Open(&#34;filename&#34;) h := sha256.New() io.Copy(h,f) s := h.Sum(nil) fmt.Println(hex.EncodeToString(s))RIPEMD160ripemd160目前只在数字货币中用到了 - 以太坊
+三方包：golang.org/x/crypto/ripemd160
+可以使用gopm安装
+gopm get -v -u golang.org/x/crypto/ripemd160
+hasher := ripemd160.New() hasher.Write([]byte(&#34;test string&#34;)) fmt.Println(hex.EncodeToString(hasher.Sum(nil)))0x2 对称加密对称加密，加密完之后，是可以通过密钥解密的 - 和hash加密不一样
+常见对称加密算法：
+DESAES补码、去码 &amp;amp; 分组加密补码：给15个字符做「分组加密」，无法平均分成两组，所以需要补一个码凑成16个字符，这种操作叫做「补码」</description>
+    </item>
     
     <item>
       <title>启示录 - 互联网团队构成</title>
@@ -49,6 +75,23 @@ OP 运维负责保障web服务正常运行运营对外宣传推广产品产品�
 产品经理交互设计师（同时负责用户研究）视觉设计师（同时负责开发原型）获取了不错的结果：很快拿到产品原型（可供目标用户测试的）
 「拿到产品原型」可以看做是一个里程碑可外包内容视觉设计用户研究和可用性测试外包成本较高重视「测试反馈」的话，成本更高建议让产品经理、交互设计师分担「用户研究」、「可用性测试」工作原型制作可以从开发团队借个帮手来做结果导向不要告诉别人「如何做」，而是告诉他们「做什么」
 收集需求的时候，常听用户谈论「你们应该如何做」，而非「做什么」。思考解决方案是人类的天性PM如果思考「做什么」，会发现解决方案如此多客户不必考虑解决问题的途径他们不知道什么可行PM常常告诉UED如何设计产品，却忘了告诉他们「做什么」 &amp;nbsp;</description>
+    </item>
+    
+    <item>
+      <title>【Git技巧】为Git创建一个孤立分支</title>
+      <link>http://azen.me/code/git%E6%8A%80%E5%B7%A7%E4%B8%BAgit%E5%88%9B%E5%BB%BA%E4%B8%80%E4%B8%AA%E5%AD%A4%E7%AB%8B%E5%88%86%E6%94%AF/</link>
+      <pubDate>Thu, 19 Apr 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://azen.me/code/git%E6%8A%80%E5%B7%A7%E4%B8%BAgit%E5%88%9B%E5%BB%BA%E4%B8%80%E4%B8%AA%E5%AD%A4%E7%AB%8B%E5%88%86%E6%94%AF/</guid>
+      <description>&amp;nbsp;
+问题描述有时候我们需要在GIT里面创建一个空分支，该分支不继承任何提交，没有父节点，完全是一个干净的分支，例如我们需要在某个分支里存放项目文档。
+使用传统的git checkout命令创建的分支是有父节点的，意味着新branch包含了历史提交，所以我们无法直接使用该命令。
+可视化效果【Git技巧】为Git创建一个孤立分支  image2018-4-19_14-27-9.png&#34; data-location=&#34;Azen  【Git技巧】为Git创建一个孤立分支  image2018-4-19_14-27-9.png&#34; data-image-height=&#34;560&#34; data-image-width=&#34;1310&#34;
+解决方法创建分支使用 git checkout的--orphan参数:
+git checkout --orphan doc该命令会创建一个名为doc的分支，并且该分支下有前一个分支下的所有文件。
+查看--orphan的帮助：
+Create a new orphan branch, named &amp;lt;new_branch&amp;gt;, started from &amp;lt;start point&amp;gt; and switch to it. The first commit made on the new branch will have no parents and it will be the root of a new history totally disconnected from all the other branchs and commits.
+这里的start point指的是你执行git checkout命令时的那个分支，当然新的分支不会指向任何以前的提交，就是它没有历史，如果你提交当前内容，那么这次提交就是这个分支的首次提交。</description>
     </item>
     
   </channel>
