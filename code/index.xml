@@ -38,42 +38,6 @@ DESAES补码、去码 &amp;amp; 分组加密补码：给15个字符做「分组�
     </item>
     
     <item>
-      <title>产品相关技能树</title>
-      <link>http://azen.me/code/product-routine/</link>
-      <pubDate>Thu, 06 Sep 2018 00:00:00 +0000</pubDate>
-      
-      <guid>http://azen.me/code/product-routine/</guid>
-      <description>&amp;nbsp;
-PM技能树从起点学院 - 产品经理就业班 扒过来的，可以通过相关模块自我诊断 &amp;amp; 查缺补漏
-学习某个领域知识，最根本的点就是在于拿到一份「地图」
-需求阶段学习阶段 
-课程章节 
-详细内容 
-课程目的 
-Step01 
-解构产品经理 
-1) 互联网行业发展史简述
-2) 什么是产品?产品的常见分类(基于案例)? 
-3) 产品从0到1到99是怎么产生的? 
-4) 什么是产品经理?产品经理的基本职责和工作流程 
-5) 产品经理的能力要求 
-6) 给新入行产品经理的学习建议 
-7) 图解互联网公司的几大核心岗位 
-了解互联网行业基本概况理解产品经理的岗位工作和价值所在了解产品从0 到1的全流程对产品认知：产品是解决用户需求问题明确各项能力要求及目的意义Step02 
-市场分析 
-1) 案例剖析:产品成败的因素 
-2) 基础定义:市场分析是什么?市场分析的价值
-3) 市场分析的方法 
-4) 案例讲解:市场分析方法的典型场景应用 
-基于产品从0到1的工作流程，本部分内容让学员
-了解市场分析的基本工作方法掌握宏观经济、竞争态势、行业技术预测的分析方法掌握市场阶段和市场规模的分析方法掌握SWOT的分析方法 学习流程图工具及思维导图工具的使用借助工具进行流程和结构化思考Step03 
-竞品分析 
-1) 竞品分析基础定义 
-2) 竞品分析前的准备工作 
-3) 竞品分析的基本方法</description>
-    </item>
-    
-    <item>
       <title>启示录 - 互联网团队构成</title>
       <link>http://azen.me/code/%E5%90%AF%E7%A4%BA%E5%BD%95---%E4%BA%92%E8%81%94%E7%BD%91%E5%9B%A2%E9%98%9F%E6%9E%84%E6%88%90/</link>
       <pubDate>Wed, 05 Sep 2018 00:00:00 +0000</pubDate>
@@ -131,31 +95,7 @@ Create a new orphan branch, named &amp;lt;new_branch&amp;gt;, started from &amp;
     </item>
     
     <item>
-      <title>STAR-in-work</title>
-      <link>http://azen.me/code/star-in-work/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>http://azen.me/code/star-in-work/</guid>
-      <description>&amp;nbsp;
-STAR法则用来描述你是如何处理一件事情的。
-S: Situation遇到了什么问题，有什么样的痛点？为什么要解决这个问题，不解决会怎样？
-问题的严重程度能否量化？有没有数据支持？能不能用图表展现？
-T: Task这个东东的核心是目标和预期收益。
-进阶要求为将目标反向拆解为一个或数个Task
-A: Action为实现目标所进行的行动
-就技术人而言，Action其实就是技术方案(粒度再小就变成如何码代码、如何实现某个函数了...没这个必要)
-最好用一张或多张图，对技术方案进行说明，可以多用对比的方法，证明技术方案的合理性和先进性。
-还要体现出来技术选型和目标收益的对应关系。
-R: Result实施了方案，所获得的结果。结果应该与目标收益呼应
-并非所有项目都一定达成目标；
-即使目标达成，是否能够做的更好？
-工作思路和STAR法则的顺序相同，也应该是从痛点入手，逐步拆解，跟进实施，最后达成目标的。
-
-&amp;nbsp;</description>
-    </item>
-    
-    <item>
-      <title>linux-timer</title>
+      <title>Linux定时任务</title>
       <link>http://azen.me/code/linux-timer/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
@@ -176,21 +116,6 @@ at.allow：at指令白名单用户at.deny：at黑名单。如果木有at.allow�
 使用结果：指令被记录到/var/spool/cron/用户名 中指令格式：crontab [-u username] [-l|-e|-r]
 -e: 编辑crontab的定时任务(当前用户的)
 任务会写在/usr/bin/crontab文件中-l: 查看crontab任务-r: 移除所有crontab任务示例：crontab -e (进入编辑界面，每项任务占一行)*/5 * * * * /home/dmtsai/test.</description>
-    </item>
-    
-    <item>
-      <title>qiniu-XuShiWei</title>
-      <link>http://azen.me/code/qiniu-xushiwei/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>http://azen.me/code/qiniu-xushiwei/</guid>
-      <description>&amp;nbsp;
-从小孩的教育到世界观当小孩长大以后，未来十年二十年的时候整个社会是什么样子的？
-只有明白了那个时候的世界是什么样的，才能想象教会小孩什么东东可以让他适应那个时候的世界——这个和做企业是一样的
-不要因为别人的言论而认为世界是什么样的，应该有自己的世界观
-职业生涯工作六年以后，有困惑：为什么我们做的wps不赚钱呢？做什么业务才是符合互联网时代的？商业上才能成功的？07年坚决转型产品经理，只有PM才能在商业上探讨产品成功的可能性。07思考：移动互联网的大趋势下，什么东西会变化？发现：似乎还没有移动互联网下的存储公司创建七牛七牛的使命：释放社会的创造力。
-解释：你有没有在做一个新的，以前人没有试过的探索。这件事是勇敢的、值的鼓励的。你起码试了，别人连试都不敢试。云计算可以降低试错成本，让你可以一个月、一周就能判断你的尝试是不是一个靠谱的事情。
-几个观点如果把人看成一个投资人的话，投资企业和思考小孩的教育有共同点：你要思考未来。写代码不习惯单步调试：人需要在把自己逼到资源相对匮乏下，才能更有效的突破（这个观点和辉哥的观点相同，想要高效学习，需要认为制造时间上的稀缺性）编程的意义在于，让你真正能够创造一个世界，或者说改变一个世界。人的意义在于自我实现，自己追求的是什么，就去实现什么。所以，要让这个世界变的更有趣一些。视频内容&amp;lt;iframe src=&#34;//player.bilibili.com/player.html?aid=12069987&amp;amp;cid=19912250&amp;amp;page=1&#34; scrolling=&#34;no&#34; border=&#34;0&#34; frameborder=&#34;no&#34; framespacing=&#34;0&#34; allowfullscreen=&#34;true&#34; height=490 width=682 &amp;lt;/iframe &amp;nbsp;</description>
     </item>
     
   </channel>
