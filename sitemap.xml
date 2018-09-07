@@ -37,6 +37,10 @@
   </url>
   
   <url>
+    <loc>http://azen.me/code/star-in-work/</loc>
+  </url>
+  
+  <url>
     <loc>http://azen.me/tags/</loc>
     <priority>0</priority>
   </url>

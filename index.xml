@@ -131,6 +131,30 @@ Create a new orphan branch, named &amp;lt;new_branch&amp;gt;, started from &amp;
     </item>
     
     <item>
+      <title>STAR-in-work</title>
+      <link>http://azen.me/code/star-in-work/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>http://azen.me/code/star-in-work/</guid>
+      <description>&amp;nbsp;
+STAR法则用来描述你是如何处理一件事情的。
+S: Situation遇到了什么问题，有什么样的痛点？为什么要解决这个问题，不解决会怎样？
+问题的严重程度能否量化？有没有数据支持？能不能用图表展现？
+T: Task这个东东的核心是目标和预期收益。
+进阶要求为将目标反向拆解为一个或数个Task
+A: Action为实现目标所进行的行动
+就技术人而言，Action其实就是技术方案(粒度再小就变成如何码代码、如何实现某个函数了...没这个必要)
+最好用一张或多张图，对技术方案进行说明，可以多用对比的方法，证明技术方案的合理性和先进性。
+还要体现出来技术选型和目标收益的对应关系。
+R: Result实施了方案，所获得的结果。结果应该与目标收益呼应
+并非所有项目都一定达成目标；
+即使目标达成，是否能够做的更好？
+工作思路和STAR法则的顺序相同，也应该是从痛点入手，逐步拆解，跟进实施，最后达成目标的。
+
+&amp;nbsp;</description>
+    </item>
+    
+    <item>
       <title>linux-timer</title>
       <link>http://azen.me/code/linux-timer/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
