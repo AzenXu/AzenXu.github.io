@@ -117,28 +117,9 @@ OP 运维负责保障web服务正常运行运营对外宣传推广产品产品�
   
 </div><div class="post">
   <h1 class="post-title">
-    <a href="http://azen.me/code/git%E6%8A%80%E5%B7%A7%E4%B8%BAgit%E5%88%9B%E5%BB%BA%E4%B8%80%E4%B8%AA%E5%AD%A4%E7%AB%8B%E5%88%86%E6%94%AF/">【Git技巧】为Git创建一个孤立分支</a>
-  </h1>
-  <span class="post-date">Thu, Apr 19, 2018</span>
-  &nbsp;
-问题描述有时候我们需要在GIT里面创建一个空分支，该分支不继承任何提交，没有父节点，完全是一个干净的分支，例如我们需要在某个分支里存放项目文档。
-使用传统的git checkout命令创建的分支是有父节点的，意味着新branch包含了历史提交，所以我们无法直接使用该命令。
-可视化效果【Git技巧】为Git创建一个孤立分支  image2018-4-19_14-27-9.png" data-location="Azen  【Git技巧】为Git创建一个孤立分支  image2018-4-19_14-27-9.png" data-image-height="560" data-image-width="1310"
-解决方法创建分支使用 git checkout的--orphan参数:
-git checkout --orphan doc该命令会创建一个名为doc的分支，并且该分支下有前一个分支下的所有文件。
-查看--orphan的帮助：
-Create a new orphan branch, named &lt;new_branch&gt;, started from &lt;start point&gt; and switch to it. The first commit made on the new branch will have no parents and it will be the root of a new history totally disconnected from all the other branchs and commits.
-这里的start point指的是你执行git checkout命令时的那个分支，当然新的分支不会指向任何以前的提交，就是它没有历史，如果你提交当前内容，那么这次提交就是这个分支的首次提交。
-  
-  <div class="read-more-link">
-    <a href="/code/git%E6%8A%80%E5%B7%A7%E4%B8%BAgit%E5%88%9B%E5%BB%BA%E4%B8%80%E4%B8%AA%E5%AD%A4%E7%AB%8B%E5%88%86%E6%94%AF/">Read More…</a>
-  </div>
-  
-</div><div class="post">
-  <h1 class="post-title">
     <a href="http://azen.me/code/linux-timer/">Linux定时任务</a>
   </h1>
-  <span class="post-date">Mon, Jan 1, 0001</span>
+  <span class="post-date">Thu, Aug 23, 2018</span>
   &nbsp;
 参考资料：鸟哥的linux私房菜
 Linux 排程就是透過 crontab 與 at 這兩個東西
@@ -158,6 +139,25 @@ at.allow：at指令白名单用户at.deny：at黑名单。如果木有at.allow�
   
   <div class="read-more-link">
     <a href="/code/linux-timer/">Read More…</a>
+  </div>
+  
+</div><div class="post">
+  <h1 class="post-title">
+    <a href="http://azen.me/code/git%E6%8A%80%E5%B7%A7%E4%B8%BAgit%E5%88%9B%E5%BB%BA%E4%B8%80%E4%B8%AA%E5%AD%A4%E7%AB%8B%E5%88%86%E6%94%AF/">【Git技巧】为Git创建一个孤立分支</a>
+  </h1>
+  <span class="post-date">Thu, Apr 19, 2018</span>
+  &nbsp;
+问题描述有时候我们需要在GIT里面创建一个空分支，该分支不继承任何提交，没有父节点，完全是一个干净的分支，例如我们需要在某个分支里存放项目文档。
+使用传统的git checkout命令创建的分支是有父节点的，意味着新branch包含了历史提交，所以我们无法直接使用该命令。
+可视化效果【Git技巧】为Git创建一个孤立分支  image2018-4-19_14-27-9.png" data-location="Azen  【Git技巧】为Git创建一个孤立分支  image2018-4-19_14-27-9.png" data-image-height="560" data-image-width="1310"
+解决方法创建分支使用 git checkout的--orphan参数:
+git checkout --orphan doc该命令会创建一个名为doc的分支，并且该分支下有前一个分支下的所有文件。
+查看--orphan的帮助：
+Create a new orphan branch, named &lt;new_branch&gt;, started from &lt;start point&gt; and switch to it. The first commit made on the new branch will have no parents and it will be the root of a new history totally disconnected from all the other branchs and commits.
+这里的start point指的是你执行git checkout命令时的那个分支，当然新的分支不会指向任何以前的提交，就是它没有历史，如果你提交当前内容，那么这次提交就是这个分支的首次提交。
+  
+  <div class="read-more-link">
+    <a href="/code/git%E6%8A%80%E5%B7%A7%E4%B8%BAgit%E5%88%9B%E5%BB%BA%E4%B8%80%E4%B8%AA%E5%AD%A4%E7%AB%8B%E5%88%86%E6%94%AF/">Read More…</a>
   </div>
   
 </div>
