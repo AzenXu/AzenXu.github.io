@@ -172,6 +172,32 @@ Create a new orphan branch, named &lt;new_branch&gt;, started from &lt;start poi
     <a href="/code/git%E6%8A%80%E5%B7%A7%E4%B8%BAgit%E5%88%9B%E5%BB%BA%E4%B8%80%E4%B8%AA%E5%AD%A4%E7%AB%8B%E5%88%86%E6%94%AF/">Read More…</a>
   </div>
   
+</div><div class="post">
+  <h1 class="post-title">
+    <a href="http://azen.me/code/linux-timer/">linux-timer</a>
+  </h1>
+  <span class="post-date">Mon, Jan 1, 0001</span>
+  &nbsp;
+参考资料：鸟哥的linux私房菜
+Linux 排程就是透過 crontab 與 at 這兩個東西
+at 和 crontabat：处理只发生一次的事件
+crontab：处理周期性事件
+crontab 除了可以使用指令執行外，亦可編輯 /etc/crontab 來支援CentOS常见定时任务log rotate（日志轮替）logwatch（日志分析工具）tmpwatch （移除暂存文档）...定时任务与软件安装的多少有关
+单次任务指令：at
+相关服务：atd
+注意：atd不一定已经打开了，需要手动操作之~
+&gt; systemctl restart atd # 重新啟動 atd 這個服務  systemctl enable atd # 讓這個服務開機就自動啟動  systemctl status atd # 查看状态at使用使用 at 指令创建工作，將這個工作寫入 /var/spool/at/ 目錄內，atd 服務会執行之可以利用 /etc/at.allow 與 /etc/at.deny 這兩個文件來進行 at 的使用限制
+at.allow：at指令白名单用户at.deny：at黑名单。如果木有at.allow，会根据at.deny判断权限以上两个文件都木有：只有root可使用...写的有点长...没看完
+定时任务服务：cron(crond)
+该服务预设为自动启动的执行任务的日志：/var/log/cron指令：crontab
+使用结果：指令被记录到/var/spool/cron/用户名 中指令格式：crontab [-u username] [-l|-e|-r]
+-e: 编辑crontab的定时任务(当前用户的)
+任务会写在/usr/bin/crontab文件中-l: 查看crontab任务-r: 移除所有crontab任务示例：crontab -e (进入编辑界面，每项任务占一行)*/5 * * * * /home/dmtsai/test.
+  
+  <div class="read-more-link">
+    <a href="/code/linux-timer/">Read More…</a>
+  </div>
+  
 </div>
 </div>
     </div>
