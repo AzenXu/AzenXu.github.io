@@ -3,6 +3,11 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>http://azen.me/code/product-create-path/</loc>
+    <lastmod>2018-09-08T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>http://azen.me/code/golang%E4%B8%8E%E5%AF%86%E7%A0%81%E5%AD%A6/</loc>
     <lastmod>2018-09-06T00:00:00+00:00</lastmod>
   </url>
@@ -29,7 +34,7 @@
   
   <url>
     <loc>http://azen.me/code/</loc>
-    <lastmod>2018-09-06T00:00:00+00:00</lastmod>
+    <lastmod>2018-09-08T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -48,7 +53,7 @@
   
   <url>
     <loc>http://azen.me/</loc>
-    <lastmod>2018-09-06T00:00:00+00:00</lastmod>
+    <lastmod>2018-09-08T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
