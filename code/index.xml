@@ -6,10 +6,44 @@
     <description>Recent content on 细胞的作战实验室</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 08 Sep 2018 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 10 Sep 2018 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="http://azen.me/code/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>区块链基础 &amp;amp; 公链原理</title>
+      <link>http://azen.me/code/%E5%8C%BA%E5%9D%97%E9%93%BE%E5%9F%BA%E7%A1%80-amp-%E5%85%AC%E9%93%BE%E5%8E%9F%E7%90%86/</link>
+      <pubDate>Mon, 10 Sep 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://azen.me/code/%E5%8C%BA%E5%9D%97%E9%93%BE%E5%9F%BA%E7%A1%80-amp-%E5%85%AC%E9%93%BE%E5%8E%9F%E7%90%86/</guid>
+      <description>&amp;nbsp;
+0x0 区块链相关概念法币：日常生活中用到的纸币
+去中心化：比特币不需要中间机构做货币的发行工作 - 货币是被「发现」的，而不是「发明」的。需要注意的是，并不是所有的区块链项目都是去中心化的
+挖矿：「结点A」希望给「结点B」转钱，需要「矿工」帮A把钱「搬运」过去
+这种搬运的行为就是「挖矿」挖矿的平均时长：10分钟（转钱不是实时到账的）广播：矿工除了能「挖矿」，还可以「广播」 - 每挖成功一次矿，就会给所有结「广播」一次
+账本：每个结点都有一个「账本」
+每个结点每次收到广播，就会在自己的账本上记录一条信息唯一的作弊方式就是篡改所有结点的账本记录区块链：每个结点维护的「账本」就叫做「区块链」
+区块：每笔转账记录消息，就叫「区块」
+创世区块：区块链的第一个区块「创世区块」
+
+矿工挖到矿之后，希望向区块链中，追加一个区块
+矿工之所以能挖出来矿，是因为有人在转账
+0x1 公链原理（共识算法）PoW原理Proof of Work - 工作量证明系统
+区块参数Nonce值：可以理解为序号
+Timestamp：挖区块的时间戳
+Data：交易信息
+Hash：根据当前区块信息计算出来的哈希值
+Pre Hash：上一个区块的哈希值
+说明有上表我们知道，参数中除Nonce和Hash，其他参数都是已知且固定的
+矿工挖矿的时候，需要先把Nonce值置为1，把四个参数组合起来，计算Hash值。如果当前组合计算出来的Hash值不符合「要求」，则把Nonce累加后，再次计算新的Hash，直到符合要求
+要求比如当前难度为4，则要求计算出来的Hash值，前4个数必须为0000，才算挖矿成功
+比特币难度系数有调整机制，会随着所有结点的总算力增强而增强，所以挖矿越来越难
+过程模拟https://anders.com/blockchain/blockchain.html
+区块的链接两个区块的链接方式，是通过后一个区块保存前一个区块的hash值，而链接起来的
+公链把上述步骤原理用代码实现而产生的产品
+示意代码片段type Block struct { PreHash []byte Timestamp int64 Data []byte Hash []byte Nonce int } func main() { //创建创世区块 var genesisBlock = CreateGenesisBlock() var newBlock = GenerateNextBlock(genesisBlock) fmt.Println(&#34;挖出的新区快Data为&#34;, newBlock.Data) fmt.Println(&#34;挖出的新区快Data为&#34;, hex.EncodeToString(newBlock.Hash)) } func CreateGenesisBlock() *Block { var genesisBlock = &amp;amp;Block{[]byte{0}, time.</description>
+    </item>
     
     <item>
       <title>探索互联网产品的最佳实践</title>

@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="//gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.46-DEV" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>区块链基础 &amp;amp; 公链原理 &middot; 细胞的作战实验室</title>
+
+  
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/print.css" media="print">
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/poole.css">
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/syntax.css">
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/hyde.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Abril+Fatface|PT+Sans:400,400i,700">
+
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+  
+  <link href="" rel="alternate" type="application/rss+xml" title="细胞的作战实验室" />
+
+  
+</head>
+
+  <body class=" ">
+  <div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <a href="http://azen.me/"><h1>细胞的作战实验室</h1></a>
+      <p class="lead">
+      An elegant open source and mobile first theme for <a href="http://hugo.spf13.com">hugo</a> made by <a href="http://twitter.com/mdo">@mdo</a>. Originally made for Jekyll.
+      </p>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li><a href="http://azen.me/">Home</a> </li>
+      
+    </ul>
+
+    <p>&copy; 2018. All rights reserved. </p>
+  </div>
+</div>
+
+    <div class="content container">
+    <div class="post">
+  <h1>区块链基础 &amp;amp; 公链原理</h1>
+  <span class="post-date">Mon, Sep 10, 2018</span>
+  <p>&nbsp;</p>         <h1>0x0 区块链相关概念</h1><p><strong>法币</strong>：日常生活中用到的纸币</p><p><strong>去中心化</strong>：比特币不需要中间机构做货币的发行工作 - 货币是被「发现」的，而不是「发明」的。需要注意的是，并不是所有的区块链项目都是去中心化的</p><p><strong>挖矿</strong>：「结点A」希望给「结点B」转钱，需要「矿工」帮A把钱「搬运」过去</p><ul style="list-style-type: square;"><li>这种搬运的行为就是「挖矿」</li><li>挖矿的平均时长：10分钟（转钱不是实时到账的）</li></ul><p><strong>广播</strong>：矿工除了能「挖矿」，还可以「广播」 - 每挖成功一次矿，就会给所有结「广播」一次</p><p><strong>账本</strong>：每个结点都有一个「账本」</p><ul style="list-style-type: square;"><li>每个结点每次收到广播，就会在自己的账本上记录一条信息</li><li>唯一的作弊方式就是篡改所有结点的账本记录</li></ul><p><strong>区块链</strong>：每个结点维护的「账本」就叫做「区块链」</p><p><strong>区块</strong>：每笔转账记录消息，就叫「区块」</p><p><strong>创世区块</strong>：区块链的第一个区块「创世区块」</p><p><br /></p><p>矿工挖到矿之后，希望向区块链中，追加一个区块</p><p>矿工之所以能挖出来矿，是因为有人在转账</p><h1>0x1 公链原理（共识算法）</h1><h2>PoW原理</h2><p>Proof of Work - 工作量证明系统</p><h3>区块参数</h3><p><img class="confluence-embedded-image confluence-external-resource" height="250" src="http://img.daker.wang/wiki/1536544688402.png" data-image-src="http://img.daker.wang/wiki/1536544688402.png"></p><p>Nonce值：可以理解为序号</p><p>Timestamp：挖区块的时间戳</p><p>Data：交易信息</p><p>Hash：根据当前区块信息计算出来的哈希值</p><p>Pre Hash：上一个区块的哈希值</p><h3>说明</h3><p>有上表我们知道，参数中除Nonce和Hash，其他参数都是已知且固定的</p><p>矿工挖矿的时候，需要先把Nonce值置为1，把四个参数组合起来，计算Hash值。如果当前组合计算出来的Hash值不符合「要求」，则把Nonce累加后，再次计算新的Hash，直到符合要求</p><h3>要求</h3><p>比如当前难度为4，则要求计算出来的Hash值，前4个数必须为0000，才算挖矿成功</p><p>比特币难度系数有调整机制，会随着所有结点的总算力增强而增强，所以挖矿越来越难</p><h3>过程模拟</h3><p><a href="https://anders.com/blockchain/blockchain.html">https://anders.com/blockchain/blockchain.html</a></p><h3>区块的链接</h3><p>两个区块的链接方式，是通过后一个区块保存前一个区块的hash值，而链接起来的</p><h3>公链</h3><p>把上述步骤原理用代码实现而产生的产品</p><h3>示意代码片段</h3><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="ae022844-1fec-4810-8586-cd62adee68cb" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>type Block struct {
+    PreHash   []byte
+    Timestamp int64
+    Data      []byte
+    Hash      []byte
+    Nonce     int
+}
+
+func main() {
+    //创建创世区块
+    var genesisBlock = CreateGenesisBlock()
+    var newBlock = GenerateNextBlock(genesisBlock)
+    fmt.Println("挖出的新区快Data为", newBlock.Data)
+    fmt.Println("挖出的新区快Data为", hex.EncodeToString(newBlock.Hash))
+}
+
+func CreateGenesisBlock() *Block {
+    var genesisBlock = &amp;Block{[]byte{0}, time.Now().Unix(),
+        []byte("ab交易1bitcoin"), nil, 0}
+    //计算当前区块的hash
+    genesisBlock.getBlockHash()
+    return genesisBlock
+}
+
+//通过PoW挖矿的方式挖新区块
+func GenerateNextBlock(oldBlock *Block) *Block {
+    //假设难度系数为4,则挖的区块的hash前边必须有4个0才算挖矿成功
+    var newBlock = &amp;Block{oldBlock.Hash, time.Now().Unix(),
+        []byte("bc交易"), nil, 0}
+    //不断改变nonce值，最终实现当前区块的hash的0的个数与系统中要求的难度系数值一致
+    nonce := 1
+    for {
+        var blockInfo = hex.EncodeToString(newBlock.PreHash) + hex.EncodeToString(newBlock.Data) +
+            string(nonce) + string(newBlock.Timestamp)
+
+        h := sha256.New()
+        h.Write([]byte(blockInfo))
+        hashed := h.Sum(nil)
+        hashString := hex.EncodeToString(hashed)
+        fmt.Println("挖矿中", hashString)
+        if strings.HasPrefix(hashString, "0000") {
+            fmt.Println("挖矿成功")
+
+            newBlock.Hash = hashed
+            return newBlock
+        }
+        nonce++
+    }
+}
+
+func (block *Block) getBlockHash() []byte {
+    //拼接区块信息
+    var blockInfo = hex.EncodeToString(block.Data) + string(block.Nonce) +
+        string(block.Timestamp) + hex.EncodeToString(block.PreHash)
+
+    h := sha256.New()
+    h.Write([]byte(blockInfo))
+    hashed := h.Sum(nil)
+
+    block.Hash = hashed
+    return hashed
+}</pre></td></tr></table><h2>PoS原理</h2><p>Proof of Stack 权益证明</p><p><strong>目的</strong>：解决PoW浪费资源的问题</p><p><strong>典型产品</strong>：以太坊</p><p><strong>原理</strong>：谁当矿工？根据结点的「总币龄」，计算成为本次矿工的概率</p><ul style="list-style-type: square;"><li>谁挖到币，不是由矿机性能决定的，而是「币量」、「币龄」而定</li><li>币量：持币的数量</li><li>币龄：<span style="color: rgb(0,0,0);">当前时间点 减去 </span><span style="color: rgb(0,0,0);">币的上一次变动（<span style="color: rgb(0,0,0);">交易，挖到矿等</span>）时间点</span></li></ul><p><span style="color: rgb(0,0,0);"><strong>举例</strong>：</span></p><ul style="list-style-type: square;"><li><span style="color: rgb(0,0,0);"><span style="color: rgb(0,0,0);">每个币每天产生1币龄，比如你持有100个币，总共持有了30天，那么，此时你的币龄就为3000</span></span></li><li><span style="color: rgb(0,0,0);"><span style="color: rgb(0,0,0);"><span style="color: rgb(0,0,0);">这个时候，如果你发现了一个PoS区块，你的币龄就会被清空为0</span></span></span></li><li><span style="color: rgb(0,0,0);"><span style="color: rgb(0,0,0);"><span style="color: rgb(0,0,0);">你每被清空365币龄，就会从区块中获得0.05个币的利息</span><br /></span></span></li></ul><p><span style="color: rgb(0,0,0);"><span style="color: rgb(0,0,0);"><span style="color: rgb(0,0,0);"><strong>优势</strong>：</span></span></span></p><ul style="list-style-type: square;"><li><span style="color: rgb(0,0,0);"><span style="color: rgb(0,0,0);"><span style="color: rgb(0,0,0);"><span style="color: rgb(0,0,0);">不需要浪费算力</span></span></span></span></li><li><span style="color: rgb(0,0,0);"><span style="color: rgb(0,0,0);"><span style="color: rgb(0,0,0);"><span style="color: rgb(0,0,0);">进行51%攻击的代价更高（想要进行51%攻击的话，需要拥有51%的货币）</span></span></span></span><ul style="list-style-type: square;"><li><span style="color: rgb(0,0,0);"><span style="color: rgb(0,0,0);"><span style="color: rgb(0,0,0);"><span style="color: rgb(0,0,0);">这东西越值钱，攻击的成本就越高</span><br class="_mce_tagged_br" /></span></span></span></li></ul></li></ul><p><span style="color: rgb(0,0,0);"><span style="color: rgb(0,0,0);"><span style="color: rgb(0,0,0);"><span style="color: rgb(0,0,0);"><strong>缺点</strong>：</span></span></span></span><span style="color: rgb(0,0,0);">马太效应</span></p><p><strong>注意</strong>：</p><ul style="list-style-type: square;"><li>不是去中心化的<ul style="list-style-type: square;"><li>举例：星云链、以太坊（公链，用Solidity做开发），都是有中央服务器的</li></ul></li><li>楼下代码片段的简易PoS中，未涉及「转账功能」<ul style="list-style-type: square;"><li>转账功能系统：UTXO - 未花费模式</li><li>区块链交易中的重要部分</li></ul></li></ul><h3>代码片段</h3><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="c30eed00-2b4f-4ca2-9495-17f73b644eee" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>//创建区块
+type Block struct {
+    Index     int
+    Timestamp string
+    Prehash   string
+    Hash      string
+    Data      int
+
+    //矿工终端地址
+    Validator string
+}
+
+//创建conn终端连接的数组
+var connAddr []net.Conn
+
+//创建节点类型
+type Node struct {
+    //终端的地址
+    Address string
+    //币领
+    Coins int
+}
+
+//  保存终端的对象
+var nodes []Node
+
+//通道实现线程通信
+var announcements = make(chan string)
+
+
+//生成新区块
+var Blockchain []Block
+
+func main() {
+
+    //区块链中是否有三个区块
+    genesisBlock := genesisBlock()
+
+    go func() {
+        //通过矿工实现区块的挖矿
+        for {
+            //此代码会将for循环卡死,
+            w := &lt;- announcements
+
+            //将新的区块,利用w旷工，添加到数组中
+            generateNextBlock(genesisBlock, 100, w)
+        }
+    }()
+
+    go func() {
+        //每隔开10S选择一次矿工
+        for {
+            time.Sleep(10 * time.Second)
+            winner := pickWinner()
+            fmt.Println("系统通过PoS帮您选出的旷工为", winner)
+            //将旷工放入到通到中
+            announcements &lt;- winner
+        }
+    }()
+
+    //如何通过终端链接代码上
+    netListen, _ := net.Listen("tcp", "127.0.0.1:1234")
+    defer netListen.Close()
+
+    //3,等待连接
+    for {
+        conn, _ := netListen.Accept()
+        //将所有的链接保存到数组
+        connAddr = append(connAddr, conn)
+        //扫描终端
+        scanbalance := bufio.NewScanner(conn)
+        io.WriteString(conn, "请输入币龄")
+
+        go addNode(scanbalance, &amp;nodes)
+    }
+}
+
+func addNode(scanbalance *bufio.Scanner, nodes *[]Node) {
+    for scanbalance.Scan() {
+        txt := scanbalance.Text()
+        //打印终端输入的信息
+        fmt.Println("您刚才从终端输入的币龄为：", txt)
+        //通过时间戳创建地址
+        addr := calculateHash(time.Now().String())
+        cons, _ := strconv.Atoi(txt)
+        node := Node{addr, cons}
+        // 将链接终端对象存放到数组 - 协程不安全，建议用channel 或 加锁
+        *nodes = append(*nodes, node)
+        fmt.Println(nodes)
+    }
+}
+
+//计算某个字符串的hash
+func calculateHash(record string) string {
+    h := sha256.New()
+    h.Write([]byte(record))
+    hashed := h.Sum(nil)
+    return hex.EncodeToString(hashed)
+}
+
+//计算block的hash
+func calculateBlockHash(block Block) string {
+    record := block.Timestamp + string(block.Data) +
+        block.Prehash + string(block.Index)
+    hashCode := calculateHash(record)
+    return hashCode
+}
+
+func generateNextBlock(oldBlock Block, data int, vald string) Block {
+    var newBlock Block
+    //设置区块高度
+    newBlock.Index = oldBlock.Index + 1
+    newBlock.Timestamp = time.Now().String()
+    newBlock.Prehash = oldBlock.Hash
+    newBlock.Data = data
+    newBlock.Hash = calculateBlockHash(newBlock)
+    newBlock.Validator = vald
+    //添加到区块链
+    Blockchain = append(Blockchain, newBlock)
+    return newBlock
+}
+
+//创建创世区块
+func genesisBlock() Block {
+    var genesisBlock = Block{0, time.Now().String(), "",
+        "", 0, ""}
+    //计算genesisBlock的hash值
+    genesisBlock.Hash = calculateBlockHash(genesisBlock)
+    //将创世区块添加到数组
+    Blockchain = append(Blockchain, genesisBlock)
+    return genesisBlock
+}
+
+//通过PoS共识算法选择旷工
+func pickWinner() string {
+    //选择旷工，利用PoS共识算法选择旷工
+    var lottyPool []string
+
+    //根据币领把对应的旷工地址，存放到数组中
+    for i := 0; i &lt; len(nodes); i++ {
+        node := nodes[i]
+        for j := 0; j &lt; node.Coins; j++ {
+            lottyPool = append(lottyPool, node.Address)
+        }
+    }
+
+    if len(lottyPool) != 0 {
+        //通过随机值，找到准备挖矿的旷工
+        rand.Seed(time.Now().Unix())
+        r := rand.Intn(len(lottyPool))
+        workerAddress := lottyPool[r]
+        //返回旷工地址
+        return workerAddress
+    }
+
+    return ""
+}</pre></td></tr></table><h2>DPoS原理</h2><p><span style="color: rgb(0,0,0);">Delegated Proof of Stake <span style="color: rgb(0,0,0);">委托权益证明</span></span></p><p><span style="color: rgb(0,0,0);"><span style="color: rgb(0,0,0);"><strong>目的</strong>：解决PoS存在的「马太效应」问题</span></span></p><p><span style="color: rgb(0,0,0);"><strong>原理</strong>：让每一个人选出可以代表自己利益的人参与到获取区块的争夺中，这样多个小股东就能够通过投票选出自己的代理人，争取自己的利益</span></p><ul style="list-style-type: square;"><li><span style="color: rgb(0,0,0);">每一个参与者都能够选举任意数量的节点生成下一个区块</span></li><li><span style="color: rgb(0,0,0);"><span style="color: rgb(0,0,0);">得票最多的前 M 个节点会被选择成为区块的创建者</span><br /></span></li><li><span style="color: rgb(0,0,0);"><span style="color: rgb(0,0,0);"><span style="color: rgb(0,0,0);">M的数量也是由整个网络投票决定的，<span style="color: rgb(0,0,0);">可以尽可能地保证网络的去中心化</span></span><br /></span></span></li><li><span style="color: rgb(0,0,0);"><span style="color: rgb(0,0,0);"><span style="color: rgb(0,0,0);"><span style="color: rgb(0,0,0);"><span style="color: rgb(0,0,0);"><span style="color: rgb(0,0,0);">随机因素：M</span>数量不确定，M中选取哪一个也不确定，再加上足够多的总量，<span style="color: rgb(0,0,0);">更大程度上确保了不可篡改性</span></span><br /></span></span></span></span></li></ul><h3><span style="color: rgb(0,0,0);"><span style="color: rgb(0,0,0);"><span style="color: rgb(0,0,0);"><span style="color: rgb(0,0,0);"><span style="color: rgb(0,0,0);"><span style="color: rgb(0,0,0);">代码片段</span></span></span></span></span></span></h3><p><br /></p><p><br /></p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="636ff43c-37c3-47c9-9547-9229cbf49bbf" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>//实现DPoS原理
+var Blockchain []*Block
+
+//选举
+type Node struct {
+    Name  string //节点名字
+    Votes int    // 被选举的票数
+}
+
+type Block struct {
+    Index     int
+    Timestamp string
+    Prehash   string
+    Hash      string
+    Data      int
+
+    //增加代理
+    delegate *Node
+}
+
+//创建数组，保存所有的节点
+var n = make([]*Node, 5)
+
+func main() {
+
+    //创建所有选民
+    mockNodes()
+    c := sortNodes()
+
+    //下边所有的挖矿均有这三个主节点完成，三个人轮流挖矿
+    g := genesisBlock()
+
+    //创建新区块
+    newBlock := generateNextBlock(g, 1)
+
+    //模拟挖矿 - 最好使用「队列」
+    newBlock.setDelete(c[0])
+    newBlock = generateNextBlock(*newBlock, 2)
+    newBlock.setDelete(c[1])
+    newBlock = generateNextBlock(*newBlock, 3)
+    newBlock.setDelete(c[2])
+    newBlock = generateNextBlock(*newBlock, 4)
+    newBlock.setDelete(c[0])
+}
+
+//创建节点
+func mockNodes() {
+    //创建随机种子
+    rand.Seed(time.Now().Unix())
+    node1 := Node{"node1", rand.Intn(10)}
+    node2 := Node{"node2", rand.Intn(10)}
+    node3 := Node{"node3", rand.Intn(10)}
+    node4 := Node{"node4", rand.Intn(10)}
+    node5 := Node{"node5", rand.Intn(10)}
+    n[0] = &amp;node1
+    n[1] = &amp;node2
+    n[2] = &amp;node3
+    n[3] = &amp;node4
+    n[4] = &amp;node5
+}
+
+//DPoS中选出票数最高的前n位
+func sortNodes() []*Node {
+    //对所有选民的票数进行排序
+    for i := 0; i &lt; 4; i++ {
+        for j := 0; j &lt; 4-i; j++ {
+            if n[j].Votes &lt; n[j+1].Votes {
+                //二者的位置交换
+                t := n[j]
+                n[j] = n[j+1]
+                n[j+1] = t
+            }
+        }
+    }
+    return n[:3]
+}
+
+func generateNextBlock(oldBlock Block, data int) *Block {
+    var newBlock = Block{oldBlock.Index + 1, time.Now().String(),
+        oldBlock.Hash, "", data, &amp;Node{"", 0}}
+    calculateHash(&amp;newBlock)
+    //将新的区块添加到数组
+    Blockchain = append(Blockchain, &amp;newBlock)
+    return &amp;newBlock
+}
+
+func calculateHash(block *Block) {
+    record := strconv.Itoa(block.Index) + strconv.Itoa(block.Data) + block.Timestamp +
+        block.Prehash
+    h := sha256.New()
+    h.Write([]byte(record))
+    hashed := h.Sum(nil)
+    block.Hash = hex.EncodeToString(hashed)
+}
+
+func (block *Block) setDelete(node *Node) {
+    block.delegate = node
+}
+
+//创世区块
+func genesisBlock() Block {
+    genesis := Block{0, time.Now().String(), "", "", 0, &amp;Node{"", 0}}
+    calculateHash(&amp;genesis)
+    Blockchain = append(Blockchain, &amp;genesis)
+    return genesis
+}</pre></td></tr></table><p><br /></p><p><br /></p><h1>0x2 密码学补充</h1><h2>零知识证明</h2><p>让别人知道你有某个能力，但不能告诉他你是怎么做到的</p><h3>举例</h3><p>A拥有B的公钥，A没有见过B，而B见过A的照片，偶然一天2人见面了，B认出了A，但A不能确定面前的人是否是B，这时B要向A证明自己是B，有2个方法：<br />　　 （一）B把自己的私钥给A，A用这个私钥对某个数据加密，然后用B的公钥解密，如果正确，则证明对方确实是B。 <br />　　 （二）A给出一个随机值，B用自己的私钥对其签名，然后把加密后的数据交给A，A用B的公钥验签，如果能够得到原来的随机值，则证明对方是B<br />方法（二）属于零知识证明</p><h3>思考</h3><p>如何让一个盲人相信我给他的两个相同的求是不同颜色的球</p><h3>应用</h3><p>区块链中的「零知识证明」原理：数字签名和验签的过程，就是零知识证明的过程</p><h2>PKI</h2><p><strong>证书</strong>：用公钥生成证书，证书由CA颁发</p><ul style="list-style-type: square;"><li>格式为certificate类型</li><li>证书能证明，这个公钥属于你本人</li></ul><p><strong>PKI</strong>：是一个总称，公钥基础设施</p>
+        <p>&nbsp;</p>
+    
+
+</div>
+
+
+    </div>
+
+    
+  </body>
+</html>
