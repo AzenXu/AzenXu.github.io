@@ -6,10 +6,27 @@
     <description>Recent content on 细胞的作战实验室</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 10 Sep 2018 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 11 Sep 2018 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="http://azen.me/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Lean Startup 概述</title>
+      <link>http://azen.me/code/lean-startup-one/</link>
+      <pubDate>Tue, 11 Sep 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://azen.me/code/lean-startup-one/</guid>
+      <description>&amp;nbsp;
+新思维运动三个代表Steve Blank
+《四步创业法》《创业者手册》Eric Rise
+Steve Blank的学生《精益创业》Reid Hoffman
+LinkedIn创始人核心 - 承认未知从「天才人物的天才设想、完美计划和完美执行」 → 「科学试错、民主创业」
+从试错中不断获取认知、不断迭代认知，最终调整创业路径
+未知观不知道用户痛点是什么不知道解决方案是什么只能通过不断试错，不断迭代，去逼近用户的真实痛点，而不是「幻想」能百分之百的「捕捉到用户痛点」
+实践 - Amazon Fresh（生鲜配送）选择西雅图做试点，「单点突破」一开始只选择了几个居住密度最大的高端小区服务不针对所有人，而是「天使用户」缴纳299美元年费的方式，过滤出天使用户天使用户对「购物环节」痛点极大选择「用户少 &amp;amp; 粘度高」的用户，做验证和测试5年时间不断测试生鲜零售模型 &amp;amp; 调整参数5年后才进入洛杉矶依然选几个密度最大的小区切入Lean Startup 五项基本原则用户导向原则：从「自我导向」到「用户导向」行动原则：从「计划导向」到「行动导向」「行先于知」，而不是「知引导行」试错原则：从「完美预测」到「科学试错」工具：MVP聚焦原则：从「系统思维」到「单点爆破」单点突破、主动过滤噪音客户迭代原则：从「完美主义」到「高速迭代」迭代、速度 都很关键总结“假设并不是科学的，任何假设都只是假设，只有经过验证或者说可证伪的假设才是科学的”
+&amp;nbsp;</description>
+    </item>
     
     <item>
       <title>区块链基础 &amp;amp; 公链原理</title>
