@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="//gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.46-DEV" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>0 前端项目技术选型 &middot; 细胞的作战实验室</title>
+
+  
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/print.css" media="print">
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/poole.css">
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/syntax.css">
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/hyde.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Abril+Fatface|PT+Sans:400,400i,700">
+
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+  
+  <link href="" rel="alternate" type="application/rss+xml" title="细胞的作战实验室" />
+
+  
+</head>
+
+  <body class=" ">
+  <div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <a href="http://azen.me/"><h1>细胞的作战实验室</h1></a>
+      <p class="lead">
+      An elegant open source and mobile first theme for <a href="http://hugo.spf13.com">hugo</a> made by <a href="http://twitter.com/mdo">@mdo</a>. Originally made for Jekyll.
+      </p>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li><a href="http://azen.me/">Home</a> </li>
+      
+    </ul>
+
+    <p>&copy; 2018. All rights reserved. </p>
+  </div>
+</div>
+
+    <div class="content container">
+    <div class="post">
+  <h1>0 前端项目技术选型</h1>
+  <span class="post-date">Tue, Sep 18, 2018</span>
+  <p>&nbsp;</p>         <h1>0x0 单页应用 &amp; 多页应用 相关技术选型</h1><p>不同项目需求不同：</p><ul style="list-style-type: square;"><li>传统的多页网站不会用React</li><li>单页应用用jQuery实现困难，需要自己处理技术细节，出错的可能性多</li></ul><h2>两大类站点</h2><h3>多页应用</h3><p>每个新页面都需要做页面的跳转，是通过浏览器发请求到服务端的</p><p><strong>日常</strong>：前端拿到设计图做好模板，后端用jsp等模板引擎填充数据，拼html代码，形成真实的html给浏览器做显示</p><p style="list-style-type: none;"><strong>特点</strong>：</p><ol><li>每个页面跳转都经过服务端</li><li>新页面出现需要刷新浏览器</li><li>用户需要有一定的等待时间</li></ol><p style="list-style-type: none;"><strong>js定位</strong>：js主要做动画，数据处理都是在后端做好的</p><ol><li style="list-style-type: none;">后端处理好拼给浏览器例如：</li><li style="list-style-type: none;background-image: none;"><ol><li>如点击某个按钮后，隐藏了一个div显示了另一个div</li><li>js设计初衷就是做这些小功能的，随着js标准升级，功能才变强大</li><li><img class="confluence-embedded-image confluence-external-resource" width="386" src="http://img.daker.wang/wiki/1537182039922.png" data-image-src="http://img.daker.wang/wiki/1537182039922.png"></li></ol></li></ol><p style="list-style-type: none;"><strong>常用类库</strong>：</p><ol><li>jQuery：对原生的DOM事件做了封装，解决了浏览器兼容性问题 &amp; 提供<a href="http://api.jquery.com/">更好用的api</a></li><li>mootools | YUI：DOM封装类库，使用方法和原生js差不多 - 多页应用时代更多的就是通过js操纵DOM</li></ol><p style="list-style-type: none;"><strong>常用工程架构工具</strong>：</p><ol><li style="list-style-type: none;">无特定前端工具，后端配合grunt：一头豪猪，是一个命令启动器，本质上是一个注册任务的脚本处理器</li><li style="list-style-type: none;background-image: none;"><ol><li>通过grunt执行一个config（比如指定编译的文件、编译好的东东输出到哪个目录下面）</li><li>用起来比较麻烦，执行任务很慢，因为硬盘读写效率低导致的</li></ol>gulp：也是跑任务的工具，和grunt差不多<ol><li>好处是通过stream的方式处理文件，比grunt更快，API更简洁好用</li><li>现在基本上已经被npm替代了</li></ol></li></ol><p style="list-style-type: none;"><strong>常用模块化工具</strong>：</p><ol><li>大部分情况下没有模块化工具：每个页面单独引一个jQuery，单独写几行代码就好</li><li>seajs：支付宝的小伙开发的</li><li>requirejs</li></ol><p style="list-style-type: none;"><strong>静态文件处理</strong>：</p><ol><li>手动编译到html中，配置的时候不够灵活</li><li>有的时候不处理，交给后端用Nginx机制去处理</li></ol><h3>单页应用</h3><p><strong>特征 - 前端路由</strong>：点到一个新页面，浏览器不需要刷新，只是页面内容刷新就可以了</p><p><strong>三大类库</strong>：React、Vue、Angular</p><ul style="list-style-type: square;"><li>特点：<ul style="list-style-type: square;"><li>各自有自己的开发范式</li><li>对整个DOM做了上层的抽象 </li></ul></li><li>好处：<ul style="list-style-type: square;"><li>隔离了DOM层，所以才能做服务端渲染<ul style="list-style-type: square;"><li>服务端没有js的DOM api的运行环境（如：document.xxx），如何把js的DOM操作渲染成最终的html呢？</li><li>通过类库抽象出来的方式去渲染</li></ul></li></ul></li></ul><ol><li>前辈：backbone.js<ul style="list-style-type: square;"><li>前端MVC的经典案例，整个类库的代码量很少</li><li>是一个骨架，细节需要自己实现</li></ul></li><li>React：<ul style="list-style-type: square;"><li>需要把它的代码编译成浏览器支持的代码才能运行，JSX语法浏览器并不认识</li></ul></li><li>Vue：<ul style="list-style-type: square;"><li>和React的主要区别：Vue的数据是双向绑定的，下层可以修改上层数据。React遵循单向数据流，数据只能从上到下修改</li></ul></li><li>Angular：<ul style="list-style-type: square;"><li>用ts开发</li><li>里面有不少超前的东西</li><li>目前的生态不够完整</li></ul></li></ol><p><strong>工程架构工具</strong>：npm 占据90%左右的使用量了</p><p><strong>模块化工具</strong>：</p><ol><li><a href="http://webpack.js.org/">webpack</a>：<ul style="list-style-type: square;"><li>可以打包任何的静态资源文件（js、jsx、css、sass...）</li><li>可以按照想要的样子做编译</li><li><img class="confluence-embedded-image confluence-external-resource" width="286" src="http://img.daker.wang/wiki/1537183206892.png" data-image-src="http://img.daker.wang/wiki/1537183206892.png"></li></ul></li><li>rollup.js：<ul style="list-style-type: square;"><li>能够按需引入函数</li><li>而不是把文件中的所有的函数都包含进来</li></ul></li></ol><p><strong>静态文件处理</strong>：使用webpack处理静态文件，直接在js里引静态资源就好，模块化工具会自动转换成线上可用静态资源路径</p><h1>0x1 web app 架构</h1><h2>简介</h2><p>以前：写好网页模板交给后端，后端填数据，把填好的html返回给浏览器</p><p>现在：webapp所有的前端页面跳转，都在浏览器中做</p><ul style="list-style-type: square;"><li>一次加载的内容变多</li><li>数据通过api获取，在前端渲染出来</li><li>大部分代码都是js代码，甚至不用写html了</li></ul><h2>工程架构</h2><h3>解放生产力</h3><p style="margin-left: 30.0px;">通过自动化操作，保障开发目光能聚焦在业务上，而不是繁琐的文件复制、目录改变之类重复性的劳动</p><p>源码处理：需要让jsx能自动转成js、自动使用babel编译、图片路径自动处理</p><p>图片处理：</p><ul style="list-style-type: square;"><li>图片是一个资源，在js中应该能直接import到</li><li>为什么要Import？<ol><li>业务代码开发目录时在src目录中，而最终是需要把「资源」编译到dist目录中，这一步其实是需要做资源拷贝的</li><li>希望图片能做「浏览器长缓存」，需要控制图片的版本。我们不希望每次手动在图片后面加版本号，这一步也希望能交给工程架构去自动完成</li><li>最终的图片url，后面会自动加一串hash值</li></ol></li><li>我们在业务代码中，直接把import进来的东东，作为资源路径即可，而不必关心dist目录中图片的hash值是多少，每次的真实路径是什么</li></ul><h3>环境搭建</h3><p style="margin-left: 30.0px;">每种框架的解决方案都不一样（jsx、ts等），需要有一个编译的过程，把不同语法类型编译成浏览器能识别的语言（es5）</p><blockquote><p>预见问题：一开始，手头项目直接写css即可。但是以后会不会出现css太多类重名的问题？如果会，是否需要提前考虑解决方案还是到时再说？</p></blockquote><h3>质量保证</h3><p style="margin-left: 30.0px;">通过代码规范，保证排错、可读性</p><p><strong>code lint</strong>：用来规范代码的写法</p><p><strong>排除环境差异</strong>：存在操作系统环境差异，需要通过工程架构避免类似问题</p><ul style="list-style-type: square;"><li>可以通过给编辑器放一个editconfig，处理不同环境下，代码规范问题</li><li>包括定义：方法结束时，应该留一个空行、用4个空格还是一个tab之类的</li></ul><p><strong>git commit预处理</strong>：强制自动做代码lint监测，有错就不让commit</p><h3>关键点：定制</h3><p style="margin-left: 30.0px;">每个项目和团队都是不一样的，需要通过定制，满足团队的上述需求。</p><p style="margin-left: 30.0px;">需要对所使用的定制工具，了如指掌，甚至自己需要写一些webpack的脚本实现某些功能才行</p><h2>项目架构</h2><p>工程架构更多的考虑让工程跑起来、更方便做开发（自动处理的东西之类的）</p><p>项目架构需要考虑：</p><ul style="list-style-type: square;"><li>网页如何运行</li><li>业务代码如何分层以便做好功能</li><li>预留业务扩展的空间</li></ul><p><strong>技术选型</strong>：</p><ul style="list-style-type: square;"><li>web app使用哪个框架？还是需要自己写？</li><li>它的store选哪个？</li><li>数据逻辑如何做？</li></ul><p><strong>数据解决方案</strong>：</p><ul style="list-style-type: square;"><li>mobx</li><li>redux</li><li>flux</li><li>需要考虑：<ul style="list-style-type: square;"><li>后端结构是怎样的？</li><li>API形式如何？</li><li>http请求用什么方案？（自己写？还是怎样？）</li></ul></li></ul><p><strong>代码风格</strong>：</p><p>和代码检测不一样，这里主要考虑：</p><ul style="list-style-type: square;"><li>数据存储：<ul style="list-style-type: square;"><li>哪些数据存在mobx中？（mobx是整个应用公用的数据管理）</li><li>哪些数据存在当前react的view中？</li></ul></li></ul><h1>0x2 网络优化 &amp; webpack打包</h1><h2>网络优化</h2><p><strong>方法：合并资源文件，减少http请求</strong></p><p>说明：</p><ul style="list-style-type: square;"><li>浏览器并发http请求有数量限制，桌面8个，手机6个</li><li>如果需要并发请求的资源太多，会延长整个页面的加载时间</li><li>合并后，可以加快网页加载时间</li></ul><p>示例：</p><ul style="list-style-type: square;"><li>我们一个工程中，js文件很多</li><li>打包出的实际页面中只有两个js文件，这就是代码打包的结果</li><li>webpack根据所有的Import依赖树，做了文件合并，合并成一个js文件</li><li>打包完成，会生成一个dist目录，就是合并后的文件的存放目录</li><li>生成一个vendor.js文件：这个文件是压缩过的<ul style="list-style-type: square;"><li>vendor：包含了所有引入的第三方类库的文件<ul style="list-style-type: square;"><li>因为第三方库更新频率较低，适合长期存在浏览器缓存中,所以单独打一个js包</li></ul></li></ul></li><li>生成一个业务代码打包后的js文件</li><li>类库的css文件，使用cdn存就好</li></ul><p><br /></p><p><strong>方法：利用浏览器的缓存机制</strong></p><ul style="list-style-type: square;"><li>加载资源文件的时候设置过期时间，默认使用浏览器内部的本地文件，这样就可以不经过网络了</li><li>缓存机制的问题：<ol><li>网站更新后，如果js静态资源的文件名没有更改，那么浏览器端不会更新静态资源，而使用缓存的资源</li><li>需要有机制更新静态资源文件的文件名和url：<ol><li>缓存更新机制<ol><li>以前：直接加时间戳，问题是不能定位到哪个文件更新了哪个没更新，导致发布一个版本，所有静态资源都被更新</li><li>现在：打包文件根据内容做计算得到hash<ol><li>如果内容有更新，hash就会更新</li><li>如果没更新，就用缓存</li></ol></li></ol></li></ol></li></ol></li></ul><p><br /></p>
+        <p>&nbsp;</p>
+    
+
+</div>
+
+
+    </div>
+
+    
+  </body>
+</html>
