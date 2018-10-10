@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="//gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.46-DEV" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>1 React前端工程架构 - 基本配置 &middot; 细胞的作战实验室</title>
+
+  
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/print.css" media="print">
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/poole.css">
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/syntax.css">
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/hyde.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Abril+Fatface|PT+Sans:400,400i,700">
+
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+  
+  <link href="" rel="alternate" type="application/rss+xml" title="细胞的作战实验室" />
+
+  
+</head>
+
+  <body class=" ">
+  <div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <a href="http://azen.me/"><h1>细胞的作战实验室</h1></a>
+      <p class="lead">
+      An elegant open source and mobile first theme for <a href="http://hugo.spf13.com">hugo</a> made by <a href="http://twitter.com/mdo">@mdo</a>. Originally made for Jekyll.
+      </p>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li><a href="http://azen.me/">Home</a> </li>
+      
+    </ul>
+
+    <p>&copy; 2018. All rights reserved. </p>
+  </div>
+</div>
+
+    <div class="content container">
+    <div class="post">
+  <h1>1 React前端工程架构 - 基本配置</h1>
+  <span class="post-date">Tue, Sep 18, 2018</span>
+  <p>&nbsp;</p>         <h1>0x0 概述</h1><p>上一篇文章我们聊过，工程架构的目标，主要是保证「开发效率」的。包括：</p><ul><li>解放生产力</li><li>环境搭建</li><li>质量保障</li></ul><p>本篇文章，将会就React的实际配置做下做下初步说明</p><p>内容包括：</p><ul><li>npm、webpack、babel编译打包基础配置</li><li>SSR（服务端渲染）基础配置</li><li>dev server实现代码实时编译</li><li>hot module实现代码热更新</li><li>服务端渲染的实时更新</li><li>eslint保证代码质量</li></ul><h1>0x1 编译打包基础配置</h1><p><a href="https://gitee.com/azen/FE-execise/commit/3c250e9bb921ca3fdeaecd7b4ba995706a66baf4">本节commit</a></p><h2>webpack</h2><p>webpack是一个模块打包器，核心是他的loader</p><ul><li>通过loader处理某种类型的资源（js、css）</li><li>会把资源处理成浏览器能运行的代码（es5），浏览器里能完整使用</li><li>如果木有对应类型的loader，可以自己写一个<ul><li>如vue自己写了一个loader处理它定义的特殊语法</li></ul></li></ul><h2>I 基础配置阶段</h2><p>1.在项目根目录下，把项目配置成npm的项目 - 通过生成的package.json文件描述依赖的npm包</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="47b9c0e2-da40-4133-ae49-a53011df981d" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>$ npm init</pre></td></tr></table><p>相关选项 - 一般情况下直接enter用默认值就好</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="6f4b2008-be7b-43fb-bd4e-4583b36840c6" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>{
+  "name": "fe-execise",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" &amp;&amp; exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@gitee.com:azen/FE-execise.git"
+  },
+  "author": "Azen",
+  "license": "ISC"
+}</pre></td></tr></table><p>2.安装webpack、react</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="9e1738b4-c297-49d2-bc98-ceff28fdd909" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>$ npm i webpack
+$ npm i react</pre></td></tr></table><p>3.新建文件夹 &amp; 初始文件</p><ul><li>build文件夹：放配置文件以及工程中需要用到的脚本文件<ul><li>webpack.config.js</li></ul></li><li>client文件夹：放前端app<ul><li>app.js：应用入口<ul><li>里面引用了App.jsx，然后把它mount到html中</li></ul></li><li>App.jsx：声明整个页面上面的内容</li></ul></li></ul><h3>webpack.config.js</h3><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="230cc1be-9510-4455-821c-82eb4f1bd354" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>const path = require('path');
+
+module.exports = {
+    //  入口
+    entry: {
+        app: path.join(__dirname, '../client/app.js')
+    },
+    output: {
+        filename: '[name].[hash].js',
+        path: path.join(__dirname, '../dist'),
+        publicPath: "public/"
+    }
+};</pre></td></tr></table><p>path包：把相对路径转成绝对路径，防止跨操作系统时路径出错 - entry - 告诉webpack打包入口文件是app</p><p>output：</p><ul><li>filename: 指定输出的文件名<ul><li>简单的可以写死app.js这个名字</li><li>一般这样写<ul><li>[]里面放变量：<ul><li>name表示entry中对应的名字，这里是app</li><li>hash是打包完后，对内容做的hash<ul><li>一旦树目录下任何一个文件变动，hash会变</li><li>会更新浏览器缓存</li></ul></li></ul></li></ul></li></ul></li><li>path：打包好的输出路径 - /dist文件夹下</li><li>publicPath：指定静态资源文件引用时的路径 <ul><li>用途：用于区分url对应的请求目标，是静态资源还是api请求之类的<ul><li>配置nginx的时候更方便区分（有public的就把静态资源丢过去，没的就丢给api服务器）</li></ul></li><li>用途二：部署到cdn上的话，publicPath写cdn的域名即可</li><li>后续还会看到它的效果</li></ul></li></ul><p><br /></p><h3>package.json</h3><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="f82d036f-58d0-4cac-803c-ef67c2b12027" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>{
+  "name": "fe-execise",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" &amp;&amp; exit 1",
+    "build": "webpack --config build/webpack.config.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@gitee.com:azen/FE-execise.git"
+  },
+  "author": "Azen",
+  "license": "ISC",
+  "dependencies": {
+    "react": "^16.5.1",
+    "webpack": "^4.19.0"
+  },
+  "devDependencies": {
+    "webpack-cli": "^3.1.0"
+  }
+}</pre></td></tr></table><p>scrpits:</p><ul><li>定义build命令<ul><li>--config：webpack指令的参数，用于指定config文件</li></ul></li></ul><h3>简单测试</h3><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="306f75b8-3bed-4241-8a98-33acd13f0f80" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>$ npm run build</pre></td></tr></table><p>结果：</p><ul><li>生成dist/app.xxxxhashxxxx.js文件，就是打包好的文件了</li><li>生成的js文件：<ul><li>前面部分是webpack处理模块时加的东东，不用管它</li><li>底部会是我们自己写的相关逻辑</li></ul></li></ul><h2>II 简单业务文件 &amp; 入口文件实现</h2><p>App.jsx</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="67d958ee-79f1-4234-bca8-5e7050733fec" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>import React from 'react'
+
+export default class App extends React.Component {
+    render() {
+        return (
+            &lt;div>初次见面，请多关照~(๑^ں^๑)&lt;/div>
+        )
+    }
+}</pre></td></tr></table><p>app.js</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="462358e3-f666-4780-bd8a-2b88782d8a1d" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>$ npm i react-dom -S</pre></td></tr></table><ul><li>-S：save，生产环境依赖</li><li>-D：save-dev，开发环境依赖</li></ul><p><br /></p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="b77cbdfd-21b9-4ccb-8211-04a8053856c6" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>import ReactDOM from 'react-dom'
+import App from './App.jsx'
+import React from "react";
+
+ReactDOM.render(&lt;App />, document.body);</pre></td></tr></table><p>配置：</p><ul><li>react-dom是用来把react的组件渲染到dom上用的<ul><li>和它对应的，react-native是把组件渲染到手机端</li></ul></li><li>import App.jsx:<ul><li>目前没配webpack忽略后缀名，所以需要写jsx后缀名</li></ul></li><li>import React：<ul><li>这里一定要引React的原因：<ul><li>每一个jsx的标签（&lt;App /&gt;），本质都是把标签内容作为参数，传给react库中的create_element方法，进而生成真正标签</li></ul></li></ul></li></ul><p><br /></p><p><strong>webpack.config.js</strong></p><p>需要给webpack配置，让它能识别react相关语法 - jsx文件和一些我们自定义的js文件中会用到react语法</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="56ed3911-8c1c-4ed8-a847-a7dbc9b78ac8" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>module.exports = {
+    ...
+    module: {
+        rules: [
+            {
+                test: /.(jsx|js)$/,
+                loader: 'babel-loader',
+                exclude: [
+                    path.join(__dirname, '../node_modules')
+                ]
+            }
+        ]
+    },
+};</pre></td></tr></table><p>配置：</p><ul><li>rules数组：里面配很多loader<ul><li>test：告诉它哪种类型的文件需要编译 - 以.jsx或.js作为结尾的文件</li><li>loader：指定使用「babel-loader」作为loader</li><li>exclude：需要排除的文件 - node_modules文件夹下的所有文件 - 这些都是三方库文件，本身已经被编译过了</li></ul></li></ul><p><br /></p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="6f838041-76c1-4d40-a2c4-c2cd5f1a9c63" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>$ npm i babel-loader@7 babel-core -D</pre></td></tr></table><p><strong>babel</strong></p><p>是一个能编译各种js语法的工具，编译出来的是浏览器里默认能执行的es5语法</p><ul><li>babel能支持jsx、es7、ts等等</li><li>以前的编译器complier是react官方自己做的编译工具，现在直接用babel就好</li></ul><p>bable-loader：是一个webpack插件，不包含babel的核心代码，需要再安装下「babel-core」</p><ul><li><p>因为依赖版本问题，这里需要指定下babel-loader@7</p></li></ul><p>babel默认只能编译es6的代码，不能编译jsx，需要在根目录写下配置文件`.babelrc`</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="f341ecad-a405-49ac-adf4-c48b9fc48b88" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>{
+  "presets": [
+    ["es2015", {"loose": true}],
+    "react"
+  ]
+}</pre></td></tr></table><p>配置：</p><ul><li>presets：配置支持的语法<ul><li><span style="color: rgb(128,128,128);">babel默认把所有语法拆分出去了，babel core没包含语法相关引擎</span></li><li>es2015（就是es6），loose true是指松散型的语法</li><li>react</li></ul></li></ul><p>安装babel语法引擎</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="92e37de8-ab77-4fea-a2e4-1b5983fcef23" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>npm i babel-preset-es2015 babel-preset-es2015-loose babel-preset-react -D</pre></td></tr></table><h3>简单测试</h3><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="42187d25-98ee-4d0a-9e3c-05b736da4cdb" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>npm run build</pre></td></tr></table><p>结果：</p><ul><li>编译出来一个非常大的文件，里面包含了所有react源代码</li></ul><h2>浏览器展示</h2><p>希望在浏览器中展示js效果，需要安装html-webpack-plugin</p><p>作用：</p><ol><li>生成一个html入口页面</li><li>在webpack编译的时候，所有entry都注入到这个html入口页面中（在html中做引用）</li><li>路径会根据我们webpack配置的publicPath拼接而成的</li></ol><p>安装：</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="3c3fa0d8-02bf-44b5-bd71-c63929e79334" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>$ npm i html-webpack-plugin -D</pre></td></tr></table><p>修改配置文件，把插件配置给webpack</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="57d6da7f-f0d7-4fcc-bdbd-f311b7be07cd" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>const HTMLPlugin = require('html-webpack-plugin');
+
+module.exports = {
+    ...
+    plugins: [
+        new HTMLPlugin()
+    ]
+};</pre></td></tr></table><p>效果：</p><ul><li>在生成的入口html中注入了打包好的js文件引用 - 且拼接了publicPath配置中的前缀<ul><li>因为没起任何服务，也没做路径映射，直接打开这个html是无法访问到我们的js文件的（因为真实文件路径中，dist目录下，js文件和入口html文件同级，真实目录中没有「public/」这一层）</li><li>为了展示效果，可以暂时注释掉publicPath配置</li></ul></li></ul><h2>最终结果</h2><p><img class="confluence-embedded-image confluence-external-resource" width="386" src="http://img.daker.wang/wiki/1537252547181.png" data-image-src="http://img.daker.wang/wiki/1537252547181.png"></p><p><img class="confluence-embedded-image confluence-external-resource" width="386" src="http://img.daker.wang/wiki/1537252620632.png" data-image-src="http://img.daker.wang/wiki/1537252620632.png"></p><p>我们看到，源代码里只有一句js引用，木有我们场景的&lt;a&gt;&lt;p&gt;等标签，这样对SEO不利 - 蜘蛛认为我们的网站中木有内容</p><p>下一节解决这个问题</p><h1>0x2 服务端渲染基础配置</h1><p><a href="https://gitee.com/azen/FE-execise/commit/bb38a7525eee207025316433ab5cd4a00c2fc4a2">本节commit</a></p><h2>0 概述</h2><p>webapp开发模式下，都是在浏览器端使用js实时渲染出来内容的</p><p><strong>问题：</strong></p><ol><li>SEO不友好<ul><li>根据url请求到的html是空白页面</li><li>蜘蛛会认为网站没东西</li></ul></li><li>首次加载时间长，体验不好</li></ol><p><strong>解决思路</strong>：</p><p style="margin-left: 30.0px;"><span style="color: rgb(153,51,0);"><strong>服务端渲染</strong></span>：在服务端的nodejs环境下，提前做好渲染，得到要访问页面的html内容，返回给浏览器</p><p><strong>可用工具</strong>：</p><ul><li>react-dom解决方案<ul><li>客户端使用react-dom在浏览器中做页面渲染</li><li>服务端使用react-dom下面的server模块，在服务端做渲染</li></ul></li></ul><h2>I 代码调整阶段</h2><p>之前app.js文件中，我们直接把App直接mount到document.body</p><p>问题：服务端运行环境中木有document，这个东东只有浏览器端有</p><p>解法：定义server-entry.js文件作为服务端渲染入口文件</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="cd4b0dc4-573f-423e-9598-1d6e61aa3b48" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>import App from './App.jsx'
+import React from "react"
+
+export default &lt;App /></pre></td></tr></table><p><br /></p><ul><li>也需要打包和编译<ul><li>因为jsx不能直接在nodejs环境下执行</li></ul></li></ul><p>配置：新建一个webpack配置文件，用来做服务端编译配置</p><p><span>build/webpack.config.server.js</span></p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="2be883dd-6c1e-483d-a715-78d00abad886" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>const path = require('path');
+
+module.exports = {
+    target: 'node',
+    entry: {
+        app: path.join(__dirname, '../client/server-entry.js')
+    },
+    output: {
+        filename: 'server-entry.js',
+        path: path.join(__dirname, '../dist'),
+        publicPath: '',
+        libraryTarget: 'commonjs2'
+    },
+    module: {
+        rules: [
+            {
+                test: /.(jsx|js)$/,
+                loader: 'babel-loader',
+                exclude: [
+                    path.join(__dirname, '../node_modules')
+                ]
+            }
+        ]
+    }
+};</pre></td></tr></table><p>说明：</p><ul><li>target：配置打包出来的内容在什么环境中执行的<ul><li>web（浏览器端）</li><li>node（nodejs环境，服务端渲染）</li></ul></li><li>filenam：服务端没有缓存概念，不需要hash，写死就好</li><li>libraryTarget：打包出来的js使用的模块方案(module)<ul><li>指定为commonjs2（还有umd amd啥的...）</li><li>使用commonjs2的模块加载方案，适用于nodejs端</li></ul></li><li>plugin：这个不需要，不用生成一个html文件</li></ul><p>构建</p><p>先安装一个删除文件夹的小工具</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="a4de1e19-b77f-44f2-84ad-f38cd6f6630c" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>$ npm i rimraf -D</pre></td></tr></table><p>定义构建方法：</p><p>package.json</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="05299b38-378b-411d-81af-d30f0099f9ad" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>{
+  ...
+  "scripts": {
+    "test": "echo \"Error: no test specified\" &amp;&amp; exit 1",
+    "clear": "rimraf dist",
+    "build:client": "webpack --config build/webpack.config.client.js",
+    "build:server": "webpack --config build/webpack.config.server.js",
+    "build": "npm run clear &amp;&amp; npm run build:client &amp;&amp; npm run build:server"
+  },
+  ...
+}</pre></td></tr></table><p>在build之前，先把dist包清空下，删掉历史打的js包，避免编译结果污染</p><h3>构建结果</h3><p>生成了三个文件</p><p>服务端打包出来的server-entry.js文件，可以用来放在node.js环境中做渲染，生成对应的html文件</p><p>简略看下打包出来的server-entry.js文件</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="78fc54db-2643-4f9d-ab74-ea8c4984c1d4" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>module.exports=function(e){...xxxxxx...}</pre></td></tr></table><h2>II 配置渲染服务器，构建nodejs渲染环境</h2><p>需要起一个nodejs网络服务，使用express作为网络服务框架</p><p><a href="http://www.expressjs.com.cn/4x/api.html">express文档</a></p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="8646a6c8-ec09-42b0-862e-d68486515b98" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>$ npm i express -S</pre></td></tr></table><h3>实现渲染服务器</h3><p>创建server文件夹，放web服务相关代码</p><p>实现server.js文件，用来实现web服务相关逻辑</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="663e23a8-1e03-4038-9418-51a3fb694cf2" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>const express = require('express');
+const ReactSSR = require('react-dom/server');
+const serverEntry = require('../dist/server-entry.js').default;
+
+const app = express();
+
+app.get('*', function (req, res) {
+    const appString = ReactSSR.renderToString(serverEntry);
+    res.send(appString)
+});
+
+app.listen(2333, function () {
+   console.log('🚀 服务起来了，正在监听2333端口(✌ﾟ∀ﾟ)☞')
+});</pre></td></tr></table><ul><li>需要引用过来react-dom/server这个包，用来做html服务端渲染</li><li>任何请求过来，都用SSR渲染之前用webpack build好的待渲染server-entry.js文件，返还给请求者</li><li>由于/dist/server-entry.js使用commonjs2的方式编译，导出方法为modules.exports=xxx，故nodejs中require的时候，需要追加.default，否则会报错</li></ul><p>npm中配置起这个服务的script</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="722283a1-6cbf-4750-bb1b-71cd089c2c00" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>{
+    ...
+  "scripts": {
+    ...
+    "web:start": "node server/server.js"
+  }
+    ...
+}</pre></td></tr></table><h3>渲染内容不完整</h3><p><img class="confluence-embedded-image confluence-external-resource" width="286" src="http://img.daker.wang/wiki/1537260308632.png" data-image-src="http://img.daker.wang/wiki/1537260308632.png"></p><p><strong>问题</strong></p><p>虽然渲染出了基础的内容 ，但是这个不是我们想要的完整内容：</p><ol><li>没有这个页面的js文件引用</li><li>不是完整的html文件，只有一行语句</li></ol><p><strong>思路</strong></p><p>把服务端渲染出来的html标签内容，拼接到编译打包好的客户端index.html文件的指定位置，然后把拼接后的内容返回给浏览器</p><p><strong>方案</strong></p><ul><li>在client文件夹下写个模板文件template.html</li><li>渲染的时候，把模板文件中的占位文本（如&lt;&gt;）替换成服务端渲染出来的东东</li></ul><p>template.html</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="df075cb0-e2f2-4893-8655-f260be259b28" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>&lt;!DOCTYPE html>
+&lt;html>
+&lt;head>
+    &lt;meta charset="UTF-8">
+    &lt;title>Webpack App&lt;/title>
+&lt;/head>
+&lt;body>
+&lt;div id="root">
+    &lt;app>&lt;/app>
+&lt;/div>
+&lt;/body>
+&lt;/html></pre></td></tr></table><p>app.js</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="27ddd005-1b02-41e5-8922-ce08314d006e" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>...
+ReactDOM.render(&lt;App />, document.getElementById("root"));</pre></td></tr></table><p>webpack.config.client.js</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="4e0efaf1-9dc0-4e7a-b938-273eee809124" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>...
+plugins: [
+    new HTMLPlugin({
+         template: path.join(__dirname, '../client/template.html')
+    })
+]</pre></td></tr></table><p>server.js</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="765cf4ab-ead0-4a11-b02a-d56e8da46c41" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>...
+const fs = require('fs');
+const path = require('path');
+const template = fs.readFileSync(path.join(__dirname, '../dist/index.html'), 'utf-8');
+...
+app.use('/public', express.static(path.join(__dirname, '../dist')));
+app.get('*', function (req, res) {
+    const appString = ReactSSR.renderToString(serverEntry);
+    res.send(template.replace('&lt;app>&lt;/app>', appString))
+});
+...</pre></td></tr></table><p>说明：</p><ul><li>需要把index.html读进来，注意指定读取的文本格式为utf8<ul><li>需要注意，这里要读的，是dist/index.html，是编译好的html入口文件，而非直接读client/template.html</li></ul></li><li>app.use句：<ul><li>配置url中/public下的内容，为访问静态资源</li><li>挂载静态资源访问请求，到../dist目录下</li><li>目的是为了防止静态资源获取类请求（xxx.js的请求），也被app.get相关规则限制住</li><li>需要在webpack配置文件中指定publicPath为/public，与这里一致</li></ul></li><li>把模板中的占位标签替换掉</li></ul><p>webpack.config.xxx.js</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="e7d667df-f421-4bf8-b16a-c0179331853c" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>...
+output: {
+    ...
+    publicPath: '/public'
+},
+...</pre></td></tr></table><p><strong>配置结果</strong></p><p><img class="confluence-embedded-image confluence-external-resource" width="386" src="http://img.daker.wang/wiki/1537263606454.png" data-image-src="http://img.daker.wang/wiki/1537263606454.png"></p><h2>III 问题</h2><ol><li>每次修改了client目录下的代码，都需要重新build一遍才能生效</li><li>每次修改了web server的代码，都需要重新web:run一遍才能成功</li></ol><p>下一章，我们来实现「<strong>开发时代码的实时更新</strong>」</p>
+        <p>&nbsp;</p>
+    
+
+</div>
+
+
+    </div>
+
+    
+  </body>
+</html>

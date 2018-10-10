@@ -98,6 +98,27 @@ mobxreduxflux需要考虑：后端结构是怎样的？API形式如何？http请
   
 </div><div class="post">
   <h1 class="post-title">
+    <a href="http://azen.me/code/react-ssr-config/">1 React前端工程架构 - 基本配置</a>
+  </h1>
+  <span class="post-date">Tue, Sep 18, 2018</span>
+  &nbsp;
+0x0 概述上一篇文章我们聊过，工程架构的目标，主要是保证「开发效率」的。包括：
+解放生产力环境搭建质量保障本篇文章，将会就React的实际配置做下做下初步说明
+内容包括：
+npm、webpack、babel编译打包基础配置SSR（服务端渲染）基础配置dev server实现代码实时编译hot module实现代码热更新服务端渲染的实时更新eslint保证代码质量0x1 编译打包基础配置本节commit
+webpackwebpack是一个模块打包器，核心是他的loader
+通过loader处理某种类型的资源（js、css）会把资源处理成浏览器能运行的代码（es5），浏览器里能完整使用如果木有对应类型的loader，可以自己写一个如vue自己写了一个loader处理它定义的特殊语法I 基础配置阶段1.在项目根目录下，把项目配置成npm的项目 - 通过生成的package.json文件描述依赖的npm包
+$ npm init相关选项 - 一般情况下直接enter用默认值就好
+{ "name": "fe-execise", "version": "1.0.0", "description": "", "main": "index.js", "scripts": { "test": "echo \"Error: no test specified\" &amp;&amp; exit 1" }, "repository": { "type": "git", "url": "git@gitee.com:azen/FE-execise.git" }, "author": "Azen", "license": "ISC" }2.安装webpack、react
+$ npm i webpack $ npm i react3.新建文件夹 &amp; 初始文件
+build文件夹：放配置文件以及工程中需要用到的脚本文件webpack.config.jsclient文件夹：放前端appapp.js：应用入口里面引用了App.jsx，然后把它mount到html中App.jsx：声明整个页面上面的内容webpack.config.jsconst path = require('path'); module.exports = { // 入口 entry: { app: path.
+  
+  <div class="read-more-link">
+    <a href="/code/react-ssr-config/">Read More…</a>
+  </div>
+  
+</div><div class="post">
+  <h1 class="post-title">
     <a href="http://azen.me/code/lean-startup-guess/">Lean Startup II 定义两个假设</a>
   </h1>
   <span class="post-date">Thu, Sep 13, 2018</span>
