@@ -8,6 +8,11 @@
   </url>
   
   <url>
+    <loc>http://azen.me/code/react-project-store/</loc>
+    <lastmod>2018-09-23T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>http://azen.me/code/react-ssr-optimize/</loc>
     <lastmod>2018-09-20T00:00:00+00:00</lastmod>
   </url>
@@ -88,10 +93,6 @@
   
   <url>
     <loc>http://azen.me/code/react-project-router-config/</loc>
-  </url>
-  
-  <url>
-    <loc>http://azen.me/code/react-project-store/</loc>
   </url>
   
   <url>
