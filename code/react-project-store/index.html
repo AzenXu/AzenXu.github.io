@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="//gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.46-DEV" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>5 React项目架构 - Store &middot; 细胞的作战实验室</title>
+
+  
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/print.css" media="print">
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/poole.css">
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/syntax.css">
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/hyde.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Abril+Fatface|PT+Sans:400,400i,700">
+
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+  
+  <link href="" rel="alternate" type="application/rss+xml" title="细胞的作战实验室" />
+
+  
+</head>
+
+  <body class=" ">
+  <div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <a href="http://azen.me/"><h1>细胞的作战实验室</h1></a>
+      <p class="lead">
+      An elegant open source and mobile first theme for <a href="http://hugo.spf13.com">hugo</a> made by <a href="http://twitter.com/mdo">@mdo</a>. Originally made for Jekyll.
+      </p>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li><a href="http://azen.me/">Home</a> </li>
+      
+    </ul>
+
+    <p>&copy; 2018. All rights reserved. </p>
+  </div>
+</div>
+
+    <div class="content container">
+    <div class="post">
+  <h1>5 React项目架构 - Store</h1>
+  <span class="post-date">Mon, Jan 1, 0001</span>
+  <p>&nbsp;</p>         <p><a href="https://gitee.com/azen/FE-execise/commit/544a848cedcced4fa2efea6e9ec530922ba8b14c">相关commit</a></p><h1>什么是Store</h1><p>store - 数据流解决方案</p><ul><li>mvc模式在前端并不特别适用：<ul><li>很多数据都是异步的</li><li>页面之间共享一部分数据，数据更新的时候需要让view层检测到数据的更新</li><li>否则会导致view层和model层脱节，渲染出错</li></ul></li><li>store：「<strong>flux单向数据流模式</strong>」中，整个app有个单独存放数据的地方，叫store<ul><li>页面上的所有内容都是根据store上的内容渲染出来的</li><li>store里的任何数据的变化，都会影响到view的渲染效果</li><li>store决定了页面展示成什么样子</li><li>解决mvc中数据维护问题，把数据维护集中在一个地方<ul><li>只要使用action处理数据，view就能自动更新</li></ul></li></ul></li><li>react：是一个视图层解决方案<ul><li>它的虚拟dom特性，让我们即便把整个数据对象都彻底更新了（换了个数据树object），react也能高效处理视图重新渲染过程</li><li>虚拟dom的出现，让这种单一数据流模式得以实现</li></ul></li></ul><p>Mobx - 一种flux模式下，数据流解决方案的后起之秀</p><ul><li><a href="https://mobx.js.org/">文档</a></li><li>安装：`npm i mobx mobx-react -S`</li><li>它的所有数据一旦更改，绑定数据的地方会立刻更新</li><li>使用方法比Redux简单很多<ul><li>Redux<ul><li>涉及Action、Dispatcher、Reducer、Store，概念比较多，学习成本较高</li><li>数据一旦更新，需要做整棵数据树的全拷贝，生成一棵新树，浪费资源</li><li>每发一个action都会产生一个新对象<ul><li>新对象的到来，会触发所有Component的重新渲染</li><li>由于虚拟dom，这种重新渲染成本不高，所以可以这么做，效率高</li><li>vue没有虚拟dom机制，所以无法这么做</li></ul></li></ul></li><li>Mobx<ul><li>声明Store的时候，声明其为Observable就好</li><li>值改变会自动通知对应view，触发该view刷新</li><li>整个数据都只有一份，不会生成新的一个对象<ul><li>只不过它有数据变动，会通知对应的view</li><li>执行效率高一些，不需要每次都拷贝一个新的数据树</li></ul></li></ul></li></ul></li></ul><p><br /></p><p>代码实现</p><p>.babelrc</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="de366127-a5d4-4c14-9756-9430175d700b" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>{
+  "presets": [
+    "stage-1",
+    ...
+    ],
+  "plugins": [
+    "transform-decorators-legacy",
+    ...
+  ]
+}</pre></td></tr></table><p>说明：</p><ul><li>babel编译配置，需要加上stage-1，因为他的语法不是es6的标准语法</li><li>需要装一个babel的插件，且需要放在第一项，否则会有问题</li><li>安装<ul><li>`npm i babel-plugin-transform-decorators-legacy babel-preset-stage-1 -D`</li></ul></li><li>验证：<ul><li>重启dev:client看下能否编译通过</li></ul></li></ul><p><br /></p><p>测试mobx</p><p>client/store/app-state.js</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="d3cba9e5-58d7-42a2-aecf-a8bf22c2d9a3" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>import {
+  observable,
+  computed,
+  action,
+  autorun,
+} from "mobx"
+
+class AppState {
+  @observable count = 0
+
+  @observable name = 'Azen' // #2
+
+  @computed get msg() {     // #3
+    return `${this.name} say count is ${this.count}`    // #4
+  }
+
+  @action add() {           // #7
+    this.count += 1
+  }
+
+  @action changeName(name) {
+    this.name = name
+  }
+}
+
+const appState = new AppState()
+
+autorun(() => {     // #5
+  console.log(appState.msg)
+})
+
+setInterval(() => { // #6
+  appState.add()
+})
+
+export { appState as default, AppState }    // #8</pre></td></tr></table><p>说明：</p><ol><li>使用computed等Mobx相关特性的时候，使用class去组织最方便，可以通过this调用相关功能</li><li>使用装饰器指定值</li><li>计算属性，可以使用点语法调用</li><li>使用模板语句拼句子</li><li>autorun：<a href="https://mobx.js.org/refguide/autorun.html">文档</a>mobx内置方法，当AppState更新，会自动调用</li><li>setInterval：js内置方法，每秒调用一次，用于测试</li><li>声明action：需要保证只有action能更新state</li><li>AppState在propTypes里会用到，也需要导出下</li></ol><p><br /></p><p>app.js</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="9c936785-2584-4b5d-b8be-a89622bccabc" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>import { Provider } from 'mobx-react'
+import appState from './store/app-state'
+
+const render = (Component) => {
+  ReactDOM.hydrate(
+    &lt;AppContainer>
+      &lt;Provider appState={appState}> // #1
+        &lt;BrowserRouter>
+          &lt;Component />
+        &lt;/BrowserRouter>
+      &lt;/Provider>
+    &lt;/AppContainer>, root,
+  )
+};</pre></td></tr></table><p>说明：</p><ol><li>需要用Provider给入口包一层，把定义好的appState传给它<ul><li>包一层：<ul><li>原理是使用了隐藏的react api，名字叫context</li><li>让内容从顶层传到下面任何一层组件，任何一层都可以拿到</li></ul></li></ul></li></ol><p><br /></p><p>使用Store</p><p>client/views/topic-list/index.jsx</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="3598a9b4-26db-46b6-b702-43ceecca5900" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>import React from 'react'
+import {
+  observer,
+  inject,
+} from 'mobx-react'
+import PropTypes from 'prop-types'  // #2
+import { AppState } from '../../store/app-state'
+
+@inject('appState') @observer   // #1
+class TopicList extends React.Component {
+  constructor() {
+    super()
+    this.changeName = this.changeName.bind(this)    // #4
+  }
+
+  componentDidMount() {
+    //  placeholder
+  }
+
+  changeName(event) {
+    this.props.appState.changeName(event.target.value)
+  }
+
+  render() {
+    return (
+      &lt;div>
+        &lt;div>ㄟ...这里是to...topic li..li..list(｡•́-ก̀｡)&lt;/div>
+        &lt;br />
+        &lt;input type="text" onChange={this.changeName} />
+        &lt;span>{this.props.appState.msg}&lt;/span>
+      &lt;/div>
+    )
+  }
+}
+
+TopicList.propTypes = {
+  // appState: PropTypes.object.isRequired  // #3
+  appState: PropTypes.instanceOf(AppState).isRequired,
+}
+
+export default TopicList</pre></td></tr></table><p>说明：</p><ol><li>@inject：app.js中包的Provider提供的属性名字<br /><ol><li>@observer：声明这个组件是observable的</li></ol></li><li>声明props类型<ol><li>安装`npm i prop-types -S`</li></ol></li><li>airbnb的eslint规则，不让把类型设置为objecte类型，因为js里所有东西都是object</li><li>需要绑定的原因：在我们执行onChange的时候，上下文已经不在组件内部了，但是我们需要用到this，所以就通过bind的方式，让执行changeName的时候可以调用this</li></ol>
+        <p>&nbsp;</p>
+    
+
+</div>
+
+
+    </div>
+
+    
+  </body>
+</html>

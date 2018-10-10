@@ -484,5 +484,25 @@ import React from &#39;react&#39; export default class TopicList extends React.C
 import React from &#39;react&#39; export default class TopicDetail extends React.Component { componentDidMount() { // placeholder } render() { return ( &amp;lt;div喂喂喂，这里是topic detail！(o˘д˘)o有人在吗？&amp;lt;/div ) } }2 配置路由路由：区分一个网站不同功能模块的地址</description>
     </item>
     
+    <item>
+      <title>5 React项目架构 - Store</title>
+      <link>http://azen.me/code/react-project-store/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>http://azen.me/code/react-project-store/</guid>
+      <description>&amp;nbsp;
+相关commit
+什么是Storestore - 数据流解决方案
+mvc模式在前端并不特别适用：很多数据都是异步的页面之间共享一部分数据，数据更新的时候需要让view层检测到数据的更新否则会导致view层和model层脱节，渲染出错store：「flux单向数据流模式」中，整个app有个单独存放数据的地方，叫store页面上的所有内容都是根据store上的内容渲染出来的store里的任何数据的变化，都会影响到view的渲染效果store决定了页面展示成什么样子解决mvc中数据维护问题，把数据维护集中在一个地方只要使用action处理数据，view就能自动更新react：是一个视图层解决方案它的虚拟dom特性，让我们即便把整个数据对象都彻底更新了（换了个数据树object），react也能高效处理视图重新渲染过程虚拟dom的出现，让这种单一数据流模式得以实现Mobx - 一种flux模式下，数据流解决方案的后起之秀
+文档安装：`npm i mobx mobx-react -S`它的所有数据一旦更改，绑定数据的地方会立刻更新使用方法比Redux简单很多Redux涉及Action、Dispatcher、Reducer、Store，概念比较多，学习成本较高数据一旦更新，需要做整棵数据树的全拷贝，生成一棵新树，浪费资源每发一个action都会产生一个新对象新对象的到来，会触发所有Component的重新渲染由于虚拟dom，这种重新渲染成本不高，所以可以这么做，效率高vue没有虚拟dom机制，所以无法这么做Mobx声明Store的时候，声明其为Observable就好值改变会自动通知对应view，触发该view刷新整个数据都只有一份，不会生成新的一个对象只不过它有数据变动，会通知对应的view执行效率高一些，不需要每次都拷贝一个新的数据树
+代码实现
+.babelrc
+{ &#34;presets&#34;: [ &#34;stage-1&#34;, ... ], &#34;plugins&#34;: [ &#34;transform-decorators-legacy&#34;, ... ] }说明：
+babel编译配置，需要加上stage-1，因为他的语法不是es6的标准语法需要装一个babel的插件，且需要放在第一项，否则会有问题安装`npm i babel-plugin-transform-decorators-legacy babel-preset-stage-1 -D`验证：重启dev:client看下能否编译通过
+测试mobx
+client/store/app-state.js
+import { observable, computed, action, autorun, } from &#34;mobx&#34; class AppState { @observable count = 0 @observable name = &#39;Azen&#39; // #2 @computed get msg() { // #3 return `${this.name} say count is ${this.count}` // #4 } @action add() { // #7 this.</description>
+    </item>
+    
   </channel>
 </rss>

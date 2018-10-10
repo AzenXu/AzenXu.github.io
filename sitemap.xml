@@ -86,6 +86,10 @@
   </url>
   
   <url>
+    <loc>http://azen.me/code/react-project-store/</loc>
+  </url>
+  
+  <url>
     <loc>http://azen.me/categories/</loc>
     <priority>0</priority>
   </url>
