@@ -51,6 +51,28 @@
     <div class="posts">
 <div class="post">
   <h1 class="post-title">
+    <a href="http://azen.me/code/react-ssr-optimize/">3 React前端工程架构 - eslint &amp;amp; 其他优化</a>
+  </h1>
+  <span class="post-date">Thu, Sep 20, 2018</span>
+  &nbsp;
+相关commit
+安装eslint：`npm i eslint -D`
+创建eslint配置文件/.eslintrc
+{ "extends": "standard" }
+client目录下，用到了jsx，需要另一套eslint规范
+client/.eslintrc
+{ "parser": "babel-eslint", "env": { "browser": true, "es6": true, "node": true }, "parserOptions": { "emacVersion": 6, "sourceType": "module" }, "extends": "airbnb", "rules": { "semi":[0] } }说明：eslint文档
+babel-eslint：指定用这个工具解析js代码，用这个是因为我们也用这个做编译env - 指定环境：
+browser是告诉他我们在浏览器中，有document之类的，不然调document会报错因为我们使用了webpack提供的部分api，所以可以把node的环境变量也包含进来parserOptions：emacVersion：定义使用的es版本 - es6sourceType：是使用模块的方式的，而不是传统的js引用方式extends：使用规则airbnb的规则很赞rules：配置自定义规则
+webpack配置编译前检测 - webpack.config.client.js
+... const config = { ... module: { rules: [ { enforce: "pre", test: /.(jsx|js)/, loader: 'eslint-loader', exclude: [ path.join(__dirname, '../node_modules') ] }, { test: /.
+  
+  <div class="read-more-link">
+    <a href="/code/react-ssr-optimize/">Read More…</a>
+  </div>
+  
+</div><div class="post">
+  <h1 class="post-title">
     <a href="http://azen.me/code/react-ssr-dev-hotload/">2 React前端工程架构 - 开发环境实时更新</a>
   </h1>
   <span class="post-date">Wed, Sep 19, 2018</span>

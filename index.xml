@@ -6,10 +6,30 @@
     <description>Recent content on 细胞的作战实验室</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 19 Sep 2018 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 20 Sep 2018 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="http://azen.me/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>3 React前端工程架构 - eslint &amp;amp; 其他优化</title>
+      <link>http://azen.me/code/react-ssr-optimize/</link>
+      <pubDate>Thu, 20 Sep 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://azen.me/code/react-ssr-optimize/</guid>
+      <description>&amp;nbsp;
+相关commit
+安装eslint：`npm i eslint -D`
+创建eslint配置文件/.eslintrc
+{ &#34;extends&#34;: &#34;standard&#34; }
+client目录下，用到了jsx，需要另一套eslint规范
+client/.eslintrc
+{ &#34;parser&#34;: &#34;babel-eslint&#34;, &#34;env&#34;: { &#34;browser&#34;: true, &#34;es6&#34;: true, &#34;node&#34;: true }, &#34;parserOptions&#34;: { &#34;emacVersion&#34;: 6, &#34;sourceType&#34;: &#34;module&#34; }, &#34;extends&#34;: &#34;airbnb&#34;, &#34;rules&#34;: { &#34;semi&#34;:[0] } }说明：eslint文档
+babel-eslint：指定用这个工具解析js代码，用这个是因为我们也用这个做编译env - 指定环境：
+browser是告诉他我们在浏览器中，有document之类的，不然调document会报错因为我们使用了webpack提供的部分api，所以可以把node的环境变量也包含进来parserOptions：emacVersion：定义使用的es版本 - es6sourceType：是使用模块的方式的，而不是传统的js引用方式extends：使用规则airbnb的规则很赞rules：配置自定义规则
+webpack配置编译前检测 - webpack.config.client.js
+... const config = { ... module: { rules: [ { enforce: &#34;pre&#34;, test: /.(jsx|js)/, loader: &#39;eslint-loader&#39;, exclude: [ path.join(__dirname, &#39;../node_modules&#39;) ] }, { test: /.</description>
+    </item>
     
     <item>
       <title>2 React前端工程架构 - 开发环境实时更新</title>
