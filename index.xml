@@ -6,10 +6,32 @@
     <description>Recent content on 细胞的作战实验室</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 18 Sep 2018 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 19 Sep 2018 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="http://azen.me/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>2 React前端工程架构 - 开发环境实时更新</title>
+      <link>http://azen.me/code/react-ssr-dev-hotload/</link>
+      <pubDate>Wed, 19 Sep 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://azen.me/code/react-ssr-dev-hotload/</guid>
+      <description>&amp;nbsp;
+dev server &amp;amp; hot load相关commit
+相关commit
+解决hot load缓慢的commit
+服务端实时渲染相关commit
+服务端实时渲染
+0x0 问题 &amp;amp; 解决方案概述问题一：每次client代码改动，都需要手动重新编译打包，导致开发效率低下
+工具：webpack dev server
+通过webpack配置，启动一个资源server服务于：css js html等静态资源文件作用：可以通过该server访问到这些资源原理：文件在编译的过程中，会存在server的内存中每当文件有变化，会自动执行编译过程刷新浏览器就能看到效果问题二：每次代码变动，都需要刷新浏览器才能看到效果，开发效率低下
+工具：hot module replacement
+代码变动，可以在页面上无刷新的立刻看到效果保持当前状态，不用重新获取数据0x1 动态编译1 功能启动安装webpack-dev-server
+npm i webpack-dev-server -D修改文件
+webpack.config.client.js
+... const isDev = process.env.NODE_ENV === &#34;development&#34;; ... const config = { ... mode: &#39;production&#39; }; if (isDev) { config.devServer = { host: &#39;0.0.0.0&#39;, port: &#39;8787&#39;, contentBase: path.join(__dirname, &#39;../dist&#39;), hot: false, overlay: { error: true }, publicPath: &#39;/public&#39;, historyApiFallback: { index: &#39;/public/index.</description>
+    </item>
     
     <item>
       <title>0 前端项目技术选型</title>

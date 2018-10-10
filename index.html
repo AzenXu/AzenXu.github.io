@@ -51,6 +51,30 @@
     <div class="posts">
 <div class="post">
   <h1 class="post-title">
+    <a href="http://azen.me/code/react-ssr-dev-hotload/">2 React前端工程架构 - 开发环境实时更新</a>
+  </h1>
+  <span class="post-date">Wed, Sep 19, 2018</span>
+  &nbsp;
+dev server &amp; hot load相关commit
+相关commit
+解决hot load缓慢的commit
+服务端实时渲染相关commit
+服务端实时渲染
+0x0 问题 &amp; 解决方案概述问题一：每次client代码改动，都需要手动重新编译打包，导致开发效率低下
+工具：webpack dev server
+通过webpack配置，启动一个资源server服务于：css js html等静态资源文件作用：可以通过该server访问到这些资源原理：文件在编译的过程中，会存在server的内存中每当文件有变化，会自动执行编译过程刷新浏览器就能看到效果问题二：每次代码变动，都需要刷新浏览器才能看到效果，开发效率低下
+工具：hot module replacement
+代码变动，可以在页面上无刷新的立刻看到效果保持当前状态，不用重新获取数据0x1 动态编译1 功能启动安装webpack-dev-server
+npm i webpack-dev-server -D修改文件
+webpack.config.client.js
+... const isDev = process.env.NODE_ENV === "development"; ... const config = { ... mode: 'production' }; if (isDev) { config.devServer = { host: '0.0.0.0', port: '8787', contentBase: path.join(__dirname, '../dist'), hot: false, overlay: { error: true }, publicPath: '/public', historyApiFallback: { index: '/public/index.
+  
+  <div class="read-more-link">
+    <a href="/code/react-ssr-dev-hotload/">Read More…</a>
+  </div>
+  
+</div><div class="post">
+  <h1 class="post-title">
     <a href="http://azen.me/code/fe-arch-overview/">0 前端项目技术选型</a>
   </h1>
   <span class="post-date">Tue, Sep 18, 2018</span>
