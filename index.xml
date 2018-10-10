@@ -6,10 +6,29 @@
     <description>Recent content on 细胞的作战实验室</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 20 Sep 2018 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 24 Sep 2018 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="http://azen.me/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>6 React项目架构 - web server网络请求转发</title>
+      <link>http://azen.me/code/react-project-network-web-server-proxy/</link>
+      <pubDate>Mon, 24 Sep 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://azen.me/code/react-project-network-web-server-proxy/</guid>
+      <description>&amp;nbsp;
+相关commit
+开发环境工程架构示意图
+接口地址：https://cnodejs.org/api
+accessToken问题：
+部分接口需要带accessToken才有权限请求accesstoken是用户登录后，cnodejs服务器返回的accesstoken不能存在浏览器里，有安全风险解决方案：
+获取accessToken后，存在web服务器里，通过session机制，在web服务端检测有木有token，没就给用户弹登录，有就转发请求实现安装工具$ npm i body-parser express-session query-string -S说明：
+body-parser是用来转化request的body的，转化成json格式的数据espress-sisson是express插件，用来存放服务端sessionquery-string是用来把url「?」后面的内容转化为一个json的配置web服务器server.js
+... const bodyParser = require(&#39;body-parser&#39;) app.use(bodyParser.json()) // #1-1 app.use(bodyParser.urlencoded({ extended: false })) // #1-2 const session = require(&#39;express-session&#39;) app.use(session({ // #2 maxAge: 10 * 60 * 1000, // #2-1 name: &#39;sid&#39;, // #2-2 resave: false, // #2-3 saveUninitialized: false, secret: &#39;(‘◇’)?&#39; // #2-4 })) ...说明：
+body-parser用于解析request的body中的参数把application json的数据，转化成req.body的数据对应formdate的数据 - 把这些数据也转换到req.body中，之后通过req.body就能拿到请求里的参数了配置服务器session相关功能的设置session的过期时长10分钟做测试用的，所以不需要太长线上的session是要存在数据库中的，如redis现在是存在内存中，服务关掉了，相关数据就没了，所有人都需要重新登录一遍指定sessionID对应的cookieID，浏览器端可以通过cookieID拿到sessionID的值是否每次请求都申请一个cookieIDsecret是一个密钥串，用于对session加密，保证cookie在浏览器端无法解密验证accessToken接口：
+post /accesstoken 验证 accessToken 的正确性接收 post 参数</description>
+    </item>
     
     <item>
       <title>3 React前端工程架构 - eslint &amp;amp; 其他优化</title>
@@ -502,25 +521,6 @@ babel编译配置，需要加上stage-1，因为他的语法不是es6的标准�
 测试mobx
 client/store/app-state.js
 import { observable, computed, action, autorun, } from &#34;mobx&#34; class AppState { @observable count = 0 @observable name = &#39;Azen&#39; // #2 @computed get msg() { // #3 return `${this.name} say count is ${this.count}` // #4 } @action add() { // #7 this.</description>
-    </item>
-    
-    <item>
-      <title>6 React项目架构 - web server网络请求转发</title>
-      <link>http://azen.me/code/react-project-network-web-server-proxy/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>http://azen.me/code/react-project-network-web-server-proxy/</guid>
-      <description>&amp;nbsp;
-相关commit
-开发环境工程架构示意图
-接口地址：https://cnodejs.org/api
-accessToken问题：
-部分接口需要带accessToken才有权限请求accesstoken是用户登录后，cnodejs服务器返回的accesstoken不能存在浏览器里，有安全风险解决方案：
-获取accessToken后，存在web服务器里，通过session机制，在web服务端检测有木有token，没就给用户弹登录，有就转发请求实现安装工具$ npm i body-parser express-session query-string -S说明：
-body-parser是用来转化request的body的，转化成json格式的数据espress-sisson是express插件，用来存放服务端sessionquery-string是用来把url「?」后面的内容转化为一个json的配置web服务器server.js
-... const bodyParser = require(&#39;body-parser&#39;) app.use(bodyParser.json()) // #1-1 app.use(bodyParser.urlencoded({ extended: false })) // #1-2 const session = require(&#39;express-session&#39;) app.use(session({ // #2 maxAge: 10 * 60 * 1000, // #2-1 name: &#39;sid&#39;, // #2-2 resave: false, // #2-3 saveUninitialized: false, secret: &#39;(‘◇’)?&#39; // #2-4 })) ...说明：
-body-parser用于解析request的body中的参数把application json的数据，转化成req.body的数据对应formdate的数据 - 把这些数据也转换到req.body中，之后通过req.body就能拿到请求里的参数了配置服务器session相关功能的设置session的过期时长10分钟做测试用的，所以不需要太长线上的session是要存在数据库中的，如redis现在是存在内存中，服务关掉了，相关数据就没了，所有人都需要重新登录一遍指定sessionID对应的cookieID，浏览器端可以通过cookieID拿到sessionID的值是否每次请求都申请一个cookieIDsecret是一个密钥串，用于对session加密，保证cookie在浏览器端无法解密验证accessToken接口：
-post /accesstoken 验证 accessToken 的正确性接收 post 参数</description>
     </item>
     
   </channel>
