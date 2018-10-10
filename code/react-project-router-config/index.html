@@ -50,7 +50,7 @@
     <div class="content container">
     <div class="post">
   <h1>4 React项目架构 - 目录划分 &amp;amp; Router配置</h1>
-  <span class="post-date">Mon, Jan 1, 0001</span>
+  <span class="post-date">Sat, Sep 22, 2018</span>
   <p>&nbsp;</p>         <p><a href="https://gitee.com/azen/FE-execise/commit/c076983e37c802949f2b12648de19aa74ffa40ea">相关commit</a></p><h1>0x0 目录划分</h1><h2>目录划分介绍</h2><p>views文件夹</p><ul><li>存放项目功能模块<ul><li>App.jsx</li></ul></li><li>需要根据路由配置，分割子级目录</li><li>如列表页：<ul><li>index.jsx为这个页面的出口，向外抛出去</li><li>列表每一项都会建一个组件<ul><li>如：titlebar会建一个组件</li></ul></li><li>这些东西会放入同一个文件夹里，因为属于同一个页面嘛</li></ul></li></ul><p>config文件夹</p><ul><li>放app的配置 &amp; 第三方类库的引用<ul><li>router.jsx 路由的配置、映射和跳转等</li></ul></li></ul><p>store文件夹</p><ul><li>存放数据管理的文件夹（包括数据的获取和封装）<ul><li>如用户登录的信息</li></ul></li><li>全局类信息需要存起来，就存在store中的某个地方</li><li>是web app单页应用开发新增的功能</li><li>需要单独拿出来</li></ul><p>components</p><ul><li>非业务型通用组件</li><li>很多view里都用到，和业务无关</li><li>如：<ul><li>下拉组件 - drop down</li></ul></li><li>更高级的通用组件封装，会打包到npm上，如<a href="https://ant.design/docs/react/introduce-cn">Ant Design组件库</a></li></ul><h1>0x1 Router的简单实现</h1><h2>1 文件调整</h2><p>/client/views/topic-list/index.jsx</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="3c6ee41d-2f0d-44a9-9d75-3f5a96e6b0bf" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>import React from 'react'
 
 export default class TopicList extends React.Component {
