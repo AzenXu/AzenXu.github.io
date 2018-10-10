@@ -466,5 +466,23 @@ Create a new orphan branch, named &amp;lt;new_branch&amp;gt;, started from &amp;
 这里的start point指的是你执行git checkout命令时的那个分支，当然新的分支不会指向任何以前的提交，就是它没有历史，如果你提交当前内容，那么这次提交就是这个分支的首次提交。</description>
     </item>
     
+    <item>
+      <title>4 React项目架构 - 目录划分 &amp;amp; Router配置</title>
+      <link>http://azen.me/code/react-project-router-config/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>http://azen.me/code/react-project-router-config/</guid>
+      <description>&amp;nbsp;
+相关commit
+0x0 目录划分目录划分介绍views文件夹
+存放项目功能模块App.jsx需要根据路由配置，分割子级目录如列表页：index.jsx为这个页面的出口，向外抛出去列表每一项都会建一个组件如：titlebar会建一个组件这些东西会放入同一个文件夹里，因为属于同一个页面嘛config文件夹
+放app的配置 &amp;amp; 第三方类库的引用router.jsx 路由的配置、映射和跳转等store文件夹
+存放数据管理的文件夹（包括数据的获取和封装）如用户登录的信息全局类信息需要存起来，就存在store中的某个地方是web app单页应用开发新增的功能需要单独拿出来components
+非业务型通用组件很多view里都用到，和业务无关如：下拉组件 - drop down更高级的通用组件封装，会打包到npm上，如Ant Design组件库0x1 Router的简单实现1 文件调整/client/views/topic-list/index.jsx
+import React from &#39;react&#39; export default class TopicList extends React.Component { componentDidMount() { // placeholder } render() { return ( &amp;lt;divㄟ...这里是to...topic li..li..list(｡•́-ก̀｡)&amp;lt;/div ) } }
+/client/views/topic-detail/index.jsx
+import React from &#39;react&#39; export default class TopicDetail extends React.Component { componentDidMount() { // placeholder } render() { return ( &amp;lt;div喂喂喂，这里是topic detail！(o˘д˘)o有人在吗？&amp;lt;/div ) } }2 配置路由路由：区分一个网站不同功能模块的地址</description>
+    </item>
+    
   </channel>
 </rss>
