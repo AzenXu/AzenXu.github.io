@@ -6,10 +6,27 @@
     <description>Recent content on 细胞的作战实验室</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 24 Sep 2018 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 11 Oct 2018 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="http://azen.me/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>7 React项目架构 - Router和Store的服务端渲染</title>
+      <link>http://azen.me/code/react-ssr-done/</link>
+      <pubDate>Thu, 11 Oct 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://azen.me/code/react-ssr-done/</guid>
+      <description>&amp;nbsp;
+0x0 概述加入了router和store，会对服务端渲染有影响：
+需要控制router的渲染，服务端渲染的内容要根据不同的url进行需要在服务端渲染中集成路由跳转功能
+使用者可以从任意路由进入网站除了前端做路由跳转外，服务端也需要支持路由跳转，返回给客户端正确的页面store数据同步：服务端渲染的时候会渲染一遍，拿到html，内容扔给客户端客户端js又会渲染一次如果没拿到服务端渲染时，通过API请求到的数据，那么就需要客户端再次通过api请求，去拿数据多次api请求导致浪费需要服务端渲染时请求到的数据，让客户端直接用
+0x1 store和router的服务端渲染基础配置实现
+server-entry.js
+修改前
+import React from &#39;react&#39; import App from &#39;./views/App&#39; export default &amp;lt;App /修改后
+import React from &#39;react&#39; import { StaticRouter } from &#39;react-router-dom&#39; // #1 import { Provider, useStaticRendering } from &#39;mobx-react&#39; // #2 import App from &#39;./views/App&#39; import { createStoreMap } from &#39;./store/store&#39; // 让mobx在服务端渲染的时候不会重复数据变换 useStaticRendering(true) // #3 // 传入对象格式：{appStore: xxx} export default (store, routerContext, url) = ( // #5 &amp;lt;Provider {.</description>
+    </item>
     
     <item>
       <title>6 React项目架构 - web server网络请求转发</title>
