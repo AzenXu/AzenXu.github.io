@@ -6,10 +6,30 @@
     <description>Recent content on 细胞的作战实验室</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 11 Oct 2018 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 13 Oct 2018 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="http://azen.me/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>8 React业务开发 - 准备工作</title>
+      <link>http://azen.me/code/react-business-prepare/</link>
+      <pubDate>Sat, 13 Oct 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://azen.me/code/react-business-prepare/</guid>
+      <description>&amp;nbsp;
+0x0 React16新特性官网：https://reactjs.org/
+新特性官方说明
+react+react-dom包大小：40k → 30k整个代码都用Fiber重新了error boundary捕获react渲染过程中的错误可以在正式环境中，弹个提醒告诉用户错误日志，辅助排错开发中排错new render return typesrender function中支持直接返回数组、字符串Protals：可以在组件中，把一个标签强制插入到页面任意其他标签下服务端渲染的升级 - 可以使用「流」的方式做渲染了
+在有服务端渲染的情况下，使用hydrate方法渲染客户端内容0x1 Material-UI的安装和使用官网：https://www.material-ui.com/
+说明：React components that implement Google&#39;s Material Design
+注意：需要考虑到服务端渲染相关配置
+特点：直接在js里面写css文件，可以有非常好的动态性
+目标：展示出来Material-UI的一个Button
+基础使用 &amp;amp; 配置服务端渲染安装https://material-ui.com/getting-started/installation/
+npm i @material-ui/core @material-ui/icons -S基本使用app.js
+... import { MuiThemeProvider, createMuiTheme } from &#39;@material-ui/core&#39; import { lightBlue, pink } from &#39;@material-ui/core/colors&#39; ... const theme = createMuiTheme({ # 1 palette: { primary: lightBlue, accent: pink, type: &#39;light&#39;, }, }) ... const render = (Component) = { ReactDOM.</description>
+    </item>
     
     <item>
       <title>7 React项目架构 - Router和Store的服务端渲染</title>

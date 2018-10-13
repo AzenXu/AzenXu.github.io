@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="//gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.46-DEV" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>8 React业务开发 - 准备工作 &middot; 细胞的作战实验室</title>
+
+  
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/print.css" media="print">
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/poole.css">
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/syntax.css">
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/hyde.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Abril+Fatface|PT+Sans:400,400i,700">
+
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+  
+  <link href="" rel="alternate" type="application/rss+xml" title="细胞的作战实验室" />
+
+  
+</head>
+
+  <body class=" ">
+  <div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <a href="http://azen.me/"><h1>细胞的作战实验室</h1></a>
+      <p class="lead">
+      An elegant open source and mobile first theme for <a href="http://hugo.spf13.com">hugo</a> made by <a href="http://twitter.com/mdo">@mdo</a>. Originally made for Jekyll.
+      </p>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li><a href="http://azen.me/">Home</a> </li>
+      
+    </ul>
+
+    <p>&copy; 2018. All rights reserved. </p>
+  </div>
+</div>
+
+    <div class="content container">
+    <div class="post">
+  <h1>8 React业务开发 - 准备工作</h1>
+  <span class="post-date">Sat, Oct 13, 2018</span>
+  <p>&nbsp;</p>         <h1>0x0 React16新特性</h1><p>官网：<a href="https://reactjs.org/">https://reactjs.org/</a></p><p>新特性<a href="https://5a046bf5a6188f4b8fa4938a--reactjs.netlify.com/blog/2017/09/26/react-v16.0.html">官方说明</a></p><ol><li>react+react-dom包大小：40k → 30k</li><li>整个代码都用Fiber重新了</li><li>error boundary<ol><li>捕获react渲染过程中的错误<ol><li>可以在正式环境中，弹个提醒告诉用户</li><li>错误日志，辅助排错</li></ol></li><li>开发中排错</li></ol></li><li>new render return types<ol><li>render function中支持直接返回数组、字符串</li></ol></li><li>Protals：可以在组件中，把一个标签强制插入到页面任意其他标签下</li><li>服务端渲染的升级 - 可以使用「流」的方式做渲染了<br /><ol><li>在有服务端渲染的情况下，使用hydrate方法渲染客户端内容</li></ol></li></ol><h1>0x1 Material-UI的安装和使用</h1><p>官网：<a href="https://www.material-ui.com/">https://www.material-ui.com/</a></p><p class="j117 j133 j146 j144 j5" style="text-align: left;">说明：React components that implement Google's Material Design</p><p class="j117 j133 j146 j144 j5" style="text-align: left;">注意：需要考虑到服务端渲染相关配置</p><p class="j117 j133 j146 j144 j5" style="text-align: left;">特点：直接在js里面写css文件，可以有非常好的动态性</p><p class="j117 j133 j146 j144 j5" style="text-align: left;">目标：展示出来Material-UI的一个Button</p><h2 class="j117 j133 j146 j144 j5" style="text-align: left;">基础使用 &amp; 配置服务端渲染</h2><h3>安装</h3><p><a href="https://material-ui.com/getting-started/installation/">https://material-ui.com/getting-started/installation/</a></p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="35c7bb9e-dcee-486d-b0d1-a7dd86de07df" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>npm i @material-ui/core @material-ui/icons -S</pre></td></tr></table><h3>基本使用</h3><p>app.js</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="89287011-0c37-4181-9f2a-f6414bc14608" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>...
+import { MuiThemeProvider, createMuiTheme } from '@material-ui/core'
+import { lightBlue, pink } from '@material-ui/core/colors'
+...
+const theme = createMuiTheme({ # 1
+  palette: {
+    primary: lightBlue,
+    accent: pink,
+    type: 'light',
+  },
+})
+
+...
+
+const render = (Component) => {
+  ReactDOM.hydrate(
+...
+          &lt;MuiThemeProvider theme={theme}> # 2
+            &lt;Component />
+          &lt;/MuiThemeProvider>
+...
+  )
+};</pre></td></tr></table><p>说明：</p><ol><li>创建调色盘<ol><li>定义主色</li><li>定义辅助色</li><li>定义通过「亮度」区分差异色</li></ol></li><li>传入theme &amp; 包裹Component</li></ol><p><br /></p><p>topic-list/index.jsx</p><p>业务组件</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="76808c16-fc60-475e-b219-58f9433ee94f" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>...
+import Button from '@material-ui/core/Button'
+...
+
+
+  render() {
+    return (
+      ...
+        &lt;Button variant="contained" color="primary">
+          不...不要点我...
+        &lt;/Button>
+      ...
+    )
+  }
+}</pre></td></tr></table><p>说明：</p><ol><li>Button组件相关API：<a href="https://material-ui.com/api/button/">https://material-ui.com/api/button/</a></li></ol><p><br /></p><p>效果</p><p><img class="confluence-embedded-image confluence-external-resource" height="212" src="http://img.daker.wang/wiki/1539418238540.png" data-image-src="http://img.daker.wang/wiki/1539418238540.png"></p><p>说明：</p><ol><li>由于未做服务端渲染，故访问2333端口无法看到此按钮效果</li><li>检查元素可以看到，相关css的style已经插入到该页面中</li></ol><h3>服务端渲染</h3><p><a href="https://material-ui.com/guides/server-rendering/#server-rendering">https://material-ui.com/guides/server-rendering/#server-rendering</a></p><p>安装插件：`npm i react-jss jss jss-preset-default -S`</p><p><br /></p><p>server-entry.js</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="4bd3ff97-4982-4cba-948a-cd855ef340a5" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>...
+import { JssProvider } from 'react-jss'
+import { MuiThemeProvider } from '@material-ui/core/styles'
+...
+
+
+export default (store, routerContext, sheetsRegistry, jss, theme, url) => (
+  ...
+      &lt;JssProvider registry={sheetsRegistry} jss={jss}>
+        &lt;MuiThemeProvider theme={theme}>
+          &lt;App />
+        &lt;/MuiThemeProvider>
+      &lt;/JssProvider>
+  ...
+)</pre></td></tr></table><p>说明：</p><ul><li>入口需要添加JssProvider和MuiThemeProvider的包裹</li></ul><p><br /></p><p>server-render.js</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="7a0df9a3-9b89-402e-85e4-627fea35140a" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>...
+const SheetsRegistry = require('react-jss').SheetsRegistry
+const create = require('jss').create
+const preset = require('jss-preset-default').default
+const createMuiTheme = require('@material-ui/core/styles').createMuiTheme
+const createGenerateClassName = require('@material-ui/core/styles/createGenerateClassName').default
+const colors = require('@material-ui/core/colors')
+...
+module.exports = (bundle, template, req, res) => {
+  return new Promise((resolve, reject) => {
+    ...
+    const sheetRegistry = new SheetsRegistry()
+    const jss = create(preset())
+    jss.options.createGenerateClassName = createGenerateClassName
+    const theme = createMuiTheme({
+      palette: {
+        primary: colors.lightBlue,
+        accent: colors.pink,
+        type: 'light',
+      },
+    })
+
+    const app = createApp(stores, routerContext, sheetRegistry, jss, theme, req.url)
+
+    asyncBootstrapper(app).then(() => {
+      ...
+      const html = ejs.render(template, {
+        ...
+        materialCss: sheetRegistry.toString(), // #1
+      })
+      ...
+    }).catch(reject)
+  })
+}</pre></td></tr></table><p>说明：</p><ol><li>把jss样式渲染成css样式，传入到html模板中</li></ol><p><br /></p><p>server.template.ejs</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="2c64b533-7038-4055-bb2b-c061766a35fb" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>...
+&lt;head>
+  ...
+  &lt;style>
+    &lt;%%- materialCss %>
+  &lt;/style>
+&lt;/head>
+...</pre></td></tr></table><p>说明：</p><ol><li>把渲染好的css样式插入到模板文件中</li><li>效果<ol><li><img class="confluence-embedded-image confluence-external-resource" height="250" src="http://img.daker.wang/wiki/1539420134761.png" data-image-src="http://img.daker.wang/wiki/1539420134761.png"></li><li>可以看到，生成的css 已经被插入进来了</li></ol></li></ol><p><br /></p><h3>删除重复的CSS定义</h3><p>需要在客户端侧，渲染完成之后，把这些css删掉，防止冲突</p><p>思路：给服务端渲染生成的style添加id，之后通过id拿到标签做删除</p><p>server.template.ejs</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="31936927-a95d-43c8-979f-ffe7e1b10cd5" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>...
+&lt;head>
+  ...
+  &lt;style id="jss-server-side">
+    &lt;%%- materialCss %>
+  &lt;/style>
+&lt;/head>
+...</pre></td></tr></table><p><br /></p><p>app.js</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="f2cd0745-0666-49f2-91b5-716b11512cd0" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>...
+const createApp = (TheApp) => {
+  class Main extends React.Component {
+    componentDidMount() {
+      const jssStyles = document.getElementById('jss-server-side')
+      if (jssStyles &amp;&amp; jssStyles.parentNode) {
+        jssStyles.parentNode.removeChild(jssStyles)
+      }
+    }
+
+    render() {
+      return &lt;TheApp />
+    }
+  }
+
+  return Main
+}
+
+
+const render = (Component) => {
+  const ComponentR = createApp(Component)
+
+  ReactDOM.hydrate(
+          ...
+            &lt;ComponentR />
+          ...
+  )
+}
+...</pre></td></tr></table><p>说明：</p><ul><li>这种「非侵入式」的配置方法，值的注意哟~</li></ul>
+        <p>&nbsp;</p>
+    
+
+</div>
+
+
+    </div>
+
+    
+  </body>
+</html>
