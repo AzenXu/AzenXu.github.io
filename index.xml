@@ -6,10 +6,21 @@
     <description>Recent content on 细胞的作战实验室</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 13 Oct 2018 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 17 Oct 2018 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="http://azen.me/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>9 主框架 &amp;amp; 列表页搭建</title>
+      <link>http://azen.me/code/react-container/</link>
+      <pubDate>Wed, 17 Oct 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://azen.me/code/react-container/</guid>
+      <description>&amp;nbsp;
+0x0 页面框架搭建基本UI元素搭建client/views/layout/app-bar.jsx
+import React from &#39;react&#39; import AppBar from &#39;@material-ui/core/AppBar&#39; import ToolBar from &#39;@material-ui/core/Toolbar&#39; import Button from &#39;@material-ui/core/Button&#39; import IconButton from &#39;@material-ui/core/IconButton&#39; import HomeIcon from &#39;@material-ui/icons/Home&#39; import Typography from &#39;@material-ui/core/Typography&#39; class MainAppBar extends React.Component { constructor() { super() this.onHomeIconClick = this.onHomeIconClick.bind(this) // #1 this.createButtonClick = this.createButtonClick.bind(this) this.loginButtonClick = this.loginButtonClick.bind(this) } /* eslint-disable */ onHomeIconClick() { } createButtonClick() { } loginButtonClick() { } /* eslint-enable */ render() { return ( &amp;lt;div &amp;lt;AppBar position=&#34;</description>
+    </item>
     
     <item>
       <title>8 React业务开发 - 准备工作</title>
