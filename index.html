@@ -34,7 +34,7 @@
     <div class="sidebar-about">
       <a href="http://azen.me/"><h1>细胞的作战实验室</h1></a>
       <p class="lead">
-      An elegant open source and mobile first theme for <a href="http://hugo.spf13.com">hugo</a> made by <a href="http://twitter.com/mdo">@mdo</a>. Originally made for Jekyll.
+      Power by <a href="http://hugo.spf13.com">hugo</a>
       </p>
     </div>
 
@@ -48,658 +48,347 @@
 </div>
 
     <div class="content container">
-    <div class="posts">
-<div class="post">
-  <h1 class="post-title">
-    <a href="http://azen.me/code/micro-server-i/">0 初识微服务</a>
-  </h1>
-  <span class="post-date">Wed, Nov 7, 2018</span>
-  &nbsp;
+    <div class='posts'>
+    <div class='post'>
+        <h1 class='post-title'>
+            <a href='http://azen.me/code/micro-server-i/'>0 初识微服务</a>
+        </h1>
+        <span class='post-date'>Wed, Nov 7, 2018</span>
+        &nbsp;
 0x0 微服务导学微服务：就是普通的项目模块，运行在Docker里面，使用K8S管理Docker们
 为什么要做微服务？
 系统越来越复杂不同模块之间技术栈差异很大，管理复杂0x1 认识微服务软件架构的进化软件架构：在软件内部，经过综合各种因素的考量、权衡，选择特定的技术，将系统划分成不同的部分并使这些部分相互分工，彼此协作，为用户提供需要的价值。
 考虑的因素业务需求（首位）已有技术栈成本组织架构（多少个小组，每个小组能做什么）可扩展性可维护性（系统的学习成本、新人上手成本、Bug修复成本）Java web的架构演进一层架构老系统：JSP - 页面、业务逻辑、数据库都放在一起MVC三层架构，纠结M到底是啥 - 其实很多概念就是用来迷惑我们的让我们纠结解决了代码调用杂乱无章的问题。通过在各层之间定义接口，让接口和维护分离，降低了维护成本dubbo背景：业务代码50w+行，产品需求不断，新人一个月上不了手，需要做拆分 - 一个大项拆成两个小项系统前端和后端服务可以从物理上管理开，变成两个可以单独维护的模块把一个单体架构变成了两个单体架构单体架构：
-三层架构只是对逻辑的拆分，物理上并没有拆分出来。最终还是运行在同一台机器的同一个进程里对于把功能、业务集中在同一个发布包里，部署运行在同一个进程中的应用，叫单体架构这么看来，客户端开发天生的就是「单体架构」...如果放宽一些要求，不考虑部署在几台机器上的话，「分包加载」「热更新」可能是客户端演进的方向...优势：易于开发易于测试（启动一个服务，所有功能就都准备好了）易于部署易于水平伸缩（新建一个服务器，配好环境，复制软件包就好）挑战维护成本的增加，代码膨胀难以维护（引入新Bug）持续交付周期长（构建、部署成本大）- 一次完整的Bug修复到提交给测试的周期拉的非常长新人上手困难创新困难（统一的前后端技术，完成所有功能），很难对现有的技术栈做扩展可扩展性差（垂直扩展、水平扩展不容易，机器贵）什么是微服务微服务：
-定义：使用一套小服务来开发单个应用的方式。每个服务运行在独立的进程里一般采用轻量级的通讯机制互联可以通过自动化的方式部署理解微：如何判断代码量？不靠谱开发时间？更不靠谱结论：不可度量传递的是设计思想，而不是「量」特征：单一职责：只把紧密相关的业务放在一起，无关业务独立出去 - 登录和注册、订单和支付、邮件服务、短信服务轻量级通信：平台、语言无关的通信 - http隔离性：运行在自己的进程中，不相互干扰有自己的独立数据存储系统技术的多样性：开发人员选择最适合的技术实现业务需求，只要能提供出适合的API就好了诞生背景互联网行业的快速发展：需求变化快、用户数变化快敏捷开发、精益方法的深入人心：最小的代价做最快的迭代，看到反馈 - 频繁的修改测试上线容器技术的成熟 - Docker的出现解决运维瓶颈画一个微服务架构图业务场景在线教育网站的部分功能
-登录注册发邮件发短信查看课程及课程的CRUD单体架构图说明：
-虚线框：物理机器大实线框：一个应用微服务拆分问题：
-一个业务场景可能同时调用上百个微服务，这样客户端代码会非常复杂不是每个微服务都能提供RESTful API的，只能适用内部访问难以重构客户端1.0上线了，如果我们想拆接口或者合并接口，为了兼容客户端很难修改解决方式：API Gateway
-一种服务，进入系统的唯一节点封装系统架构，提供唯一的接口给客户端可以有其他功能：授权、监控、负载均衡、缓存微服务架构的优势和不足优势独立性：每个服务只需要管理好自己就好
-每个服务的数据访问体量可能不同，如：登录注册（QPS 10）、用户信息（QPS 100）可以启动2个登录注册服务，5个用户信息服务容错：出现问题只会影响它自己，可以快速恢复独立的数据库，让数据表的多少、结构变得简单，最多只能影响到它自己敏捷性：
-接口简单，使用者容易理解、应对变化技术栈灵活：
-可以有自己独立的技术栈高效团队：
-团队规模小，每个团队只负责自己的微服务不足额外的工作：
-服务的拆分（如何把服务拆解成微服务 - 服务拆分相关知识可以了解下DDD领域驱动设计）拆分的太小，会造成服务之间调用过多拆分的太大，会失去微服务的优势数据一致性单体架构只有一个数据库，使用事务，保证数据的一致性微服务多个数据库拆分的时候尽量避免产生「连表操作」很难避免数据一致性问题的挑战沟通成本微服务的API改变带来的沟通成本单体架构：改了API可以顺手改了调用的地方微服务：需要推动其他组做修改
-&nbsp;
-  
-</div><div class="post">
-  <h1 class="post-title">
-    <a href="http://azen.me/code/micro_service_ii/">1 微服务的着眼点及解决方案</a>
-  </h1>
-  <span class="post-date">Wed, Nov 7, 2018</span>
-  &nbsp;
+        
+        <div class='read-more-link'>
+            <a href='/code/micro-server-i/'>Read More…</a>
+        </div>
+        
+    </div><div class='post'>
+        <h1 class='post-title'>
+            <a href='http://azen.me/code/micro-service-ii/'>1 微服务的着眼点及解决方案</a>
+        </h1>
+        <span class='post-date'>Wed, Nov 7, 2018</span>
+        &nbsp;
 0x0 微服务带来的问题服务之间的通讯问题？单体架构中需要通讯的情况少见，而微服务之间的相互调用非常频繁微服务如何发现彼此？单体架构使用Dubbo做服务发现：服务消费者需要对服务的提供者进行发现。发现的原理是通过KV存储有一个中间人，提供者把自己的信息告诉中间人，消费者去中间人那里拿提供者的地址微服务有各种语言，如何彼此发现？微服务怎样部署？更新？扩容？自动化流程？Jekins部署到预发环境，没问题部署到生产环境？微服务少的情况下可以这么做，但是一般很难这么做，因为需要同时上线的微服务器可能非常多，无法手动搞0x1 微服务间如何通讯通讯：socket、tcp/ip、http...
 两个角度考虑通讯：
 通讯模式通讯协议通讯模式角度通讯协议角度REST API特点：
 请求方式描述动作类REST并不是适合于所有业务场景RPCMQ - 消息队列发布订阅的模式，可以使用MQ的方式实现
-RPC专项选择RPC框架I/O、线程调度模型同步？非阻塞的异步？长连接？短连接？单线程？多线程？线程调度算法？序列化方式（效率影响了RPC通讯效率）可读的XMLJSON二进制pb多语言支持服务治理有木有服务发现？服务监控？流行的RPC框架Dubbo/Dubbox阿里/当当蓝色：服务启动的时候做的事实现：同步调用，虚线：异步调用特点：只支持Java有完善的服务治理Motan新浪微博特点：支持JavaThriftfacebook/Apache最下面：定义一个API的文件，然后通过Thrift生成定义各种语言代码生成之后，服务的提供者和消费者需要引用生成的API服务端通过引用，做实现功能的实现，消费者通过API的存根直接调用提供者特点：跨语言CS模式通过代码生成工具，讲接口定义的文件生成服务器端和客户端的代码（服务端和客户端的代码可以是不同语言的），进而实现服务端和客户端的跨语言支持序列化：支持很多种二进制模式压缩格式线上使用，提升性能Json模式Debug模式开发中使用通讯模式（多种）：阻塞IONIO专门传输文件的传输方式线程模型（多种）：单线程模式线程池模式多线程使用非阻塞IO模式没有服务治理相关东西（没有服务发现和监控）消费者只能通过提供者的IP:PORT访问需要自己实现服务发现GrpcGoogle说明：和Thrift类似，需要先写API的定义文件，文件格式是protoBuffer的，然后去生成各语言接口，然后实现跨语言调用序列化：pb（高效的序列化方式）通讯协议：没用socket，基于http/2 - 主要面向移动端编码和传输效率低于socket模式RPC框架对比
-0x2 服务发现、部署更新扩容服务发现所有服务对外的形式都是IP:PORT形式
-服务发现的本质：让调用者知道提供者的IP和PORT
-传统服务「发现」虚线：主机，上面部署了两个服务
-客户端通过DNS解析到NginxNginx中配置了两台服务器的IP和PORTNginx有一个负载均衡策略，如轮询，会依次访问到右边的两个服务传统的服务「发现」，其实没有发现什么东西：
-所有服务提供者已经写死了配置文件的维护和更新需要运维同学「手动操作」服务发现客户端的服务发现微服务启动之后，会把IP和PORT告诉注册中心
-客户端从注册中心查需要访问的服务，然后连这个服务
-服务端的服务发现客户端只固定访问一个服务器，这台服务器来做客户端消息的转发、服务内部的发现、负载均衡选择服务器之类的事情
-服务的部署、更新、扩容传统流程部署流程代码写好，内网测试通过准备上线→跟运维交涉找到一台空闲的服务器用来部署服务→运维把应用cp到服务器上（Jekins、脚本、其他自动化方式）-(web服务)→ cp一个Tomcat，给服务分配一个端口号（查询端口列表，找一个没有被占用的端口）→ 给域名做DNS解析，解析到对应的Nginx→ Nginx里配置反向代理，指向刚配置的Tomcat
-更新流程单服务器情况：替换旧代码 &amp; 重启服务
-双服务器（高可用）情况：线下一台服务器→ 代码更新重启验证没问题→ 上线→ 重复部署到另一台服务器上
-扩容和部署差不多
-微服务流程特点：服务数量巨多，更新上线非常频繁，传统流程运维同学无法接受
-解决方案：服务编排
-服务编排包括服务发现、部署、更新、扩容功能，目的是「简化」
-服务编排工具Mesos、Docker Swarm、Kubernetes
-0x3 SpringBoot &amp; SpringCloudJava世界里和微服务密切相关的东东
-参考资料：Spring Framework
-SpringBoot目的：化繁为简
-核心功能：
-独立运行以前运行Spring服务的方式一个web服务器，如Tomcat把代码发布到服务器的指定位置启动服务SpringBoot的运行方式以一个Java命令的形式运行服务java -jar xxxxx.jar内嵌web服务器内嵌了Tomcat简化配置提供准生产的应用监控与微服务的关系SpringBoot是Java开发微服务的润滑剂，让开发微服务的效率变高了。不是开发微服务的必须
-SpringBoot的简化思路，贴合了微服务的理念
-SpringCloud目的：简化Java的分布式系统的通用性问题
-多个服务的负载均衡服务之间的调用事务管理统一的注册管理理解：
-一系列框架的集合简化Java的分布式系统开发 - 利用了SpringBoot用SpringBoot对一些轮子做的封装与微服务的关系专门来做微服务的，是Java的微服务解决方案
-侧重功能开发，让开发更快没提供资源的管理、部署等核心组件Eureka：服务发现发现模式：客户端发现
-Eureka Server：是一个注册中心，运行多个实例可以避免「单点」的问题，保证高可用Application Service：注册到Eureka且保持心跳，心跳停止会认为其不可用Application Client：通过Eureka Server查询获取服务的注册信息（IP PORT）Client和Service自己通信Ribbon：客户端侧的负载均衡
-Edge Service：负责把各业务服务提供的数据串联起来，统一提供给客户端的服务（如景点信息、门票信息、景点评论等）特点：整合后端服务数据离客户端最近问题：Edge Service和API Gateway的区别？答案见文章下方Zuul部分请求通过ELB来到API ServiceAPI Service 通过Eureka的服务发现找到服务列表根据RibbonClient提供的负载均衡策略，选择访问指定的服务策略：Customer Hash策略：Zone Aware RoundRobin还提供了完善的配置：连接超时、重试、重试的算法等Hystrix：断路器场景：web服务调用了数据库服务，数据库出问题无法响应，导致客户端超时。用户发现没反应，会重复操作，导致请求成倍增长。即使数据库很快恢复，也会由于后面堆积的大量请求而再次压垮，服务很长时间无法恢复。
-  
-  <div class="read-more-link">
-    <a href="/code/micro_service_ii/">Read More…</a>
-  </div>
-  
-</div><div class="post">
-  <h1 class="post-title">
-    <a href="http://azen.me/code/react-container/">9 主框架 &amp;amp; 列表页搭建</a>
-  </h1>
-  <span class="post-date">Wed, Oct 17, 2018</span>
-  &nbsp;
+        
+        <div class='read-more-link'>
+            <a href='/code/micro-service-ii/'>Read More…</a>
+        </div>
+        
+    </div><div class='post'>
+        <h1 class='post-title'>
+            <a href='http://azen.me/code/react-container/'>9 主框架 &amp;amp; 列表页搭建</a>
+        </h1>
+        <span class='post-date'>Wed, Oct 17, 2018</span>
+        &nbsp;
 0x0 页面框架搭建基本UI元素搭建client/views/layout/app-bar.jsx
-import React from 'react' import AppBar from '@material-ui/core/AppBar' import ToolBar from '@material-ui/core/Toolbar' import Button from '@material-ui/core/Button' import IconButton from '@material-ui/core/IconButton' import HomeIcon from '@material-ui/icons/Home' import Typography from '@material-ui/core/Typography' class MainAppBar extends React.Component { constructor() { super() this.onHomeIconClick = this.onHomeIconClick.bind(this) // #1 this.createButtonClick = this.createButtonClick.bind(this) this.loginButtonClick = this.loginButtonClick.bind(this) } /* eslint-disable */ onHomeIconClick() { } createButtonClick() { } loginButtonClick() { } /* eslint-enable */ render() { return ( &lt;div &lt;AppBar position="
-  
-  <div class="read-more-link">
-    <a href="/code/react-container/">Read More…</a>
-  </div>
-  
-</div><div class="post">
-  <h1 class="post-title">
-    <a href="http://azen.me/code/react-business-prepare/">8 React业务开发 - 准备工作</a>
-  </h1>
-  <span class="post-date">Sat, Oct 13, 2018</span>
-  &nbsp;
+import React from 'react' import AppBar from '@material-ui/core/AppBar' import ToolBar from '@material-ui/core/Toolbar' import Button from '@material-ui/core/Button' import IconButton from '@material-ui/core/IconButton' import HomeIcon from '@material-ui/icons/Home' import Typography from '@material-ui/core/Typography' class MainAppBar extends React.
+        
+        <div class='read-more-link'>
+            <a href='/code/react-container/'>Read More…</a>
+        </div>
+        
+    </div><div class='post'>
+        <h1 class='post-title'>
+            <a href='http://azen.me/code/react-business-prepare/'>8 React业务开发 - 准备工作</a>
+        </h1>
+        <span class='post-date'>Sat, Oct 13, 2018</span>
+        &nbsp;
 0x0 React16新特性官网：https://reactjs.org/
 新特性官方说明
 react+react-dom包大小：40k → 30k整个代码都用Fiber重新了error boundary捕获react渲染过程中的错误可以在正式环境中，弹个提醒告诉用户错误日志，辅助排错开发中排错new render return typesrender function中支持直接返回数组、字符串Protals：可以在组件中，把一个标签强制插入到页面任意其他标签下服务端渲染的升级 - 可以使用「流」的方式做渲染了
-在有服务端渲染的情况下，使用hydrate方法渲染客户端内容0x1 Material-UI的安装和使用官网：https://www.material-ui.com/
-说明：React components that implement Google's Material Design
-注意：需要考虑到服务端渲染相关配置
-特点：直接在js里面写css文件，可以有非常好的动态性
-目标：展示出来Material-UI的一个Button
-基础使用 &amp; 配置服务端渲染安装https://material-ui.com/getting-started/installation/
-npm i @material-ui/core @material-ui/icons -S基本使用app.js
-... import { MuiThemeProvider, createMuiTheme } from '@material-ui/core' import { lightBlue, pink } from '@material-ui/core/colors' ... const theme = createMuiTheme({ # 1 palette: { primary: lightBlue, accent: pink, type: 'light', }, }) ... const render = (Component) = { ReactDOM.
-  
-  <div class="read-more-link">
-    <a href="/code/react-business-prepare/">Read More…</a>
-  </div>
-  
-</div><div class="post">
-  <h1 class="post-title">
-    <a href="http://azen.me/code/react-ssr-done/">7 React项目架构 - Router和Store的服务端渲染</a>
-  </h1>
-  <span class="post-date">Thu, Oct 11, 2018</span>
-  &nbsp;
+        
+        <div class='read-more-link'>
+            <a href='/code/react-business-prepare/'>Read More…</a>
+        </div>
+        
+    </div><div class='post'>
+        <h1 class='post-title'>
+            <a href='http://azen.me/code/react-ssr-done/'>7 React项目架构 - Router和Store的服务端渲染</a>
+        </h1>
+        <span class='post-date'>Thu, Oct 11, 2018</span>
+        &nbsp;
 0x0 概述加入了router和store，会对服务端渲染有影响：
 需要控制router的渲染，服务端渲染的内容要根据不同的url进行需要在服务端渲染中集成路由跳转功能
 使用者可以从任意路由进入网站除了前端做路由跳转外，服务端也需要支持路由跳转，返回给客户端正确的页面store数据同步：服务端渲染的时候会渲染一遍，拿到html，内容扔给客户端客户端js又会渲染一次如果没拿到服务端渲染时，通过API请求到的数据，那么就需要客户端再次通过api请求，去拿数据多次api请求导致浪费需要服务端渲染时请求到的数据，让客户端直接用
 0x1 store和router的服务端渲染基础配置实现
 server-entry.js
 修改前
-import React from 'react' import App from './views/App' export default &lt;App /修改后
-import React from 'react' import { StaticRouter } from 'react-router-dom' // #1 import { Provider, useStaticRendering } from 'mobx-react' // #2 import App from './views/App' import { createStoreMap } from './store/store' // 让mobx在服务端渲染的时候不会重复数据变换 useStaticRendering(true) // #3 // 传入对象格式：{appStore: xxx} export default (store, routerContext, url) = ( // #5 &lt;Provider {.
-  
-  <div class="read-more-link">
-    <a href="/code/react-ssr-done/">Read More…</a>
-  </div>
-  
-</div><div class="post">
-  <h1 class="post-title">
-    <a href="http://azen.me/code/react-project-network-web-server-proxy/">6 React项目架构 - web server网络请求转发</a>
-  </h1>
-  <span class="post-date">Mon, Sep 24, 2018</span>
-  &nbsp;
+import React from 'react' import App from '.
+        
+        <div class='read-more-link'>
+            <a href='/code/react-ssr-done/'>Read More…</a>
+        </div>
+        
+    </div><div class='post'>
+        <h1 class='post-title'>
+            <a href='http://azen.me/code/react-project-network-web-server-proxy/'>6 React项目架构 - web server网络请求转发</a>
+        </h1>
+        <span class='post-date'>Mon, Sep 24, 2018</span>
+        &nbsp;
 相关commit
 开发环境工程架构示意图
 接口地址：https://cnodejs.org/api
 accessToken问题：
 部分接口需要带accessToken才有权限请求accesstoken是用户登录后，cnodejs服务器返回的accesstoken不能存在浏览器里，有安全风险解决方案：
 获取accessToken后，存在web服务器里，通过session机制，在web服务端检测有木有token，没就给用户弹登录，有就转发请求实现安装工具$ npm i body-parser express-session query-string -S说明：
-body-parser是用来转化request的body的，转化成json格式的数据espress-sisson是express插件，用来存放服务端sessionquery-string是用来把url「?」后面的内容转化为一个json的配置web服务器server.js
-... const bodyParser = require('body-parser') app.use(bodyParser.json()) // #1-1 app.use(bodyParser.urlencoded({ extended: false })) // #1-2 const session = require('express-session') app.use(session({ // #2 maxAge: 10 * 60 * 1000, // #2-1 name: 'sid', // #2-2 resave: false, // #2-3 saveUninitialized: false, secret: '(‘◇’)?' // #2-4 })) ...说明：
-body-parser用于解析request的body中的参数把application json的数据，转化成req.body的数据对应formdate的数据 - 把这些数据也转换到req.body中，之后通过req.body就能拿到请求里的参数了配置服务器session相关功能的设置session的过期时长10分钟做测试用的，所以不需要太长线上的session是要存在数据库中的，如redis现在是存在内存中，服务关掉了，相关数据就没了，所有人都需要重新登录一遍指定sessionID对应的cookieID，浏览器端可以通过cookieID拿到sessionID的值是否每次请求都申请一个cookieIDsecret是一个密钥串，用于对session加密，保证cookie在浏览器端无法解密验证accessToken接口：
-post /accesstoken 验证 accessToken 的正确性接收 post 参数
-  
-  <div class="read-more-link">
-    <a href="/code/react-project-network-web-server-proxy/">Read More…</a>
-  </div>
-  
-</div><div class="post">
-  <h1 class="post-title">
-    <a href="http://azen.me/code/react-project-store/">5 React项目架构 - Store</a>
-  </h1>
-  <span class="post-date">Sun, Sep 23, 2018</span>
-  &nbsp;
+        
+        <div class='read-more-link'>
+            <a href='/code/react-project-network-web-server-proxy/'>Read More…</a>
+        </div>
+        
+    </div><div class='post'>
+        <h1 class='post-title'>
+            <a href='http://azen.me/code/react-project-store/'>5 React项目架构 - Store</a>
+        </h1>
+        <span class='post-date'>Sun, Sep 23, 2018</span>
+        &nbsp;
 相关commit
 什么是Storestore - 数据流解决方案
 mvc模式在前端并不特别适用：很多数据都是异步的页面之间共享一部分数据，数据更新的时候需要让view层检测到数据的更新否则会导致view层和model层脱节，渲染出错store：「flux单向数据流模式」中，整个app有个单独存放数据的地方，叫store页面上的所有内容都是根据store上的内容渲染出来的store里的任何数据的变化，都会影响到view的渲染效果store决定了页面展示成什么样子解决mvc中数据维护问题，把数据维护集中在一个地方只要使用action处理数据，view就能自动更新react：是一个视图层解决方案它的虚拟dom特性，让我们即便把整个数据对象都彻底更新了（换了个数据树object），react也能高效处理视图重新渲染过程虚拟dom的出现，让这种单一数据流模式得以实现Mobx - 一种flux模式下，数据流解决方案的后起之秀
 文档安装：`npm i mobx mobx-react -S`它的所有数据一旦更改，绑定数据的地方会立刻更新使用方法比Redux简单很多Redux涉及Action、Dispatcher、Reducer、Store，概念比较多，学习成本较高数据一旦更新，需要做整棵数据树的全拷贝，生成一棵新树，浪费资源每发一个action都会产生一个新对象新对象的到来，会触发所有Component的重新渲染由于虚拟dom，这种重新渲染成本不高，所以可以这么做，效率高vue没有虚拟dom机制，所以无法这么做Mobx声明Store的时候，声明其为Observable就好值改变会自动通知对应view，触发该view刷新整个数据都只有一份，不会生成新的一个对象只不过它有数据变动，会通知对应的view执行效率高一些，不需要每次都拷贝一个新的数据树
-代码实现
-.babelrc
-{ "presets": [ "stage-1", ... ], "plugins": [ "transform-decorators-legacy", ... ] }说明：
-babel编译配置，需要加上stage-1，因为他的语法不是es6的标准语法需要装一个babel的插件，且需要放在第一项，否则会有问题安装`npm i babel-plugin-transform-decorators-legacy babel-preset-stage-1 -D`验证：重启dev:client看下能否编译通过
-测试mobx
-client/store/app-state.js
-import { observable, computed, action, autorun, } from "mobx" class AppState { @observable count = 0 @observable name = 'Azen' // #2 @computed get msg() { // #3 return `${this.name} say count is ${this.count}` // #4 } @action add() { // #7 this.
-  
-  <div class="read-more-link">
-    <a href="/code/react-project-store/">Read More…</a>
-  </div>
-  
-</div><div class="post">
-  <h1 class="post-title">
-    <a href="http://azen.me/code/react-project-router-config/">4 React项目架构 - 目录划分 &amp;amp; Router配置</a>
-  </h1>
-  <span class="post-date">Sat, Sep 22, 2018</span>
-  &nbsp;
+        
+        <div class='read-more-link'>
+            <a href='/code/react-project-store/'>Read More…</a>
+        </div>
+        
+    </div><div class='post'>
+        <h1 class='post-title'>
+            <a href='http://azen.me/code/react-project-router-config/'>4 React项目架构 - 目录划分 &amp;amp; Router配置</a>
+        </h1>
+        <span class='post-date'>Sat, Sep 22, 2018</span>
+        &nbsp;
 相关commit
 0x0 目录划分目录划分介绍views文件夹
 存放项目功能模块App.jsx需要根据路由配置，分割子级目录如列表页：index.jsx为这个页面的出口，向外抛出去列表每一项都会建一个组件如：titlebar会建一个组件这些东西会放入同一个文件夹里，因为属于同一个页面嘛config文件夹
 放app的配置 &amp; 第三方类库的引用router.jsx 路由的配置、映射和跳转等store文件夹
 存放数据管理的文件夹（包括数据的获取和封装）如用户登录的信息全局类信息需要存起来，就存在store中的某个地方是web app单页应用开发新增的功能需要单独拿出来components
-非业务型通用组件很多view里都用到，和业务无关如：下拉组件 - drop down更高级的通用组件封装，会打包到npm上，如Ant Design组件库0x1 Router的简单实现1 文件调整/client/views/topic-list/index.jsx
-import React from 'react' export default class TopicList extends React.Component { componentDidMount() { // placeholder } render() { return ( &lt;divㄟ...这里是to...topic li..li..list(｡•́-ก̀｡)&lt;/div ) } }
-/client/views/topic-detail/index.jsx
-import React from 'react' export default class TopicDetail extends React.Component { componentDidMount() { // placeholder } render() { return ( &lt;div喂喂喂，这里是topic detail！(o˘д˘)o有人在吗？&lt;/div ) } }2 配置路由路由：区分一个网站不同功能模块的地址
-  
-  <div class="read-more-link">
-    <a href="/code/react-project-router-config/">Read More…</a>
-  </div>
-  
-</div><div class="post">
-  <h1 class="post-title">
-    <a href="http://azen.me/code/react-ssr-optimize/">3 React前端工程架构 - eslint &amp;amp; 其他优化</a>
-  </h1>
-  <span class="post-date">Thu, Sep 20, 2018</span>
-  &nbsp;
+        
+        <div class='read-more-link'>
+            <a href='/code/react-project-router-config/'>Read More…</a>
+        </div>
+        
+    </div><div class='post'>
+        <h1 class='post-title'>
+            <a href='http://azen.me/code/react-ssr-optimize/'>3 React前端工程架构 - eslint &amp;amp; 其他优化</a>
+        </h1>
+        <span class='post-date'>Thu, Sep 20, 2018</span>
+        &nbsp;
 相关commit
 安装eslint：`npm i eslint -D`
 创建eslint配置文件/.eslintrc
 { "extends": "standard" }
-client目录下，用到了jsx，需要另一套eslint规范
-client/.eslintrc
-{ "parser": "babel-eslint", "env": { "browser": true, "es6": true, "node": true }, "parserOptions": { "emacVersion": 6, "sourceType": "module" }, "extends": "airbnb", "rules": { "semi":[0] } }说明：eslint文档
-babel-eslint：指定用这个工具解析js代码，用这个是因为我们也用这个做编译env - 指定环境：
-browser是告诉他我们在浏览器中，有document之类的，不然调document会报错因为我们使用了webpack提供的部分api，所以可以把node的环境变量也包含进来parserOptions：emacVersion：定义使用的es版本 - es6sourceType：是使用模块的方式的，而不是传统的js引用方式extends：使用规则airbnb的规则很赞rules：配置自定义规则
-webpack配置编译前检测 - webpack.config.client.js
-... const config = { ... module: { rules: [ { enforce: "pre", test: /.(jsx|js)/, loader: 'eslint-loader', exclude: [ path.join(__dirname, '../node_modules') ] }, { test: /.
-  
-  <div class="read-more-link">
-    <a href="/code/react-ssr-optimize/">Read More…</a>
-  </div>
-  
-</div><div class="post">
-  <h1 class="post-title">
-    <a href="http://azen.me/code/react-ssr-dev-hotload/">2 React前端工程架构 - 开发环境实时更新</a>
-  </h1>
-  <span class="post-date">Wed, Sep 19, 2018</span>
-  &nbsp;
+        
+        <div class='read-more-link'>
+            <a href='/code/react-ssr-optimize/'>Read More…</a>
+        </div>
+        
+    </div><div class='post'>
+        <h1 class='post-title'>
+            <a href='http://azen.me/code/react-ssr-dev-hotload/'>2 React前端工程架构 - 开发环境实时更新</a>
+        </h1>
+        <span class='post-date'>Wed, Sep 19, 2018</span>
+        &nbsp;
 dev server &amp; hot load相关commit
 相关commit
 解决hot load缓慢的commit
 服务端实时渲染相关commit
-服务端实时渲染
-0x0 问题 &amp; 解决方案概述问题一：每次client代码改动，都需要手动重新编译打包，导致开发效率低下
-工具：webpack dev server
-通过webpack配置，启动一个资源server服务于：css js html等静态资源文件作用：可以通过该server访问到这些资源原理：文件在编译的过程中，会存在server的内存中每当文件有变化，会自动执行编译过程刷新浏览器就能看到效果问题二：每次代码变动，都需要刷新浏览器才能看到效果，开发效率低下
-工具：hot module replacement
-代码变动，可以在页面上无刷新的立刻看到效果保持当前状态，不用重新获取数据0x1 动态编译1 功能启动安装webpack-dev-server
-npm i webpack-dev-server -D修改文件
-webpack.config.client.js
-... const isDev = process.env.NODE_ENV === "development"; ... const config = { ... mode: 'production' }; if (isDev) { config.devServer = { host: '0.0.0.0', port: '8787', contentBase: path.join(__dirname, '../dist'), hot: false, overlay: { error: true }, publicPath: '/public', historyApiFallback: { index: '/public/index.
-  
-  <div class="read-more-link">
-    <a href="/code/react-ssr-dev-hotload/">Read More…</a>
-  </div>
-  
-</div><div class="post">
-  <h1 class="post-title">
-    <a href="http://azen.me/code/fe-arch-overview/">0 前端项目技术选型</a>
-  </h1>
-  <span class="post-date">Tue, Sep 18, 2018</span>
-  &nbsp;
+        
+        <div class='read-more-link'>
+            <a href='/code/react-ssr-dev-hotload/'>Read More…</a>
+        </div>
+        
+    </div><div class='post'>
+        <h1 class='post-title'>
+            <a href='http://azen.me/code/fe-arch-overview/'>0 前端项目技术选型</a>
+        </h1>
+        <span class='post-date'>Tue, Sep 18, 2018</span>
+        &nbsp;
 0x0 单页应用 &amp; 多页应用 相关技术选型不同项目需求不同：
 传统的多页网站不会用React单页应用用jQuery实现困难，需要自己处理技术细节，出错的可能性多两大类站点多页应用每个新页面都需要做页面的跳转，是通过浏览器发请求到服务端的
 日常：前端拿到设计图做好模板，后端用jsp等模板引擎填充数据，拼html代码，形成真实的html给浏览器做显示
 特点：
 每个页面跳转都经过服务端新页面出现需要刷新浏览器用户需要有一定的等待时间js定位：js主要做动画，数据处理都是在后端做好的
-后端处理好拼给浏览器例如：如点击某个按钮后，隐藏了一个div显示了另一个divjs设计初衷就是做这些小功能的，随着js标准升级，功能才变强大常用类库：
-jQuery：对原生的DOM事件做了封装，解决了浏览器兼容性问题 &amp; 提供更好用的apimootools | YUI：DOM封装类库，使用方法和原生js差不多 - 多页应用时代更多的就是通过js操纵DOM常用工程架构工具：
-无特定前端工具，后端配合grunt：一头豪猪，是一个命令启动器，本质上是一个注册任务的脚本处理器通过grunt执行一个config（比如指定编译的文件、编译好的东东输出到哪个目录下面）用起来比较麻烦，执行任务很慢，因为硬盘读写效率低导致的gulp：也是跑任务的工具，和grunt差不多好处是通过stream的方式处理文件，比grunt更快，API更简洁好用现在基本上已经被npm替代了常用模块化工具：
-大部分情况下没有模块化工具：每个页面单独引一个jQuery，单独写几行代码就好seajs：支付宝的小伙开发的requirejs静态文件处理：
-手动编译到html中，配置的时候不够灵活有的时候不处理，交给后端用Nginx机制去处理单页应用特征 - 前端路由：点到一个新页面，浏览器不需要刷新，只是页面内容刷新就可以了
-三大类库：React、Vue、Angular
-特点：各自有自己的开发范式对整个DOM做了上层的抽象 好处：隔离了DOM层，所以才能做服务端渲染服务端没有js的DOM api的运行环境（如：document.xxx），如何把js的DOM操作渲染成最终的html呢？通过类库抽象出来的方式去渲染前辈：backbone.js前端MVC的经典案例，整个类库的代码量很少是一个骨架，细节需要自己实现React：需要把它的代码编译成浏览器支持的代码才能运行，JSX语法浏览器并不认识Vue：和React的主要区别：Vue的数据是双向绑定的，下层可以修改上层数据。React遵循单向数据流，数据只能从上到下修改Angular：用ts开发里面有不少超前的东西目前的生态不够完整工程架构工具：npm 占据90%左右的使用量了
-模块化工具：
-webpack：可以打包任何的静态资源文件（js、jsx、css、sass...）可以按照想要的样子做编译rollup.js：能够按需引入函数而不是把文件中的所有的函数都包含进来静态文件处理：使用webpack处理静态文件，直接在js里引静态资源就好，模块化工具会自动转换成线上可用静态资源路径
-0x1 web app 架构简介以前：写好网页模板交给后端，后端填数据，把填好的html返回给浏览器
-现在：webapp所有的前端页面跳转，都在浏览器中做
-一次加载的内容变多数据通过api获取，在前端渲染出来大部分代码都是js代码，甚至不用写html了工程架构解放生产力通过自动化操作，保障开发目光能聚焦在业务上，而不是繁琐的文件复制、目录改变之类重复性的劳动
-源码处理：需要让jsx能自动转成js、自动使用babel编译、图片路径自动处理
-图片处理：
-图片是一个资源，在js中应该能直接import到为什么要Import？业务代码开发目录时在src目录中，而最终是需要把「资源」编译到dist目录中，这一步其实是需要做资源拷贝的希望图片能做「浏览器长缓存」，需要控制图片的版本。我们不希望每次手动在图片后面加版本号，这一步也希望能交给工程架构去自动完成最终的图片url，后面会自动加一串hash值我们在业务代码中，直接把import进来的东东，作为资源路径即可，而不必关心dist目录中图片的hash值是多少，每次的真实路径是什么环境搭建每种框架的解决方案都不一样（jsx、ts等），需要有一个编译的过程，把不同语法类型编译成浏览器能识别的语言（es5）
-预见问题：一开始，手头项目直接写css即可。但是以后会不会出现css太多类重名的问题？如果会，是否需要提前考虑解决方案还是到时再说？
-质量保证通过代码规范，保证排错、可读性
-code lint：用来规范代码的写法
-排除环境差异：存在操作系统环境差异，需要通过工程架构避免类似问题
-可以通过给编辑器放一个editconfig，处理不同环境下，代码规范问题包括定义：方法结束时，应该留一个空行、用4个空格还是一个tab之类的git commit预处理：强制自动做代码lint监测，有错就不让commit
-关键点：定制每个项目和团队都是不一样的，需要通过定制，满足团队的上述需求。
-需要对所使用的定制工具，了如指掌，甚至自己需要写一些webpack的脚本实现某些功能才行
-项目架构工程架构更多的考虑让工程跑起来、更方便做开发（自动处理的东西之类的）
-项目架构需要考虑：
-网页如何运行业务代码如何分层以便做好功能预留业务扩展的空间技术选型：
-web app使用哪个框架？还是需要自己写？它的store选哪个？数据逻辑如何做？数据解决方案：
-mobxreduxflux需要考虑：后端结构是怎样的？API形式如何？http请求用什么方案？（自己写？还是怎样？）代码风格：
-和代码检测不一样，这里主要考虑：
-数据存储：哪些数据存在mobx中？（mobx是整个应用公用的数据管理）哪些数据存在当前react的view中？0x2 网络优化 &amp; webpack打包网络优化方法：合并资源文件，减少http请求
-说明：
-浏览器并发http请求有数量限制，桌面8个，手机6个如果需要并发请求的资源太多，会延长整个页面的加载时间合并后，可以加快网页加载时间示例：
-我们一个工程中，js文件很多打包出的实际页面中只有两个js文件，这就是代码打包的结果webpack根据所有的Import依赖树，做了文件合并，合并成一个js文件打包完成，会生成一个dist目录，就是合并后的文件的存放目录生成一个vendor.js文件：这个文件是压缩过的vendor：包含了所有引入的第三方类库的文件因为第三方库更新频率较低，适合长期存在浏览器缓存中,所以单独打一个js包生成一个业务代码打包后的js文件类库的css文件，使用cdn存就好
-方法：利用浏览器的缓存机制
-加载资源文件的时候设置过期时间，默认使用浏览器内部的本地文件，这样就可以不经过网络了缓存机制的问题：网站更新后，如果js静态资源的文件名没有更改，那么浏览器端不会更新静态资源，而使用缓存的资源需要有机制更新静态资源文件的文件名和url：缓存更新机制以前：直接加时间戳，问题是不能定位到哪个文件更新了哪个没更新，导致发布一个版本，所有静态资源都被更新现在：打包文件根据内容做计算得到hash如果内容有更新，hash就会更新如果没更新，就用缓存
-&nbsp;
-  
-</div><div class="post">
-  <h1 class="post-title">
-    <a href="http://azen.me/code/react-ssr-config/">1 React前端工程架构 - 基本配置</a>
-  </h1>
-  <span class="post-date">Tue, Sep 18, 2018</span>
-  &nbsp;
+        
+        <div class='read-more-link'>
+            <a href='/code/fe-arch-overview/'>Read More…</a>
+        </div>
+        
+    </div><div class='post'>
+        <h1 class='post-title'>
+            <a href='http://azen.me/code/react-ssr-config/'>1 React前端工程架构 - 基本配置</a>
+        </h1>
+        <span class='post-date'>Tue, Sep 18, 2018</span>
+        &nbsp;
 0x0 概述上一篇文章我们聊过，工程架构的目标，主要是保证「开发效率」的。包括：
 解放生产力环境搭建质量保障本篇文章，将会就React的实际配置做下做下初步说明
 内容包括：
 npm、webpack、babel编译打包基础配置SSR（服务端渲染）基础配置dev server实现代码实时编译hot module实现代码热更新服务端渲染的实时更新eslint保证代码质量0x1 编译打包基础配置本节commit
 webpackwebpack是一个模块打包器，核心是他的loader
-通过loader处理某种类型的资源（js、css）会把资源处理成浏览器能运行的代码（es5），浏览器里能完整使用如果木有对应类型的loader，可以自己写一个如vue自己写了一个loader处理它定义的特殊语法I 基础配置阶段1.在项目根目录下，把项目配置成npm的项目 - 通过生成的package.json文件描述依赖的npm包
-$ npm init相关选项 - 一般情况下直接enter用默认值就好
-{ "name": "fe-execise", "version": "1.0.0", "description": "", "main": "index.js", "scripts": { "test": "echo \"Error: no test specified\" &amp;&amp; exit 1" }, "repository": { "type": "git", "url": "git@gitee.com:azen/FE-execise.git" }, "author": "Azen", "license": "ISC" }2.安装webpack、react
-$ npm i webpack $ npm i react3.新建文件夹 &amp; 初始文件
-build文件夹：放配置文件以及工程中需要用到的脚本文件webpack.config.jsclient文件夹：放前端appapp.js：应用入口里面引用了App.jsx，然后把它mount到html中App.jsx：声明整个页面上面的内容webpack.config.jsconst path = require('path'); module.exports = { // 入口 entry: { app: path.
-  
-  <div class="read-more-link">
-    <a href="/code/react-ssr-config/">Read More…</a>
-  </div>
-  
-</div><div class="post">
-  <h1 class="post-title">
-    <a href="http://azen.me/code/lean-startup-guess/">Lean Startup II 定义两个假设</a>
-  </h1>
-  <span class="post-date">Thu, Sep 13, 2018</span>
-  &nbsp;
+        
+        <div class='read-more-link'>
+            <a href='/code/react-ssr-config/'>Read More…</a>
+        </div>
+        
+    </div><div class='post'>
+        <h1 class='post-title'>
+            <a href='http://azen.me/code/lean-startup-guess/'>Lean Startup II 定义两个假设</a>
+        </h1>
+        <span class='post-date'>Thu, Sep 13, 2018</span>
+        &nbsp;
 时机：用户探索阶段
 定义用户痛点假设：
 观察用户痛点大小决定了商业模式的空间观察用户痛点持续性决定了商业模式的持续性痛点本身会不断演化痛点具有时效性定义解决方案假设：
 解决方案和用户痛点的「匹配度」能不能解决这个痛点解决方案和用户痛点的「吻合度」
 产品和市场之间的吻合度0x0 用户痛点是什么Guy Kawasaki：思考不如意的事情，然后从这些点切入，寻找新的机会
 SnapchatSituation痛点一：社交压力 传统社交媒体分享自己照片时的「点赞压力」「期望得到评论压力」
-分享人：每一次分享都是一个对自己受欢迎程度的测试持续发消息却没回应 - 感觉自己是个Loser阅读者：迫于社交压力不得不给人点赞痛点二：隐私泄露问题
-「非主流」照片，一旦发给朋友，就永远失去对照片的控制权Task「不适合公开照片」可以设置倒计时（如7秒），到期彻底消失
-如果对方截屏，系统会发通知「xxx正试图截屏你的照片」，从而形成约束力UberSituation坐出租车的痛点：
-打不到车 - 永远不知道下一辆车什么时候来驾驶员服务态度不好交易过程不方便司机的痛点：
-老板的专职司机有大量碎片时间（老板：你7点送我过去，晚上9点来接我）Task地图叫车评分体系免密支付Result这里讲的Uber模式，就是滴滴的「专车」模式...的确是解决了上述痛点的
-德康血糖仪Situation糖尿病是一种慢性病，痛点：测血糖
-采样麻烦不能连续采样睡眠状态无法采样Task无痛植入采样传感器连续监测 + 云端数据同步葡萄酒：Dr.WineSituation葡萄酒选择太多，挑选过程艰辛，最终会变成「仅仅基于价格」的选择Task方案一（澳大利亚黄尾巴）：用颜色标签极度简化葡萄酒信息方案二（Dr.Wine）：用App扫酒标，获得这款酒的相关信息，包括历史和评论方案三（WSJY）：买会员，它每季度配送12瓶不同的葡萄酒（帮用户做选择）分析：单品思维（12瓶酒）预售模式：先有用户，再集中用户倒逼供应链0x1 怎样定义用户痛点和解决方案假设错误做法：
-天才人物的天才构想市场调查和焦点小组原因：市场调查主观性强烈：去听你想听的东西本质缺陷：消费者无法告诉你他们的「潜在需求或隐形需求」到底是什么方法体系工具一：头脑风暴初创小组带着强烈的同理心去进行头脑风暴，将自己代入用户角色，从而定义用户痛点和解决方案
-目标：对用户形成一些「基本的认知」
-场景对比工具使用「同理心」将自己代入用户观察使用场景，进行定性描述通过定性描述，定义有可能的痛点（脑爆的点）提出有可能的解决方案（脑爆的点）举例：Netflix做的场景对比
-传统模式用户租DVD的场景图 VS Netflix新解决方案的场景图
-头脑风暴两阶段阶段一：思维发散阶段
-尽可能多的收集点子不要引入价值判断阶段二：聚焦阶段
-引入价值判断做取舍头脑风暴基本规则第一大规则：推迟判断在积累大量点子之前，不要过早引入价值判断，价值判断留待最后
-第二大规则：注重数量头脑风暴的关键作用：打开个人思维的局限性
-工具二：参与式观察和访谈关键的一步
-关键点：
-不带预设，不过早引入价值判断深入挖掘和预期不符的维度不只关注用户自身体验，深入挖掘用户相关利益方体验案例：解决印度地区新生儿死亡率高问题假设问题：印度医院设备落后
-假设方案：找到印度医院和潜在捐赠对象，把两者做对接，给医院更多恒温箱
-Action：走访印度不同医院
-Result：发现真正问题 - 农村小孩缺乏从家到医院的设备，医院有恒温箱但大量闲置
-修正方案：做有基本保温功能、便于运输的睡袋，便于把孩子送到医院
-工具三：从别人的失败中学习案例：ANM模式：聚焦消费类电子产品，美国设计，中国代工生产，美国销售
-50%员工只做一件事：去亚马逊读各种电子产品的差评两个标准：分类排名中靠前的产品（有一定影响力、销量）有用户基础，但是差评很多将竞对的差评转化为认知，继而针对性迭代自己产品的设计
-
-&nbsp;
-  
-</div><div class="post">
-  <h1 class="post-title">
-    <a href="http://azen.me/code/lean-startup-verify/">Lean Startup III 用MVP验证两个假设</a>
-  </h1>
-  <span class="post-date">Thu, Sep 13, 2018</span>
-  &nbsp;
+        
+        <div class='read-more-link'>
+            <a href='/code/lean-startup-guess/'>Read More…</a>
+        </div>
+        
+    </div><div class='post'>
+        <h1 class='post-title'>
+            <a href='http://azen.me/code/lean-startup-verify/'>Lean Startup III 用MVP验证两个假设</a>
+        </h1>
+        <span class='post-date'>Thu, Sep 13, 2018</span>
+        &nbsp;
 重点：
 验证解决方案和痛点的匹配度通过不断迭代，实现对真实用户的痛点、有效解决方案的不断逼近工具：Minimum Viable Product
 最小可行产品针对天使用户的「最小功能组合」关键点：只针对天使用户对产品容忍度高能看到产品的未来愿意互动，一起改进产品最小、最基本功能组合建议把想象中的产品砍成两半，再砍两半关键点：以最快的速度通过MVP获取认知，放弃一切无助于认知的功能
 速度聚焦
 举例：Zappos - 美国最大的鞋类电商网站待验证：有没有人愿意通过网购买鞋
-MVP：
-不是 买一堆鞋子不是 建立仓库是 在鞋店里拍下照片，发到网站上是 如果有人买，他就到店里按原价把鞋买下来再寄给顾客分析：
-卖一双鞋都会亏一点钱用很少的钱验证了基本假设
-举例：微信1.0版待验痛点：
-传统运营商短信贵群发短信不容易MVP（1.0版）：
-只有免费短信和短信群发功能I 设计MVP本质：资源有限的前提下，加快迭代速度、快速获取认知
-第一步：用户排序不急于放大用户群，主动做减法，过滤 &amp; 筛选用户群，找出天使用户
-用户分层金字塔：
-天使用户两特点：
-特点一：痛点迫切，愿意尝试不成熟、不完美、有一定缺陷的产品
-特点二：愿意积极提供反馈，愿意积极推广产品或解决方案
-举例：啄木鸟假牙关键：引入了20位牙医，作为天使用户，单独拉微信群以方便沟通
-牙医将病人情况反馈给研发，包括使用产品前后对比图、最新治疗情况等
-第二步：痛点和功能排序对痛点和功能组合做筛选和排序，找出最核心、与痛点最相关、最小的功能组合
-方法：
-从最痛点、功能开始验证提出「可有可无」、「暂不需要」的功能点最痛点验证完之后，才向次重点迈进关键：
-聚焦加速聚焦举例 - 社交软件：Yo唯一功能：想起哪个朋友要打招呼，点一下这个朋友的名字，会自动给他发一条信息：Yo
-
-第三步：制作MVPMVP形态静态页面（如：卖鞋的Zappos）广告链接微信朋友圈里发的某个东西产品原型设计产品原型思路：
-类比：通过观察其他行业或本行业类似的服务、产品，获取灵感反证：观察别人，总结失败案例跨界嫁接：不同产业、行业的不同创新元素重新组合，通过嫁接形成产品原型举例：斯坦福学生团队的移动充电桩原型场景：车库没充电桩
-原型：木板下装了四个轮，上面放了块电池
-II 测度MVP &amp; 数据收集比较关注数据指标（与成型产品关注的数据指标不同）：
-分阶段指标 而不是 总指标实时的对比测试 而不是 事后的因果分析
-对比验证：多版本试验定量 与 定性（后续对用户的访谈与观察）结合工具一：AB测试举例亚马逊：办公室里的桌子摆放，都通过AB测来决定...（有名的AB测公司）
-预设一个测量指标把桌子摆成不同形状通过指标评分决定桌子摆放啄木鸟假牙：两轮AB测
-内部测（19个内部员工，刻意提高销售人数比重）外部测（19个牙医）工具二：同期群分析针对总量概念的对比。
-如果：只看uv总数变化曲线，会掩盖不同时期用户群的行为差异或活跃度差异
-同期群分析：看到不同时期用户数的变化 - 进入、推出、流失
-帮助我们把用户分成不同时期的用户群的工具
-目的：对每一个用户群的行为和趋势，进行更精确的判断
-工具三：净推荐值NPS - Net Promoter Score，表明了MVP是否有增长潜力
-「测试用户黏性时，唯一有效的工具」
-净推荐值和「增长」密切相关，高净推荐值有可能获得「病毒式增长」
-初创公司三大增长引擎黏着式增长：用户新增率 &gt; 用户流失率
-  
-  <div class="read-more-link">
-    <a href="/code/lean-startup-verify/">Read More…</a>
-  </div>
-  
-</div><div class="post">
-  <h1 class="post-title">
-    <a href="http://azen.me/code/lean-startup-one/">Lean Startup 概述</a>
-  </h1>
-  <span class="post-date">Tue, Sep 11, 2018</span>
-  &nbsp;
+        
+        <div class='read-more-link'>
+            <a href='/code/lean-startup-verify/'>Read More…</a>
+        </div>
+        
+    </div><div class='post'>
+        <h1 class='post-title'>
+            <a href='http://azen.me/code/lean-startup-one/'>Lean Startup 概述</a>
+        </h1>
+        <span class='post-date'>Tue, Sep 11, 2018</span>
+        &nbsp;
 0x0 新思维运动三个代表Steve Blank
 《四步创业法》《创业者手册》Eric Rise
 Steve Blank的学生《精益创业》Reid Hoffman
 LinkedIn创始人核心 - 承认未知从「天才人物的天才设想、完美计划和完美执行」 → 「科学试错、民主创业」
-从试错中不断获取认知、不断迭代认知，最终调整创业路径
-未知观不知道用户痛点是什么不知道解决方案是什么只能通过不断试错，不断迭代，去逼近用户的真实痛点，而不是「幻想」能百分之百的「捕捉到用户痛点」
-实践 - Amazon Fresh（生鲜配送）选择西雅图做试点，「单点突破」一开始只选择了几个居住密度最大的高端小区服务不针对所有人，而是「天使用户」缴纳299美元年费的方式，过滤出天使用户天使用户对「购物环节」痛点极大选择「用户少 &amp; 粘度高」的用户，做验证和测试5年时间不断测试生鲜零售模型 &amp; 调整参数5年后才进入洛杉矶依然选几个密度最大的小区切入Lean Startup 五项基本原则用户导向原则：从「自我导向」到「用户导向」行动原则：从「计划导向」到「行动导向」「行先于知」，而不是「知引导行」试错原则：从「完美预测」到「科学试错」工具：MVP聚焦原则：从「系统思维」到「单点爆破」单点突破、主动过滤噪音客户迭代原则：从「完美主义」到「高速迭代」迭代、速度 都很关键总结“假设并不是科学的，任何假设都只是假设，只有经过验证或者说可证伪的假设才是科学的”
-0x1 逻辑框架新创企业 &amp; 大公司新创企业不是大公司的缩小版，大公司执行已知的商业模式，新创企业探索商业模式
-Lean Startup是一个关于「探索商业模式」的方法论区别商业模式：大公司已经有了被验证的商业模式，新创公司没有大公司：执行已知或已确定的商业模式，更多是在运营和执行层面新创公司：探索未知的商业模式
-新创企业之所以失败，是因为它们混淆了探索与执行，过早执行一个没有经过验证的商业模式。
-新创企业的工具目标：更高效的探索商业模式
-工具：Lean Startup
-Lean Startup 逻辑结构Part I：基本的商业计划只是假设的商业计划，用这个东东提出「前提和假设」再完美的商业计划：也只是「前提和假设」也经不起和客户的第一次亲密接触在和客户第一次接触时，基本上也就完成了历史使命Part II：「客户开发」阶段客户开发和产品开发同步进行，甚至客户开发前置于产品开发客户开发而非产品开发，是整个Lean Startup的核心中心是用户，而非产品，更不是自己想象中的产品产品根据用户的需求来开发Part III：「精益研发」阶段用「精益研发」来快速迭代，科学试错小结用商业计划建立前提和假设，从一开始就把客户导入到创业过程中用「高速迭代」、「科学试错」获取认知传统产品引入模型缺陷认知来的太晚：直到产品已经开发完毕，进入测试阶段，团队才真正开始提升认知的过程
-创业过程中最关键的不是某个产品或服务而是在于是否具有正确的认知用户反馈是否从一开始就结合在创业过程中两个错误假设：
-用户痛点高度确定解决方案高度确定新创企业生命周期 &amp; 工作重点精益创业期阶段I：商业模式探索（发散式）发散式探索，不确定性极高可能会尝试多个方向，快速转向，不停试错阶段II：商业模式探索（聚焦式）已经确定了初步方向在两三个路径中选择商业模式关键点I、II阶段：现金流为负，关键点是「快速迭代」、在现金流耗尽之前，尽快确立商业模式
-工作重点
-起点：「用户探索」
-任务：探索和定义两个基本假设用户痛点假设解决方案假设关键点：倾听的技巧观察、访谈、倾听用户停止推销，开始倾听在很长一段时间里，对推出自己的解决方案保持克制结果：不断探索，不断提升认知
-进入：「用户验证」
-任务：验证「用户痛点假设」和「解决方案假设」验证商业模式：可重复、可规模化方法：与天使用户大量互动
-转轴：
-定位：用户开发的「核心反馈机制」时机：「用户验证」阶段，发现没有天使用户做法：循环往复，免除危机回到精益创业的起点，调整商业模式，继续探索，积累认知，迭代商业模型关键：快速、敏捷、把握时机原因：现金流为负、现金流有限
-有用户 &amp; 商业模式成立：
-进入用户扩张 &amp; 执行阶段
-
-Sweet Spot：II 和 III 的交界点，此处新创公司终于确立了商业模式
-这个点之前和之后，需要的技能「完全不同」硅谷很少有人能「同时拥有两大阶段技能」放大执行期阶段III：商业模式确立放大阶段从1到100阶段IV：商业模式正常执行传统商学院覆盖的内容三大理论基石I 跨越鸿沟参考：豆瓣
-新产品，如何从「天使用户」到被「主流人群」广泛接受
-  
-  <div class="read-more-link">
-    <a href="/code/lean-startup-one/">Read More…</a>
-  </div>
-  
-</div><div class="post">
-  <h1 class="post-title">
-    <a href="http://azen.me/code/%E5%8C%BA%E5%9D%97%E9%93%BE%E5%9F%BA%E7%A1%80-amp-%E5%85%AC%E9%93%BE%E5%8E%9F%E7%90%86/">区块链基础 &amp;amp; 公链原理</a>
-  </h1>
-  <span class="post-date">Mon, Sep 10, 2018</span>
-  &nbsp;
+        
+        <div class='read-more-link'>
+            <a href='/code/lean-startup-one/'>Read More…</a>
+        </div>
+        
+    </div><div class='post'>
+        <h1 class='post-title'>
+            <a href='http://azen.me/code/%E5%8C%BA%E5%9D%97%E9%93%BE%E5%9F%BA%E7%A1%80-amp-%E5%85%AC%E9%93%BE%E5%8E%9F%E7%90%86/'>区块链基础 &amp;amp; 公链原理</a>
+        </h1>
+        <span class='post-date'>Mon, Sep 10, 2018</span>
+        &nbsp;
 0x0 区块链相关概念法币：日常生活中用到的纸币
 去中心化：比特币不需要中间机构做货币的发行工作 - 货币是被「发现」的，而不是「发明」的。需要注意的是，并不是所有的区块链项目都是去中心化的
 挖矿：「结点A」希望给「结点B」转钱，需要「矿工」帮A把钱「搬运」过去
 这种搬运的行为就是「挖矿」挖矿的平均时长：10分钟（转钱不是实时到账的）广播：矿工除了能「挖矿」，还可以「广播」 - 每挖成功一次矿，就会给所有结「广播」一次
-账本：每个结点都有一个「账本」
-每个结点每次收到广播，就会在自己的账本上记录一条信息唯一的作弊方式就是篡改所有结点的账本记录区块链：每个结点维护的「账本」就叫做「区块链」
-区块：每笔转账记录消息，就叫「区块」
-创世区块：区块链的第一个区块「创世区块」
-
-矿工挖到矿之后，希望向区块链中，追加一个区块
-矿工之所以能挖出来矿，是因为有人在转账
-0x1 公链原理（共识算法）PoW原理Proof of Work - 工作量证明系统
-区块参数Nonce值：可以理解为序号
-Timestamp：挖区块的时间戳
-Data：交易信息
-Hash：根据当前区块信息计算出来的哈希值
-Pre Hash：上一个区块的哈希值
-说明有上表我们知道，参数中除Nonce和Hash，其他参数都是已知且固定的
-矿工挖矿的时候，需要先把Nonce值置为1，把四个参数组合起来，计算Hash值。如果当前组合计算出来的Hash值不符合「要求」，则把Nonce累加后，再次计算新的Hash，直到符合要求
-要求比如当前难度为4，则要求计算出来的Hash值，前4个数必须为0000，才算挖矿成功
-比特币难度系数有调整机制，会随着所有结点的总算力增强而增强，所以挖矿越来越难
-过程模拟https://anders.com/blockchain/blockchain.html
-区块的链接两个区块的链接方式，是通过后一个区块保存前一个区块的hash值，而链接起来的
-公链把上述步骤原理用代码实现而产生的产品
-示意代码片段type Block struct { PreHash []byte Timestamp int64 Data []byte Hash []byte Nonce int } func main() { //创建创世区块 var genesisBlock = CreateGenesisBlock() var newBlock = GenerateNextBlock(genesisBlock) fmt.Println("挖出的新区快Data为", newBlock.Data) fmt.Println("挖出的新区快Data为", hex.EncodeToString(newBlock.Hash)) } func CreateGenesisBlock() *Block { var genesisBlock = &amp;Block{[]byte{0}, time.
-  
-  <div class="read-more-link">
-    <a href="/code/%E5%8C%BA%E5%9D%97%E9%93%BE%E5%9F%BA%E7%A1%80-amp-%E5%85%AC%E9%93%BE%E5%8E%9F%E7%90%86/">Read More…</a>
-  </div>
-  
-</div><div class="post">
-  <h1 class="post-title">
-    <a href="http://azen.me/code/product-create-path/">探索互联网产品的最佳实践</a>
-  </h1>
-  <span class="post-date">Sat, Sep 8, 2018</span>
-  &nbsp;
+        
+        <div class='read-more-link'>
+            <a href='/code/%E5%8C%BA%E5%9D%97%E9%93%BE%E5%9F%BA%E7%A1%80-amp-%E5%85%AC%E9%93%BE%E5%8E%9F%E7%90%86/'>Read More…</a>
+        </div>
+        
+    </div><div class='post'>
+        <h1 class='post-title'>
+            <a href='http://azen.me/code/product-create-path/'>探索互联网产品的最佳实践</a>
+        </h1>
+        <span class='post-date'>Sat, Sep 8, 2018</span>
+        &nbsp;
 根据《启示录》第二部分 - 流程 相关内容，重新梳理总结而成。省略了部分「大公司」相关内容 &amp; 「开发」相关内容
 0x0 概述产品探索 + 产品开发 = 完整产品
-本章着重探讨「产品探索」部分，这部分内容是所打造产品的能否达到预期的核心。
-目标产出有价值、可用、可行的解决方案（产品原型）
-阶段产品探索分为两阶段：
-机会评估阶段方案完善阶段将会在「0x1」「0x2」两节中详细介绍
-Tips「产品探索」阶段，完成时间不固定、无法准确预期不要像规划施工一样规划产品探索时间
-反面举例
-当我们有一个创意，需要根据它定义新产品的时候，计划：
-第一周：评估产品机会，尝试理解待解决问题，拜访潜在用户，收集基本需求
-第二周：与交互设计师一起制作产品原型
-第三周：利用产品原型展开用户测试
-第四周：完成产品用例，与开发团队一起评审原型和文档
-然而：
-第三周突然发现，用户对解决方案（创意或原型）丝毫不感兴趣
-没时间了，于是让开发团队做「有缺陷」的产品
-最后产品彻底失败
-确保「产品探索」完成后再进入「产品开发」否则，就是赌上全部开发资源，在进行「产品探索」
-通过「用户研究」可以改善现有产品常用方法
-问卷调查、日志分析、数据挖掘、拜访用户、可用性测试、竞品分析
-注意
-仅通过用户研究，很难定义新产品
-0x1 机会评估阶段目标（Task）发现&amp; 确认问题、发现和验证市场机会
-淘汰馊主意避免浪费时间和金钱挑选最合适、最有利的产品机会团结团队、理解产品、整合资源方法（Action）十问法1、产品价值：产品要解决什么问题？
-最难回答多数PM答非所问，只能说出：产品的功能和特色2、目标市场：为谁解决这个问题？
-3、市场规模：成功的机会有多大？
-可以求助于：行业分析师贸易协会公司财务结合自己的分析做出判断评估需要谨慎，避免浮夸，不是所有产品都有十亿美金市场4、量化指标：（度量指标或收益指标）怎样判断产品成功与否？
-5、竞争格局：有哪些同类产品？
-6、竞争优势：为什么我们最适合做这个产品？
-7、市场时机：时机合适吗？
-8、营销组合策略：如何把产品推向市场？
-描述具体销售方案，甚至会影响产品需求9、解决方案要满足的条件：成功的必要条件是什么？
-注意：不是描述解决方案，而是搞清楚产品的依赖因素和约束条件举例：如果要通过系统集成商销售产品，对方可能会对产品的扩展性、合作方式提出要求10、结论（继续或放弃）：给出评估结果
-特约用户法寻找10名左右用户作为「特约用户」
-从特约用户身上，探索目标用户的需求强烈程度
-Tips机会评估只讨论「待解决问题」，不应该涉及「具体解决方案」将来有大把时间讨论考虑方案，现在需要认真考虑「解决什么问题」
-常见错误
-把「问题」和「解决方案」一起考虑「解决方案」遇到问题，就整个放弃「产品机会」（洗澡水和孩子一起倒掉）开发新产品或者改善旧产品，都属于「产品机会」「产品机会」与产品的新旧无关，需要一视同仁的比较所有产品机会的「成本和收益」
-新产品一样有机会市场环境充满变数竞争对手不断被淘汰新技术、新创意不断涌现财务人员辅助机会评估能帮你了解和评估产品，看公司的投入是否划算帮你了解用户，财务同事掌握着各种支付、交易数据确认商业上的可行性常见错误跳过机会评估阶段没有回答机会评估应该论证的问题大量回避评估产品机会，直扑产品设计的PM小案例产品机会评估案例
-0x2 方案完善阶段目标（Task）设计&amp; 验证&amp; 完善MVP解决方案（探索最小可行产品解决方案）
-方法（Action）此处主要讲方案的验证和完善
-原型测试法目标目标一：测试产品原型的价值判断对用户来说：
-你的产品是否有用是否愿意购买有多喜欢产品的设计重在观察用户是否喜欢这些功能
-目标二：测试产品原型的可用性发现没能成功实现的功能点发现被忽视掉的功能点重在观察用户如何设法完成必要操作
-步骤步骤一：选人特约用户竞品用户亲朋好友（针对大众产品）目标用户聚集地捞人步骤二：测试测试内容：
-1、用户未接触产品时，如何解决相关问题
-先不要给测试者原型，只抛问题然后看他们如何做2、观察测试者能否从原型首页看出产品要解决的是什么问题？哪些功能点最吸引他们？
-3、正式进行测试任务
-4、任务完成后通过聊天收集进一步信息
-是否使用同类产品？是否有别的解决方案？原型是否比他们常用的产品好？净推荐值打分？5、让用户为产品的每个阶段打分
-x、如果原型尚不完整
-分功能点，测试主流程用户操作到没做好的功能点：问问他们「接下来希望发生什么」TipsPM要亲自参与原型测试，不能委托他人，一定要多接触用户克服自己「难以面对测试结果」的心里障碍，要明白：自己产品设计不可能完美，没有人能做到始终正确获取用户反馈是完善产品的最佳途径理想状态下需要两个人：一个人主持测试，一个人做记录测试的是原型，而不是测试者…只有原型会测试不通过，测试者不会的，不要担心告诉测试者：这只是初步创意，不是正式产品，请大胆说出真实看法测试重点：看测试者是否能「轻松完成任务」&amp;「喜欢相关功能」步骤三：迭代提高原型的「可用性」和「价值（吸引力）」
-原型修改：2~3个用户反应同一个问题就可以马上修改原型
-成功表征：连续6个用户理解和欣赏产品价值，且完成了关键的测试项目
-  
-  <div class="read-more-link">
-    <a href="/code/product-create-path/">Read More…</a>
-  </div>
-  
-</div><div class="post">
-  <h1 class="post-title">
-    <a href="http://azen.me/code/golang%E4%B8%8E%E5%AF%86%E7%A0%81%E5%AD%A6/">Golang与密码学</a>
-  </h1>
-  <span class="post-date">Thu, Sep 6, 2018</span>
-  &nbsp;
+        
+        <div class='read-more-link'>
+            <a href='/code/product-create-path/'>Read More…</a>
+        </div>
+        
+    </div><div class='post'>
+        <h1 class='post-title'>
+            <a href='http://azen.me/code/golang%E4%B8%8E%E5%AF%86%E7%A0%81%E5%AD%A6/'>Golang与密码学</a>
+        </h1>
+        <span class='post-date'>Thu, Sep 6, 2018</span>
+        &nbsp;
 0x0 概述这篇文档主要聊聊三种加密方式与Golang实现
 哈希加密对称加密非对称加密0x1 哈希加密哈希算法我们知道，查找中，有「哈希查找」，是一种比「顺序查找」更快的查找方法。
 「哈希查找」的关键点，就是实现一种「哈希算法」，使得每个任意key，经过哈希算法计算后，可以获得一个定长的散列值。
 相同key经过相同哈希算法散列之后，获得相同的散列值不同key经过相同哈西算法散列之后，获得不同的散列值特点：
 可以把任意长度的「明文」，散列成固定长度的「指纹」正向计算简单快速，逆向推算困难，基本不可能逆推出明文明文有一点点变化，密文就会改变优秀的散列算法需要尽量避免两个不同的明文，加密出来是相同的指纹发展：
  取模操作 → 异或运算→ 位移操作
-密码学里面，一般都通过「位移操作」「取模操作」「异或操作」来实现加密 - 无论对称加密非对称加密、哈希散列加密
-成熟Hash算法MD5SHARIPEMDGolang相关hash代码片段MD5MD5加密结果为16字节串
-data := []byte("test string") s := fmt.Sprintf("%x", md5.Sum(data))m := md5.New() m.Write(content) s := hex.EncodeToString(m.Sum(nil))SHA256sha256加密方式，通常用在公链中，散列结果为32字节
-s := fmt.Sprintf("%x", sha256.Sum256(content))m := sha256.New() m.Write(content) fmt.Println(hex.EncodeToString(m.Sum(nil)))文件内容加密
-f,_ := os.Open("filename") h := sha256.New() io.Copy(h,f) s := h.Sum(nil) fmt.Println(hex.EncodeToString(s))RIPEMD160ripemd160目前只在数字货币中用到了 - 以太坊
-三方包：golang.org/x/crypto/ripemd160
-可以使用gopm安装
-gopm get -v -u golang.org/x/crypto/ripemd160
-hasher := ripemd160.New() hasher.Write([]byte("test string")) fmt.Println(hex.EncodeToString(hasher.Sum(nil)))0x2 对称加密对称加密，加密完之后，是可以通过密钥解密的 - 和hash加密不一样
-常见对称加密算法：
-DESAES补码、去码 &amp; 分组加密补码：给15个字符做「分组加密」，无法平均分成两组，所以需要补一个码凑成16个字符，这种操作叫做「补码」
-  
-  <div class="read-more-link">
-    <a href="/code/golang%E4%B8%8E%E5%AF%86%E7%A0%81%E5%AD%A6/">Read More…</a>
-  </div>
-  
-</div><div class="post">
-  <h1 class="post-title">
-    <a href="http://azen.me/code/%E5%90%AF%E7%A4%BA%E5%BD%95---%E4%BA%92%E8%81%94%E7%BD%91%E5%9B%A2%E9%98%9F%E6%9E%84%E6%88%90/">启示录 - 互联网团队构成</a>
-  </h1>
-  <span class="post-date">Wed, Sep 5, 2018</span>
-  &nbsp;
+        
+        <div class='read-more-link'>
+            <a href='/code/golang%E4%B8%8E%E5%AF%86%E7%A0%81%E5%AD%A6/'>Read More…</a>
+        </div>
+        
+    </div><div class='post'>
+        <h1 class='post-title'>
+            <a href='http://azen.me/code/%E5%90%AF%E7%A4%BA%E5%BD%95---%E4%BA%92%E8%81%94%E7%BD%91%E5%9B%A2%E9%98%9F%E6%9E%84%E6%88%90/'>启示录 - 互联网团队构成</a>
+        </h1>
+        <span class='post-date'>Wed, Sep 5, 2018</span>
+        &nbsp;
 产品成败的关紧因素：选择人员、界定工作职责
 作者在本节中反复强调了，「不同的工作要人不同的人专职来做」
 但是作为初创团队，甚至个人开发者，人力严重不足的情况下，需要「分清项目阶段」，「不同阶段让自己带上不同的思考帽」进行不掺杂无关信息的专业性思考。
 通过这一章，我们可以知道，个人开发者，在整个项目流程中：
 分别需要扮演什么样的角色？每种角色的职责是什么？每种角色需要分配多少精力？时间占比如何？每种角色的目标产出是什么？产品达成预期的关键点：有价值 + 可用 + 可行
-关键角色及其职责角色职责补充PM 产品经理评估产品机会
-机会来源：Boss拍脑袋用户反馈可用性测试产品团队和运营团队脑爆PM需要判断这些需求是否可采纳工具和方法（产出）：传统方法（产出）：市场需求文档（MRD）简化方法（产出）：机会评估（作者提出的方案）详细定义待开发产品（探索产品的解决方案）
-需定义的内容：基本的产品特征和功能产品的用户体验产品的发布标准工具和方法（产出）：传统方法（产出）：产品需求文档（PRD）简化方法（产出）：简化文档（围绕产品原型展开工作）注意点：文档应该用来描述「功能」和「属性」文档不应该用来「讨论技术实现」【重要】一定要有一个全权负责「定义产品」的人
-【重要】产品经理定义的产品没有价值、不具备可用性和可行性，开发团队多出色都无济于事
-九成产品未能实现既定目标：
-构思拙劣尚不成熟可用性差毫无价值PM最宝贵的经验：
-打造优秀产品的流程领导产品团队的能力应对产品扩张的经验个人对自己的认知自我激励的能力（不是）行业知识或技术UED 用户体验设计师让真实用户测试产品
-用户研究
-职责：研究分析用户，评估产品或原型是否符合特定用户的使用习惯工作内容：拟订恰当的用户测试项目监督测试评估测试结果提出改进方案产出：没说...估计是用户画像之类的吧...交互设计
-工作内容：理解「目标用户」的基础上：设计有价值、可用的：目标功能用户导航产品使用流程产出：「用线框绘制产品需求」，交给视觉设计师视觉设计
-工作内容：根据线框，设计可见的用户界面：布局颜色字体传达并唤起产品蕴含的情感原型制作
-迅速制作融合的PM、设计师创意的产品原型，让用户试用根据用户反馈意见，反复修正原型与PM密切合作，将功能和设计相结合，确保产品同时具有「可用性」和「价值」
-PM → 价值UED → 可用性
-为了保证「可行性」，还需要软件架构师参与评估设计和产品原型
-项目经理产品定义完毕之后，开发团队接手，项目经理登场
-制定计划跟踪进度目标：保证项目「按期发布」
-有些项目经理，以为管理能力等同于使用微软「Project」软件的能力，这没有领悟项目管理的真谛。
-优秀项目经理的特质：
-给人工作紧迫感善于捕捉问题思路清晰用数据说话利用数据：识别项目方向确认项目进度改善产品和开发流程，必须从「测量、收集数据」开始务必坚持根据「数据和事实」制定决策果断判断力态度必须克服所有障碍解决所有问题一往无前、愈挫愈勇，直到项目成功RD 开发成功的产品：真实用户需求（PM） + 现阶段可行的技术方案（RD）
-【tips】很多优秀的产品，是程序员抓住用户需求，自己创业研发出来的
-OP 运维负责保障web服务正常运行运营对外宣传推广产品产品发布拓展市场销售渠道组织重点营销活动和PM沟通互补：
-运营是产品获得需求的重要来源产品是运营获取市场营销信息的重要来源小团队的妥协方案案例让设计师身兼数职
-一个创业公司只有三个人：
-产品经理交互设计师（同时负责用户研究）视觉设计师（同时负责开发原型）获取了不错的结果：很快拿到产品原型（可供目标用户测试的）
-「拿到产品原型」可以看做是一个里程碑可外包内容视觉设计用户研究和可用性测试外包成本较高重视「测试反馈」的话，成本更高建议让产品经理、交互设计师分担「用户研究」、「可用性测试」工作原型制作可以从开发团队借个帮手来做结果导向不要告诉别人「如何做」，而是告诉他们「做什么」
-收集需求的时候，常听用户谈论「你们应该如何做」，而非「做什么」。思考解决方案是人类的天性PM如果思考「做什么」，会发现解决方案如此多客户不必考虑解决问题的途径他们不知道什么可行PM常常告诉UED如何设计产品，却忘了告诉他们「做什么」 &nbsp;
-  
-</div><div class="post">
-  <h1 class="post-title">
-    <a href="http://azen.me/code/linux-timer/">Linux定时任务</a>
-  </h1>
-  <span class="post-date">Thu, Aug 23, 2018</span>
-  &nbsp;
+        
+        <div class='read-more-link'>
+            <a href='/code/%E5%90%AF%E7%A4%BA%E5%BD%95---%E4%BA%92%E8%81%94%E7%BD%91%E5%9B%A2%E9%98%9F%E6%9E%84%E6%88%90/'>Read More…</a>
+        </div>
+        
+    </div><div class='post'>
+        <h1 class='post-title'>
+            <a href='http://azen.me/code/linux-timer/'>Linux定时任务</a>
+        </h1>
+        <span class='post-date'>Thu, Aug 23, 2018</span>
+        &nbsp;
 参考资料：鸟哥的linux私房菜
 Linux 排程就是透過 crontab 與 at 這兩個東西
 at 和 crontabat：处理只发生一次的事件
-crontab：处理周期性事件
-crontab 除了可以使用指令執行外，亦可編輯 /etc/crontab 來支援CentOS常见定时任务log rotate（日志轮替）logwatch（日志分析工具）tmpwatch （移除暂存文档）...定时任务与软件安装的多少有关
-单次任务指令：at
-相关服务：atd
-注意：atd不一定已经打开了，需要手动操作之~
-&gt; systemctl restart atd # 重新啟動 atd 這個服務  systemctl enable atd # 讓這個服務開機就自動啟動  systemctl status atd # 查看状态at使用使用 at 指令创建工作，將這個工作寫入 /var/spool/at/ 目錄內，atd 服務会執行之可以利用 /etc/at.allow 與 /etc/at.deny 這兩個文件來進行 at 的使用限制
-at.allow：at指令白名单用户at.deny：at黑名单。如果木有at.allow，会根据at.deny判断权限以上两个文件都木有：只有root可使用...写的有点长...没看完
-定时任务服务：cron(crond)
-该服务预设为自动启动的执行任务的日志：/var/log/cron指令：crontab
-使用结果：指令被记录到/var/spool/cron/用户名 中指令格式：crontab [-u username] [-l|-e|-r]
--e: 编辑crontab的定时任务(当前用户的)
-任务会写在/usr/bin/crontab文件中-l: 查看crontab任务-r: 移除所有crontab任务示例：crontab -e (进入编辑界面，每项任务占一行)*/5 * * * * /home/dmtsai/test.
-  
-  <div class="read-more-link">
-    <a href="/code/linux-timer/">Read More…</a>
-  </div>
-  
-</div><div class="post">
-  <h1 class="post-title">
-    <a href="http://azen.me/code/qiniu-xushiwei/">Go 语言狂人许式伟：编程的意义就是让世界变得有趣一些</a>
-  </h1>
-  <span class="post-date">Fri, Jun 15, 2018</span>
-  &nbsp;
+        
+        <div class='read-more-link'>
+            <a href='/code/linux-timer/'>Read More…</a>
+        </div>
+        
+    </div><div class='post'>
+        <h1 class='post-title'>
+            <a href='http://azen.me/code/qiniu-xushiwei/'>Go 语言狂人许式伟：编程的意义就是让世界变得有趣一些</a>
+        </h1>
+        <span class='post-date'>Fri, Jun 15, 2018</span>
+        &nbsp;
 从小孩的教育到世界观当小孩长大以后，未来十年二十年的时候整个社会是什么样子的？
 只有明白了那个时候的世界是什么样的，才能想象教会小孩什么东东可以让他适应那个时候的世界——这个和做企业是一样的
 不要因为别人的言论而认为世界是什么样的，应该有自己的世界观
 职业生涯工作六年以后，有困惑：为什么我们做的wps不赚钱呢？做什么业务才是符合互联网时代的？商业上才能成功的？07年坚决转型产品经理，只有PM才能在商业上探讨产品成功的可能性。07思考：移动互联网的大趋势下，什么东西会变化？发现：似乎还没有移动互联网下的存储公司创建七牛七牛的使命：释放社会的创造力。
 解释：你有没有在做一个新的，以前人没有试过的探索。这件事是勇敢的、值的鼓励的。你起码试了，别人连试都不敢试。云计算可以降低试错成本，让你可以一个月、一周就能判断你的尝试是不是一个靠谱的事情。
-几个观点如果把人看成一个投资人的话，投资企业和思考小孩的教育有共同点：你要思考未来。写代码不习惯单步调试：人需要在把自己逼到资源相对匮乏下，才能更有效的突破（这个观点和辉哥的观点相同，想要高效学习，需要认为制造时间上的稀缺性）编程的意义在于，让你真正能够创造一个世界，或者说改变一个世界。人的意义在于自我实现，自己追求的是什么，就去实现什么。所以，要让这个世界变的更有趣一些。视频内容&lt;iframe src="//player.bilibili.com/player.html?aid=12069987&amp;cid=19912250&amp;page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true" height=490 width=682 &lt;/iframe &nbsp;
-  
-</div><div class="post">
-  <h1 class="post-title">
-    <a href="http://azen.me/code/git%E6%8A%80%E5%B7%A7%E4%B8%BAgit%E5%88%9B%E5%BB%BA%E4%B8%80%E4%B8%AA%E5%AD%A4%E7%AB%8B%E5%88%86%E6%94%AF/">【Git技巧】为Git创建一个孤立分支</a>
-  </h1>
-  <span class="post-date">Thu, Apr 19, 2018</span>
-  &nbsp;
+几个观点如果把人看成一个投资人的话，投资企业和思考小孩的教育有共同点：你要思考未来。写代码不习惯单步调试：人需要在把自己逼到资源相对匮乏下，才能更有效的突破（这个观点和辉哥的观点相同，想要高效学习，需要认为制造时间上的稀缺性）编程的意义在于，让你真正能够创造一个世界，或者说改变一个世界。人的意义在于自我实现，自己追求的是什么，就去实现什么。所以，要让这个世界变的更有趣一些。视频内容&lt;iframe src="//player.bilibili.com/player.html?aid=12069987&amp;cid=19912250&amp;page=1" scrolling="no" border="0" frameborder="
+        
+        <div class='read-more-link'>
+            <a href='/code/qiniu-xushiwei/'>Read More…</a>
+        </div>
+        
+    </div><div class='post'>
+        <h1 class='post-title'>
+            <a href='http://azen.me/code/git%E6%8A%80%E5%B7%A7%E4%B8%BAgit%E5%88%9B%E5%BB%BA%E4%B8%80%E4%B8%AA%E5%AD%A4%E7%AB%8B%E5%88%86%E6%94%AF/'>【Git技巧】为Git创建一个孤立分支</a>
+        </h1>
+        <span class='post-date'>Thu, Apr 19, 2018</span>
+        &nbsp;
 问题描述有时候我们需要在GIT里面创建一个空分支，该分支不继承任何提交，没有父节点，完全是一个干净的分支，例如我们需要在某个分支里存放项目文档。
 使用传统的git checkout命令创建的分支是有父节点的，意味着新branch包含了历史提交，所以我们无法直接使用该命令。
-可视化效果【Git技巧】为Git创建一个孤立分支  image2018-4-19_14-27-9.png" data-location="Azen  【Git技巧】为Git创建一个孤立分支  image2018-4-19_14-27-9.png" data-image-height="560" data-image-width="1310"
-解决方法创建分支使用 git checkout的--orphan参数:
-git checkout --orphan doc该命令会创建一个名为doc的分支，并且该分支下有前一个分支下的所有文件。
-查看--orphan的帮助：
-Create a new orphan branch, named &lt;new_branch&gt;, started from &lt;start point&gt; and switch to it. The first commit made on the new branch will have no parents and it will be the root of a new history totally disconnected from all the other branchs and commits.
-这里的start point指的是你执行git checkout命令时的那个分支，当然新的分支不会指向任何以前的提交，就是它没有历史，如果你提交当前内容，那么这次提交就是这个分支的首次提交。
-  
-  <div class="read-more-link">
-    <a href="/code/git%E6%8A%80%E5%B7%A7%E4%B8%BAgit%E5%88%9B%E5%BB%BA%E4%B8%80%E4%B8%AA%E5%AD%A4%E7%AB%8B%E5%88%86%E6%94%AF/">Read More…</a>
-  </div>
-  
-</div>
+可视化效果【Git技巧】为Git创建一个孤立分支  image2018-4-19_14-27-9.png" data-location="Azen  【Git技巧】为Git创建一个孤立分支  image2018-4-19_14-27-9.
+        
+        <div class='read-more-link'>
+            <a href='/code/git%E6%8A%80%E5%B7%A7%E4%B8%BAgit%E5%88%9B%E5%BB%BA%E4%B8%80%E4%B8%AA%E5%AD%A4%E7%AB%8B%E5%88%86%E6%94%AF/'>Read More…</a>
+        </div>
+        
+    </div>
 </div>
     </div>
 
