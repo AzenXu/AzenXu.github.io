@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="//gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.46-DEV" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>4 服务编排 - Mesos &middot; 细胞的作战实验室</title>
+
+  
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/print.css" media="print">
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/poole.css">
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/syntax.css">
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/hyde.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Abril+Fatface|PT+Sans:400,400i,700">
+
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+  
+  <link href="" rel="alternate" type="application/rss+xml" title="细胞的作战实验室" />
+
+  
+</head>
+
+  <body class=" ">
+  <div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <a href="http://azen.me/"><h1>细胞的作战实验室</h1></a>
+      <p class="lead">
+      Power by <a href="http://hugo.spf13.com">hugo</a>
+      </p>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li><a href="http://azen.me/">Home</a> </li>
+      
+    </ul>
+
+    <p>&copy; 2018. All rights reserved. </p>
+  </div>
+</div>
+
+    <div class="content container">
+    <div class="post">
+  <h1>4 服务编排 - Mesos</h1>
+  <span class="post-date">Mon, Nov 12, 2018</span>
+  <p>&nbsp;</p>         <h1>初见</h1><p><img class="confluence-embedded-image confluence-external-resource" height="250" src="http://img.daker.wang/wiki/1541997782680.png" data-image-src="http://img.daker.wang/wiki/1541997782680.png"></p><p>Program against your datacenter, like it's a single pool of resources.</p><p>在你的数据中心上运行程序，就像运行在单个的资源池一样</p><ul style="list-style-type: square;"><li>数据中心：很多台服务器的集合</li></ul><p>Apache Mesos abstrcts CPU, memory, storage, and other compute resources away from machines (physical or vitual), enabling fault-tolerant and elastic distributed systems to easily be built and run effectively.</p><p>Mesos会从机器（物理机、虚拟机）上抽取CPU、内存、硬盘等资源，构建一个方便部署、高效运转的可容错的分布式系统</p><ul style="list-style-type: square;"><li>只是通过软件管理的方式，把机器管理起来，进行合理的调度</li><li>Twitter开发的，有20w台机器运行在Mesos上...</li></ul><h1>原理</h1><h2>调度框架</h2><p>两级调度架构</p><p><img class="confluence-embedded-image confluence-external-resource" width="686" src="http://img.daker.wang/wiki/1541998280676.png" data-image-src="http://img.daker.wang/wiki/1541998280676.png"></p><h4>第一级调度：Mesos master一行</h4><p>由Mesos master调用Mesos Slave，每个Slave启动的时候都会注册到master，master协调全部Slave，以及确定Slave的资源</p><ul style="list-style-type: square;"><li>支持高可用集群，通过ZooKeeper完成主节点的选举</li><li>管理所有<strong>Mesos slave（又叫Agent）</strong><ul style="list-style-type: square;"><li>运行在虚拟机或物理机上</li><li>运行着任务或服务，如Hadoop或MPI</li></ul></li></ul><h4>第二级调度：由Framework组件组成（红色虚线部分）</h4><p>Framework包括：<strong>调度器</strong>、<strong>执行器</strong></p><ul style="list-style-type: square;"><li>调度器：上面的虚线部分<ul style="list-style-type: square;"><li>举例：Hadoop scheduler、MPI scheduler</li><li>Mesos可以和多种类型的framework通讯，其他类型的应用也会有相应的framework</li></ul></li><li>执行器：下面的虚线部分<ul style="list-style-type: square;"><li>运行在messos的slave中</li><li>由slave调度起来</li></ul></li></ul><p>Framework被注册到Messos，以使用Messos集群中的资源</p><h2>调度流程</h2><p><img class="confluence-embedded-image confluence-external-resource" width="686" src="http://img.daker.wang/wiki/1541998821429.png" data-image-src="http://img.daker.wang/wiki/1541998821429.png"></p><p>注：Agent === Slave</p><h4>执行步骤</h4><p>第一步：Slave 1 向master汇报它的空闲资源（4个cpu，4g内存）</p><p>第二步：</p><ul style="list-style-type: square;"><li>由master触发分配策略模块，得到的反馈：framework 1请求全部可用资源</li><li>master向framework发送<span style="color: rgb(128,0,0);"><strong>资源邀约</strong></span>，描述了slave 1上的所有可用资源（4个cpu，4g内存）</li></ul><p>第三步：framework的调度器，和master说：需要在slave上运行两个任务（共占用3个cpu，3g内存）</p><p>第四步：master向slave下发任务，分配资源给framework的执行器。之后由执行器启动这两个任务（Executor和Task）</p><h4>说明</h4><p>此时，还有1g内存和1个cpu没用，可以分配给其他任务来运行</p><h4>总结</h4><ol><li>framework的<strong>调度器</strong>：用来和mesos master谈判资源的：「我需要多少资源，你的资源够不够，给我哪个资源用」</li><li>然后把<strong>执行器</strong>发给slave，在slave上执行<ol><li>执行器：可以理解为一段代码，可以和slave对接的代码</li></ol></li></ol><h4>隔离模块</h4><p>目的：实现同一个slave上运行多个任务</p><p>机制：进程隔离机制（如使用Docker本身的隔离机制）</p><h2>资源邀约和分配</h2><h3>策略</h3><p>资源邀约：</p><p>1 由master向注册在上面的framework发送资源邀约，包含：</p><ul style="list-style-type: square;"><li>slave上的可用cpu、内存</li><li>资源列表</li></ul><p>2 由master提供资源给其framework，分配策略对所有的framework通用</p><p>3 如果资源情况不满足，framework可以拒绝资源邀约，master将邀约发送给其他framework</p><p>4 slave定期向master报告其可用资源</p><p><br /></p><p>任务类型：</p><p>mesos上可以运行不同的资源类型，取决于你的framework。如：</p><ol><li>马拉松Marathon，适合运行长期的服务，如web服务、缓存、数据库</li><li>Co....，适合运行周期性的作业，如数据备份、数据导出</li></ol><h2>常用Framework</h2><h3>Marathon</h3><p>Mesos + Marathon 对比 原始Linux内核</p><p><img class="confluence-embedded-image confluence-external-resource" width="686" src="http://img.daker.wang/wiki/1542004520519.png" data-image-src="http://img.daker.wang/wiki/1542004520519.png"></p><p>说明：</p><ol><li>Marathon + Mesos相当于系统内核</li><li>Marthon相当于内核中的外壳管理程序，如<a href="http://www.ruanyifeng.com/blog/2016/03/systemd-tutorial-commands.html">systemd</a></li><li>区别：Mesos不只是一台机器的内核，它可以调度成千上万个机器的内核，实际上它是一个数据中心的内核</li></ol><p><br /></p><p>Mesos服务整合：mesos、Marathon、负载均衡、服务发现</p><p><img class="confluence-embedded-image confluence-external-resource" width="886" src="http://img.daker.wang/wiki/1542004815147.png" data-image-src="http://img.daker.wang/wiki/1542004815147.png"></p><p>流程一（黑线）服务如何运行：资源邀约&amp;运行任务（调度器和执行器的工作过程）</p><ol><li>报告资源</li><li>Mesos向framework（马拉松）发送邀约</li><li>framework发送任务和资源请求（在哪个slave上运行，需要多少个CPU和内存），把<strong>执行器</strong>发给master</li><li>master向slave发送执行器</li><li>slave调度执行器，启动任务<ol><li>例一：tomcat web服务</li><li>例二：dubbo服务</li></ol></li></ol><p>流程二（蓝线）客户端如何访问：服务运行起来后，客户端获取响应的过程</p><ol><li>客户端访问web服务，通过Marathon-lb（marathon提供的一个<strong>负载均衡和服务发现</strong>的实现，基于HAProxy，会订阅Marathon的一个事件，知道Marathon上运行的所有程序信息，与Marathon有通讯）</li><li>HAProxy访问到具体的Slave，把执行的结果回传给Client</li></ol><h1>流程</h1><h2>解决服务编排问题</h2><ul style="list-style-type: square;"><li>服务发现</li><li>服务部署</li><li>服务更新</li><li>服务扩容</li></ul><h3>服务发现、负载均衡</h3><p><img class="confluence-embedded-image confluence-external-resource" height="50" src="http://img.daker.wang/wiki/1542005618885.png" data-image-src="http://img.daker.wang/wiki/1542005618885.png">：所有服务的注册中心，决定某个任务具体运行在哪个Slave的哪个端口上，它对每个服务的具体信息都清楚</p><p><img class="confluence-embedded-image confluence-external-resource" height="51" src="http://img.daker.wang/wiki/1542005728434.png" data-image-src="http://img.daker.wang/wiki/1542005728434.png">:可以理解为Nginx，其HAProxy和Nginx的功能相似。区别：Nginx的配置是手动配置的，HAProxy的配置是根据Marathon-loadbalance动态更新其配置的</p><p>以上，实现了服务发现和负责均衡功能</p><h3>服务部署</h3><p>流程：</p><ol><li>做一个Docker镜像</li><li>在Marathon平台上，把服务建立起来，把镜像配置进去，指定一些信息（端口号）</li><li>点击「部署」，所有服务调度流程就运行起来了</li></ol><p>哇...这么简单！</p><h3>服务更新</h3><p>流程：</p><ol><li>找到原来的服务，修改镜像版本，保存</li></ol><p>哇...下巴掉了...</p><h3>服务扩缩容</h3><p>流程：</p><ol><li>修改一个字段，点击保存...</li></ol><h1>特征</h1><h2>Mesos</h2><ol><li>强大的资源管理：保证集群内的用户平等的使用资源</li><li>Kernel和Framework分离：Mesos只负责资源的调度和管理，轻量、灵活，可以让各种程序，都使用Mesos的资源。很多厂商都支持，如果没有合适的Framework，可以自己开发。</li><li>门槛低，易使用：集群环境易搭建，长期运行的服务用Marason就好。（如果有特别的应用，需要自己实现Framework的话，门槛就高了）</li><li>大厂使用（Twitter、Apple、Uber、爱奇艺）</li></ol><h2>Marathon</h2><ol><li>高可用（支持集群）</li><li>Constraints（限制、约束）：举例 - 一些机器的CPU好，一些机器的网络好，可以给这些机器<strong>打标签</strong>，在资源邀约的时候，可以选择有指定标签的资源</li><li>服务发现&amp;负责均衡：Marathon相当于一个注册中心，Marathon-lb借助于它实现了<strong>服务发现和负载均衡</strong>的功能</li><li>健康检查：Marathon的执行器里有「健康检查」的功能，三种方式：<ol><li>基于HTTP：web服务一般会加这个健康检查，访问一个固定的页面，返回的code是200，认为服务是正常运行的；连续多次不是200，说明不健康，Marthon将其停止，再启动一个新的实例</li><li>基于TCP</li><li>基于Shell命令</li></ol></li><li>事件订阅：自己写的应用可以向Marathon注册一个事件订阅，Marathon会把事件都推送给Endpoint，包括服务运行、停止、被杀掉等事件</li><li>完善的REST API、漂亮的UI，方便查看所有服务的状态</li></ol><h1>架构图</h1><p><img class="confluence-embedded-image confluence-external-resource" width="886" src="http://img.daker.wang/wiki/1542007051496.png" data-image-src="http://img.daker.wang/wiki/1542007051496.png"></p>
+        <p>&nbsp;</p>
+    
+</div>
+
+
+    </div>
+
+    
+  </body>
+</html>

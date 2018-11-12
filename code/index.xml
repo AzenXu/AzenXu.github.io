@@ -41,6 +41,16 @@
     </item>
     
     <item>
+      <title>4 服务编排 - Mesos</title>
+      <link>http://azen.me/code/micro-server-v/</link>
+      <pubDate>Mon, 12 Nov 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://azen.me/code/micro-server-v/</guid>
+      <description>&amp;nbsp;
+初见Program against your datacenter, like it&#39;s a single pool of resources.</description>
+    </item>
+    
+    <item>
       <title>0 初识微服务</title>
       <link>http://azen.me/code/micro-server-i/</link>
       <pubDate>Wed, 07 Nov 2018 00:00:00 +0000</pubDate>
