@@ -25,6 +25,22 @@
     </item>
     
     <item>
+      <title>3 服务编排前奏 - Docker容器化</title>
+      <link>http://azen.me/code/micro-server-iv/</link>
+      <pubDate>Mon, 12 Nov 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://azen.me/code/micro-server-iv/</guid>
+      <description>&amp;nbsp;
+服务Docker化
+搭建Docker仓库，存image
+搭建高可用的集群环境，优雅的调度程序
+
+服务的Docker化把服务放在一个合适的运行环境里面
+运行环境，又叫基础镜像
+套路（Java为例）现在docker hub中寻找合适的镜像（搜Java）docker pull openjdk:7-jredocker run -it --entrypoint bash openjdk:7-jrerun个container起来把服务部署到镜像里（写DockerFile）经常变的东西不能写死到镜像里，否则一旦变更就需要重新构建这个镜像如数据库的访问地址，需要提出去而不是在配置文件里写死localhost应该写成变量的形式把要部署的服务打包成一个文件，xxx.</description>
+    </item>
+    
+    <item>
       <title>0 初识微服务</title>
       <link>http://azen.me/code/micro-server-i/</link>
       <pubDate>Wed, 07 Nov 2018 00:00:00 +0000</pubDate>
