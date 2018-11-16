@@ -77,6 +77,19 @@
     </item>
     
     <item>
+      <title>2-5 前端页面</title>
+      <link>http://azen.me/code/micro/golang-server-v/</link>
+      <pubDate>Thu, 05 Jul 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://azen.me/code/micro/golang-server-v/</guid>
+      <description>&amp;nbsp;
+前端部分，展示了如何串联三个服务器方面的知识，所以还是很有必要好好看下的。所以写了这篇wiki。
+想知道前端应该如何使用cookie和session把身份验证流程打通？
+ajax如何和服务端进行交互？
+前端 → 代理服务器 → 业务服务器 的完整链条是怎样的？</description>
+    </item>
+    
+    <item>
       <title>2-4 前端服务</title>
       <link>http://azen.me/code/micro/golang-server-iv/</link>
       <pubDate>Wed, 04 Jul 2018 00:00:00 +0000</pubDate>

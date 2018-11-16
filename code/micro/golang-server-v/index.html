@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="//gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.46-DEV" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>2-5 前端页面 &middot; 细胞的作战实验室</title>
+
+  
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/print.css" media="print">
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/poole.css">
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/syntax.css">
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/hyde.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Abril+Fatface|PT+Sans:400,400i,700">
+
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+  
+  <link href="" rel="alternate" type="application/rss+xml" title="细胞的作战实验室" />
+
+  
+</head>
+
+  <body class=" ">
+  <div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <a href="http://azen.me/"><h1>细胞的作战实验室</h1></a>
+      <p class="lead">
+      Power by <a href="http://hugo.spf13.com">hugo</a>
+      </p>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li><a href="http://azen.me/">Home</a> </li>
+      
+    </ul>
+
+    <p>&copy; 2018. All rights reserved. </p>
+  </div>
+</div>
+
+    <div class="content container">
+    <div class="post">
+  <h1>2-5 前端页面</h1>
+  <span class="post-date">Thu, Jul 5, 2018</span>
+  <p>&nbsp;</p>         <blockquote><p>前端部分，展示了如何串联三个服务器方面的知识，所以还是很有必要好好看下的。所以写了这篇wiki。</p></blockquote><h1>想知道</h1><p>前端应该如何使用cookie和session把身份验证流程打通？</p><p>ajax如何和服务端进行交互？</p><p>前端 → 代理服务器 → 业务服务器 的完整链条是怎样的？</p><h1>前端基础</h1><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="2d9ba2a1-4a50-43b2-8b87-65713cfdf950" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>$(document).ready(function () {
+    alert("主文档加载完毕")
+})
+
+//  js入口函数
+window.onload = function () {
+    // 执行代码
+    alert("js装载完毕")
+}</pre></td></tr></table><h2><span>引用</span></h2><h3><span>JS</span></h3><p><span>js内部引用别的js文件：</span></p><p><span>document.write &quot;&lt;script src='another.js'&gt;&lt;/script&gt;&quot;</span><span>;</span></p><p>本质上是应该在html中再引一个js文件的</p><pre><span style="color: rgb(232,191,106);">&lt;script </span><span style="color: rgb(186,186,186);">type=</span><span style="color: rgb(165,194,97);">&quot;text/javascript&quot; </span><span style="color: rgb(186,186,186);">src=</span><span style="color: rgb(165,194,97);">&quot;/statics/scripts/home.js&quot;</span><span style="color: rgb(232,191,106);">&gt;&lt;/script&gt;</span></pre><h3>CSS</h3><pre><span style="color: rgb(232,191,106);">&lt;link </span><span style="color: rgb(186,186,186);">rel=</span><span style="color: rgb(165,194,97);">&quot;stylesheet&quot; </span><span style="color: rgb(186,186,186);">type=</span><span style="color: rgb(165,194,97);">&quot;text/css&quot; </span><span style="color: rgb(186,186,186);">href=</span><span style="color: rgb(165,194,97);">&quot;/statics/style.css&quot; </span><span style="color: rgb(232,191,106);">/&gt;</span></pre><h2>变量</h2><p>var: <span>申明了一个要么是全局，要么是函数级的变量</span></p><ul style="list-style-type: square;"><li><span>变量声明无论出现在代码的任何位置，都会在任何代码执行之前处理</span></li><li><span><span>给一个非声明变量赋值会隐式创建一个全局变量（全局object的一个属性）</span><br /></span></li><li><span><span><span>如果不初始化，输出undefined或者''</span><br /></span></span></li></ul><p><span><span><span>let: <span>申明了一个块级域的局部变量，并且可以给它一个初始化值</span></span></span></span></p><ul style="list-style-type: square;"><li><span><span><span><span>与var相比let把变量的作用域限制在块级</span><br class="_mce_tagged_br" /></span></span></span></li></ul><p><span><span><span><span>const: <span>创建一个只读常量，在不同浏览器上表现为不可修改；建议申明后不修改；拥有块级作用域</span></span></span></span></span></p><ul style="list-style-type: square;"><li><span><span><span><span><span>可以在全局作用域或者函数内申明常量，但是必须初始化常量</span><br class="_mce_tagged_br" /></span></span></span></span></li><li><span><span><span><span><span><span>常量不能和它所在作用域内其它变量或者函数拥有相同名称</span><br /></span></span></span></span></span></li></ul><h2><span>jQuery简明</span></h2><p><span>jQuery 语法是通过<strong>选取 HTML 元素</strong>，并对选取的<strong>元素执行某些操作</strong>。</span></p><p>基础语法： <strong>$(<em>selector</em>).<em>action</em>()</strong></p><ul><li style="list-style-type: none;background-image: url(http://47.93.232.68:8090/assets/img/bullet@2x.png);">美元符号定义 jQuery</li><li style="list-style-type: none;background-image: url(http://47.93.232.68:8090/assets/img/bullet@2x.png);">选择符（selector）&quot;查询&quot;和&quot;查找&quot; HTML 元素</li><li style="list-style-type: none;background-image: url(http://47.93.232.68:8090/assets/img/bullet@2x.png);">jQuery 的 action() 执行对元素的操作</li></ul><p>实例:</p><ul><li style="list-style-type: none;background-image: url(http://47.93.232.68:8090/assets/img/bullet@2x.png);"><p>$(this).hide() - 隐藏当前元素</p></li><li style="list-style-type: none;background-image: url(http://47.93.232.68:8090/assets/img/bullet@2x.png);"><p>$(&quot;p&quot;).hide() - 隐藏所有 &lt;p&gt; 元素</p></li><li style="list-style-type: none;background-image: url(http://47.93.232.68:8090/assets/img/bullet@2x.png);"><p>$(&quot;p.test&quot;).hide() - 隐藏所有 class=&quot;test&quot; 的 &lt;p&gt; 元素</p></li><li style="list-style-type: none;background-image: url(http://47.93.232.68:8090/assets/img/bullet@2x.png);"><p>$(&quot;#test&quot;).hide() - 隐藏所有 id=&quot;test&quot; 的元素</p></li></ul><h3>Promise</h3><p>简明Demo</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="3492b865-0422-41a7-8e59-8df423558d8b" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>function runAsync(){
+    var def = $.Deferred();
+    //做一些异步操作
+    setTimeout(function(){
+        var num = Math.ceil(Math.random()*10); //生成1-10的随机数
+        console.log(num);
+        if(num&lt;=5){
+            console.log("数字OK");
+            def.resolve(num);
+        }
+        else{
+            console.log("数字太大了");
+            def.reject('数字太大了');
+        }
+    }, 2000);
+    return def.promise(); //就在这里调用
+}
+
+var d = runAsync();
+
+d.then(function(data){
+    console.log(data);
+    return runAsync();
+}, function (err) {
+    console.log("错误的回调", err)
+}).then(function(data){
+    console.log(data);
+    return runAsync();
+}, function (err) {
+    console.log("错误的回调", err)
+}).then(function(data){
+        console.log(data);
+}, function (err) {
+    console.log("错误的回调", err)
+});</pre></td></tr></table><h3>选取</h3><p><a href="https://www.runoob.com/jquery/jquery-ref-selectors.html">选择器文档</a></p><p>jQuery 选择器基于元素的 id、类、类型、属性、属性值等&quot;查找&quot;（或选择）HTML 元素。 它基于已经存在的 <a href="https://www.runoob.com/cssref/css-selectors.html">CSS 选择器</a>，除此之外，它还有一些自定义的选择器。</p><p>jQuery 中所有选择器都以美元符号开头：$()</p><table class="wrapped confluenceTable"><colgroup><col /><col /><col /></colgroup><tbody><tr><th class="confluenceTh">选谁</th><th class="confluenceTh">语法</th><th colspan="1" class="confluenceTh">目标</th></tr><tr><td class="confluenceTd"><span>标签&lt;xxx&gt;</span></td><td class="confluenceTd"><p><span class="hl-code" style="color: gray;">$</span><span class="hl-brackets" style="color: olive;">(</span><span class="hl-quotes" style="color: rgb(139,0,0);">&quot;</span><span class="hl-string" style="color: rgb(170,17,17);">button</span><span class="hl-quotes" style="color: rgb(139,0,0);">&quot;</span><span class="hl-brackets" style="color: olive;">)</span><span class="hl-code" style="color: gray;">.</span><span class="hl-identifier" style="color: rgb(0,85,170);">click</span><span class="hl-brackets" style="color: olive;">(</span><span class="hl-reserved" style="color: green;">function</span><span class="hl-brackets" style="color: olive;">(</span><span class="hl-brackets" style="color: olive;">)</span><span class="hl-brackets" style="color: olive;">{})</span></p><p><span class="hl-brackets" style="color: olive;"><span class="hl-code" style="color: gray;">$</span><span class="hl-brackets" style="color: olive;">(</span><span class="hl-quotes" style="color: rgb(139,0,0);">&quot;</span><span class="hl-string" style="color: rgb(170,17,17);">p</span><span class="hl-quotes" style="color: rgb(139,0,0);">&quot;</span><span class="hl-brackets" style="color: olive;">)</span><span class="hl-code" style="color: gray;">.</span><span class="hl-identifier" style="color: rgb(0,85,170);">hide</span><span class="hl-brackets" style="color: olive;">(</span><span class="hl-brackets" style="color: olive;">)</span><br /></span></p></td><td colspan="1" class="confluenceTd"><br /></td></tr><tr><td class="confluenceTd">id</td><td class="confluenceTd"><span class="hl-code" style="color: gray;">$</span><span class="hl-brackets" style="color: olive;">(</span><span class="hl-quotes" style="color: rgb(139,0,0);">&quot;</span><span class="hl-string" style="color: rgb(170,17,17);">#test</span><span class="hl-quotes" style="color: rgb(139,0,0);">&quot;</span><span class="hl-brackets" style="color: olive;">)</span><span class="hl-code" style="color: gray;">.</span><span class="hl-identifier" style="color: rgb(0,85,170);">hide</span><span class="hl-brackets" style="color: olive;">(</span><span class="hl-brackets" style="color: olive;">)</span><span class="hl-code" style="color: gray;">;</span></td><td colspan="1" class="confluenceTd">&lt;p id=&quot;test&quot;&gt;pick me&lt;/p&gt;</td></tr><tr><td class="confluenceTd">class</td><td class="confluenceTd"><span style="color: rgb(68,68,68);">$(&quot;.test&quot;)</span></td><td colspan="1" class="confluenceTd"><pre><span><span class="cm-tag cm-bracket" style="color: rgb(17,119,0);">&lt;</span><span class="cm-tag" style="color: rgb(17,119,0);">p</span> <span class="cm-attribute" style="color: rgb(0,0,204);">class</span>=<span class="cm-string" style="color: rgb(170,17,17);">&quot;test&quot;</span><span class="cm-tag cm-bracket" style="color: rgb(17,119,0);">&gt;</span>这是一个段落。<span class="cm-tag cm-bracket" style="color: rgb(17,119,0);">&lt;/</span><span class="cm-tag" style="color: rgb(17,119,0);">p</span><span class="cm-tag cm-bracket" style="color: rgb(17,119,0);">&gt;</span></span></pre></td></tr><tr><td colspan="1" class="confluenceTd">所有</td><td colspan="1" class="confluenceTd"><span>$(&quot;*&quot;)</span></td><td colspan="1" class="confluenceTd"><br /></td></tr><tr><td colspan="1" class="confluenceTd"><span>当前 HTML 元素</span></td><td colspan="1" class="confluenceTd"><span>$(this)</span></td><td colspan="1" class="confluenceTd"><br /></td></tr><tr><td colspan="1" class="confluenceTd"><span>(组合) 标签 + class</span></td><td colspan="1" class="confluenceTd"><span>$(&quot;p.intro&quot;)</span></td><td colspan="1" class="confluenceTd">&lt;p class=&quot;intro&quot;&gt;这是一个段落，点击按钮隐藏。&lt;/p&gt;</td></tr><tr><td colspan="1" class="confluenceTd">(组合) 标签 + 排序</td><td colspan="1" class="confluenceTd"><span>$(&quot;p:first&quot;)</span></td><td colspan="1" class="confluenceTd"><br /></td></tr><tr><td colspan="1" class="confluenceTd">(组合) 标签+标签+排序</td><td colspan="1" class="confluenceTd"><span>$(&quot;ul li:first&quot;)</span></td><td colspan="1" class="confluenceTd"><span>选取第一个 &lt;ul&gt; 元素的第一个 &lt;li&gt; 元素</span></td></tr><tr><td colspan="1" class="confluenceTd"><br /></td><td colspan="1" class="confluenceTd"><span>$(&quot;ul li:first-child&quot;)</span></td><td colspan="1" class="confluenceTd"><span>选取每个 &lt;ul&gt; 元素的第一个 &lt;li&gt; 元素</span></td></tr><tr><td colspan="1" class="confluenceTd"><br /></td><td colspan="1" class="confluenceTd"><span>$(&quot;[href]&quot;)</span></td><td colspan="1" class="confluenceTd"><span>选取带有 href 属性的元素</span></td></tr><tr><td colspan="1" class="confluenceTd"><br /></td><td colspan="1" class="confluenceTd"><span>$(&quot;a[target='_blank']&quot;)</span></td><td colspan="1" class="confluenceTd"><span>选取所有 target 属性值等于 &quot;_blank&quot; 的 &lt;a&gt; 元素</span></td></tr><tr><td colspan="1" class="confluenceTd"><br /></td><td colspan="1" class="confluenceTd"><span>$(&quot;a[target!='_blank']&quot;)</span></td><td colspan="1" class="confluenceTd"><span>选取所有 target 属性值不等于 &quot;_blank&quot; 的 &lt;a&gt; 元素</span></td></tr><tr><td colspan="1" class="confluenceTd"><br /></td><td colspan="1" class="confluenceTd"><span>$(&quot;:button&quot;)</span></td><td colspan="1" class="confluenceTd"><span>选取所有 type=&quot;button&quot; 的 &lt;input&gt; 元素 和 &lt;button&gt; 元素</span></td></tr><tr><td colspan="1" class="confluenceTd"><br /></td><td colspan="1" class="confluenceTd"><span>$(&quot;tr:even&quot;)</span></td><td colspan="1" class="confluenceTd"><span>选取偶数位置的 &lt;tr&gt; 元素</span></td></tr><tr><td colspan="1" class="confluenceTd"><br /></td><td colspan="1" class="confluenceTd"><span>$(&quot;tr:odd&quot;)</span></td><td colspan="1" class="confluenceTd"><span>选取奇数位置的 &lt;tr&gt; 元素</span></td></tr></tbody></table><h3>响应</h3><p>使用jQuery让元素响应各种「事件」</p><p><a href="https://www.runoob.com/jquery/jquery-ref-events.html">事件方法文档</a></p><table class="wrapped confluenceTable"><colgroup><col /><col /><col /><col /></colgroup><tbody><tr><th style="text-align: left;" class="confluenceTh">鼠标事件</th><th style="text-align: left;" class="confluenceTh">键盘事件</th><th style="text-align: left;" class="confluenceTh">表单事件</th><th style="text-align: left;" class="confluenceTh">文档/窗口事件</th></tr><tr><td class="confluenceTd"><a href="https://www.runoob.com/jquery/event-click.html">click</a></td><td class="confluenceTd"><a href="https://www.runoob.com/jquery/event-keypress.html">keypress</a></td><td class="confluenceTd"><a href="https://www.runoob.com/jquery/event-submit.html">submit</a></td><td class="confluenceTd"><a href="https://www.runoob.com/jquery/event-load.html">load</a></td></tr><tr><td class="confluenceTd"><a href="https://www.runoob.com/jquery/event-dblclick.html">dblclick</a> 双击</td><td class="confluenceTd"><a href="https://www.runoob.com/jquery/event-keydown.html">keydown</a></td><td class="confluenceTd"><a href="https://www.runoob.com/jquery/event-change.html">change</a></td><td class="confluenceTd"><a href="https://www.runoob.com/jquery/event-resize.html">resize</a></td></tr><tr><td class="confluenceTd"><a href="https://www.runoob.com/jquery/event-mouseenter.html">mouseenter</a> <span>鼠标指针穿过元素</span></td><td class="confluenceTd"><a href="https://www.runoob.com/jquery/event-keyup.html">keyup</a></td><td class="confluenceTd"><a href="https://www.runoob.com/jquery/event-focus.html">focus</a></td><td class="confluenceTd"><a href="https://www.runoob.com/jquery/event-scroll.html">scroll</a></td></tr><tr><td class="confluenceTd"><a href="https://www.runoob.com/jquery/event-mouseleave.html">mouseleave</a> <span>鼠标指针离开元素</span></td><td class="confluenceTd"><br /></td><td class="confluenceTd"><a href="https://www.runoob.com/jquery/event-blur.html">blur</a></td><td class="confluenceTd"><a href="https://www.runoob.com/jquery/event-unload.html">unload</a></td></tr></tbody></table><p>使用示例：</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="e10fc7a2-8237-4fa4-8be5-4fb64cb8b66c" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>$("p").click(function(){
+    // 动作触发后执行的代码!!
+});</pre></td></tr></table><h3>操纵</h3><p><a href="https://www.runoob.com/jquery/jquery-ref-effects.html">效果方法文档</a></p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="459c89e4-b778-41c6-80ff-c759c31e8c3e" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>$("button").click(function(){
+  $("p").hide(1000);
+});</pre></td></tr></table><h3>其他</h3><p><a href="https://www.runoob.com/jquery/jquery-ref-html.html">HTML插元素</a></p><h3>Ajax</h3><p>javascript请求网络的异步库</p><p><a href="https://www.runoob.com/jquery/jquery-ref-ajax.html">文档</a></p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="01e2544c-b882-40de-b4e7-e4acc58a0b2e" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>$("button").click(function(){
+  $.get("demo_test.php",function(data,status){
+    alert("数据: " + data + "\n状态: " + status);
+  });
+});
+
+
+$("button").click(function(){
+    $.post("/try/ajax/demo_test_post.php",
+    {
+        name:"菜鸟教程",
+        url:"http://www.runoob.com"
+    },
+        function(data,status){
+        alert("数据: \n" + data + "\n状态: " + status);
+    });
+});</pre></td></tr></table><h1>工程实现</h1><p>基本思路：</p><p>1.绑定事件</p><ul style="list-style-type: square;"><li>页面的静态元素（html模板里有的，固定展示的元素），在document.load之后，绑定各种事件</li><li>页面的动态元素（html里没有，请求回来数据以后生成的元素，如：评论列表），在<span style="color: rgb(128,0,0);"><strong>数据请求回来、根据数据生成好DOM</strong></span>之后，绑定各种时间</li></ul><p>PS：<strong>数据请求回来、根据数据生成好DOM → 就是initPage方法</strong></p><p><br /></p><p>2. 根据接口返回结果，刷新界面</p><p><br /></p><p>所有页面都是这样的。然后，跳转新页面的逻辑和时机，是服务端控制的。</p><ul style="list-style-type: square;"><li>不像iOS，是先跳新页面，再发网络请求，在新页面中请求下个请求。</li></ul><p><br /></p><p>home.html</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="ede583ed-0c8b-4fdf-b320-ab065acee841" data-macro-parameters="language=xml" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGU6bGFuZ3VhZ2U9eG1sfQ&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>&lt;!DOCTYPE html>
+&lt;html>
+&lt;head>
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1">
+    &lt;link rel="stylesheet" type="text/css" href="./style.css">
+    &lt;script
+            src="https://code.jquery.com/jquery-3.3.1.min.js"
+            integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+            crossorigin="anonymous">
+    &lt;/script>
+    &lt;script type="text/javascript" src="./scripts/home.js">&lt;/script>
+    &lt;script type="text/javascript" src="./scripts/requests.js">&lt;/script>
+&lt;/head>
+
+&lt;body id="main-back">
+
+&lt;div class="top-nav">
+    &lt;a class="active" href="#home">Home&lt;/a>
+    &lt;a href="#news">{{.Name}}&lt;/a>
+    &lt;a href="#about">Help&lt;/a>
+&lt;/div>
+
+&lt;div class="topic-back" style="padding-left:16px">
+    &lt;h2 id="title">嗨，这里是你的体内，我是红血球...请随意参观~&lt;/h2>
+&lt;/div>
+
+&lt;form method="post" id="reg-submit" action="/userhome" style="width: 500px; margin: 0 auto;">
+    &lt;div class="container">
+        &lt;h1>Register&lt;/h1>
+        &lt;hr>
+
+        &lt;label for="email">&lt;b>User name&lt;/b>&lt;/label>
+        &lt;input id="username" type="text" placeholder="Enter user name" name="username" required>
+
+        &lt;label for="psw">&lt;b>Password&lt;/b>&lt;/label>
+        &lt;input id="pwd" type="password" placeholder="Enter Password" name="pwd" required>
+
+        &lt;hr>
+        &lt;p>By creating an account you agree to our &lt;a href="#">Terms &amp; Privacy&lt;/a>.&lt;/p>
+
+        &lt;button id="reg-btn" type="submit" class="register-btn">Register&lt;/button>
+    &lt;/div>
+
+    &lt;div class="container sign-in">
+        &lt;p>Already have an account? &lt;a id="sign-in-href" href="#"&gt;Sign in&lt;/a>.&lt;/p>
+    &lt;/div>
+&lt;/form>
+
+&lt;form method="post" id="sign-in-submit" action="/userhome" style="width: 500px; margin: 0 auto; display: none;">
+    &lt;div class="container">
+        &lt;h1>Sign In&lt;/h1>
+        &lt;hr>
+
+        &lt;label for="email">&lt;b>User name&lt;/b>&lt;/label>
+        &lt;input id="s-username" type="text" placeholder="Enter user name" name="username" required>
+
+        &lt;label for="psw">&lt;b>Password&lt;/b>&lt;/label>
+        &lt;input id="s-pwd" type="password" placeholder="Enter Password" name="pwd" required>
+
+        &lt;hr>
+        &lt;p>By creating an account you agree to our &lt;a href="#">Terms &amp; Privacy&lt;/a>.&lt;/p>
+
+        &lt;button id="sign-in-btn" type="submit" class="register-btn">Sign In&lt;/button>
+    &lt;/div>
+
+    &lt;div class="container sign-in">
+        &lt;p>Don't have an account? &lt;a id="register-href" href="#">Register&lt;/a>.&lt;/p>
+    &lt;/div>
+&lt;/form>
+
+&lt;/body>
+&lt;/html></pre></td></tr></table><p>呈现</p><p><img class="confluence-embedded-image confluence-external-resource" height="250" src="http://img.daker.wang/wiki/1533868102548.png" data-image-src="http://img.daker.wang/wiki/1533868102548.png"></p><p>注意点：css &amp; js文件路径不能直接用html的相对路径，而要用之前通过web服务绑定的「静态资源」路径</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="72fb7c4e-2feb-4b31-9dc5-b9dd65cd0ae3" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>r.ServeFiles("/statics/*filepath", http.Dir("./template")) // 把template文件做了静态资源绑定</pre></td></tr></table><p>所以，css和js的引用路径：</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="104372d5-6d59-4812-839e-7a81815ddac7" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>❌ &lt;link rel="stylesheet" type="text/css" href="./style.css">
+✅ &lt;link rel="stylesheet" type="text/css" href="/statics/style.css" /></pre></td></tr></table><p>参考：<a href="https://golangtc.com/t/55555bcd421aa90930000005">问答</a></p>
+        <p>&nbsp;</p>
+    
+</div>
+
+
+    </div>
+
+    
+  </body>
+</html>
