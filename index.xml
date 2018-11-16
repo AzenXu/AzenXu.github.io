@@ -319,6 +319,22 @@ at 和 crontabat：处理只发生一次的事件</description>
     </item>
     
     <item>
+      <title>2-x 复习 &amp;amp; 完善Comments功能模块</title>
+      <link>http://azen.me/code/micro/golang-server-vi/</link>
+      <pubDate>Fri, 06 Jul 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://azen.me/code/micro/golang-server-vi/</guid>
+      <description>&amp;nbsp;
+这一节笔记，写于学习完课程 &amp;amp; 妈来北京玩了10天之后。
+通过完善这个模块，可以快速回顾学到的服务端开发知识点。以后如果忘了，也可以循着这章再走一遍，就可以想起来了~
+开始标签：https://github.com/AzenXu/Go-execise/tree/2018.8.21.comment.start
+结束标签：https://github.com/AzenXu/Go-execise/tree/2018.8.21.comment.done
+
+思路：
+以前端为调试开始点。</description>
+    </item>
+    
+    <item>
       <title>2-5 前端页面</title>
       <link>http://azen.me/code/micro/golang-server-v/</link>
       <pubDate>Thu, 05 Jul 2018 00:00:00 +0000</pubDate>
