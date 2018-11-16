@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="//gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.46-DEV" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>3 网站上云 &middot; 细胞的作战实验室</title>
+
+  
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/print.css" media="print">
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/poole.css">
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/syntax.css">
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/hyde.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Abril+Fatface|PT+Sans:400,400i,700">
+
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+  
+  <link href="" rel="alternate" type="application/rss+xml" title="细胞的作战实验室" />
+
+  
+</head>
+
+  <body class=" ">
+  <div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <a href="http://azen.me/"><h1>细胞的作战实验室</h1></a>
+      <p class="lead">
+      Power by <a href="http://hugo.spf13.com">hugo</a>
+      </p>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li><a href="http://azen.me/">Home</a> </li>
+      
+    </ul>
+
+    <p>&copy; 2018. All rights reserved. </p>
+  </div>
+</div>
+
+    <div class="content container">
+    <div class="post">
+  <h1>3 网站上云</h1>
+  <span class="post-date">Sat, Jul 7, 2018</span>
+  <p>&nbsp;</p>         <h1>0x0 CloudNative概述</h1><p><strong>是什么</strong>：借助于大规模分布式系统在资源利用上的灵活使用、服务化拆分，演变出来的一种软件部署、架构、上线的流程方面的<strong>最佳实践</strong></p><ul style="list-style-type: square;"><li>Cloud Native在云刚出来的时候就有了</li><li>没有任何组织清晰定义云原生，而是一种习惯用法和最佳实践</li></ul><p>参考：<a href="https://baike.baidu.com/item/Cloud%20Native/19865304">百度百科</a></p><h2>特点</h2><p><img class="confluence-embedded-image confluence-external-resource" height="215" src="http://img.daker.wang/wiki/1534915410803.png" data-image-src="http://img.daker.wang/wiki/1534915410803.png"></p><h3>松耦合(SOA)</h3><p>每一个独立拆分的服务，具有独立完整的生命周期，不受别的服务影响和制约。</p><ul style="list-style-type: square;"><li>微服务领域，涉及其他知识点：<ul style="list-style-type: square;"><li>服务注册</li><li>微服务网关</li><li>契约调用等</li></ul></li><li>以防止每一个服务调用之间出现不一致不统一的情况</li></ul><h4>项目实现</h4><p><img class="confluence-embedded-image confluence-external-resource" height="250" src="http://img.daker.wang/wiki/1534916304367.png" data-image-src="http://img.daker.wang/wiki/1534916304367.png"></p><h3>无状态(Stateless)</h3><p>RESTful中提到过，<a href="http://kyfxbl.iteye.com/blog/1831869">参考</a></p><h3>伸缩性(<strong><span>scalability)</span></strong></h3><p>伸缩性分为：纵向的伸缩(scale up)、横向的伸缩(scale out)</p><ul style="list-style-type: square;"><li>纵向伸缩：给一个机器堆资源，总有一个瓶颈会堆不上去。</li><li>横向伸缩：我们把服务设计成可横向扩展的模式，能扩展500台机器，就是伸缩性</li></ul><h3>冗余</h3><p>只有一个节点提供服务，挂了就没了。用冗余做备用，提高可靠性</p><h4>项目实现</h4><p><img class="confluence-embedded-image confluence-external-resource" height="250" src="http://img.daker.wang/wiki/1534916378576.png" data-image-src="http://img.daker.wang/wiki/1534916378576.png"></p><p>无状态：我们的案例中，每一个Server已经是无状态的了，本身不存任何东西，只提供API（除了session之外）</p><p>伸缩和冗余：通过加LB(负载均衡)实现</p><h3>平台无关性</h3><p>AWS上的东东，只用非常少的成本，可以迁移到阿里云上</p><ul style="list-style-type: square;"><li>在公有云上，可以预见的是一定不会出现一家独大的情况。</li><li>现有可靠性高的做法：<ul style="list-style-type: square;"><li>把应用分别部署在不同的云上<ul style="list-style-type: square;"><li>用阿里云的CDN，腾讯云的计算存储</li><li>也可以按照业务拆分：用户信息放在阿里云，商品信息放在华为云</li></ul></li></ul></li></ul><h4>项目实现</h4><p><img class="confluence-embedded-image confluence-external-resource" height="250" src="http://img.daker.wang/wiki/1534916573483.png" data-image-src="http://img.daker.wang/wiki/1534916573483.png"></p><h5>OSS</h5><p>我们之前把上传的视频直接存在native，这样不安全</p><p>正确的方法：使用当前云平台的存储服务 - 阿里云OSS 或 七牛云</p><h5>Data Base</h5><p>可以自己部署，也可以使用云平台的 - 云平台的会比较贵</p><h2>部署和发布</h2><p><img class="confluence-embedded-image confluence-external-resource" height="250" src="http://img.daker.wang/wiki/1534916669444.png" data-image-src="http://img.daker.wang/wiki/1534916669444.png"></p><p>自动化部署：能用机器的别用人手敲（有相关工具，我们在本项目中使用脚本进行半自动部署）</p><p>良好的迁移性：和CloudNative的「平台无关性」相呼应，可以很快的迁移到其他云平台上</p><p>多云共生：不要把鸡蛋放在同一个篮子里</p><h1>0x1 使用OSS做视频上传及播放</h1><p><a href="https://www.aliyun.com/product/oss?spm=a2c4g.11186623.2.9.4jFKoz">阿里云OSS文档</a></p><p>SSO: <span>Object Storage Service <span>使用OSS，您可以通过网络随时存储和调用包括文本、图片、音频和视频等在内的各种非结构化数据文件</span></span></p><h2>费用与购买</h2><table class="wrapped confluenceTable" style="text-align: center;"><colgroup><col /><col /><col /><col /><col /></colgroup><tbody><tr><td style="text-align: left;" class="confluenceTd">资费项</td><td style="text-align: left;" class="confluenceTd">计费项</td><td style="text-align: left;" class="confluenceTd">标准型单价</td><td style="text-align: left;" class="confluenceTd">低频访问型单价</td><td style="text-align: left;" class="confluenceTd">归档型单价</td></tr><tr><td style="text-align: left;" class="confluenceTd">存储费用<span style="color: rgb(24,156,239);">(注①)</span></td><td style="text-align: left;" class="confluenceTd">数据存储</td><td style="text-align: left;" class="confluenceTd">0.12元/GB/月</td><td style="text-align: left;" class="confluenceTd">0.08元/GB/月</td><td style="text-align: left;" class="confluenceTd">0.033/GB/月</td></tr><tr><td style="text-align: left;" class="confluenceTd">流量费用<span style="color: rgb(24,156,239);">(注①)</span></td><td style="text-align: left;" class="confluenceTd">内/外网流入流量（数据上传到OSS）</td><td style="text-align: left;" class="confluenceTd">免费</td><td style="text-align: left;" class="confluenceTd">免费</td><td style="text-align: left;" class="confluenceTd">免费</td></tr><tr><td style="text-align: left;" class="confluenceTd"><br /></td><td style="text-align: left;" class="confluenceTd">内网流出流量（通过ECS云服务器下载OSS的数据）</td><td style="text-align: left;" class="confluenceTd">免费</td><td style="text-align: left;" class="confluenceTd">免费</td><td style="text-align: left;" class="confluenceTd">免费</td></tr><tr><td style="text-align: left;" class="confluenceTd"><br /></td><td style="text-align: left;" class="confluenceTd">外网流出流量</td><td style="text-align: left;" class="confluenceTd">00:00-08:00（闲时）：0.25元/GB<br />8:00-24:00（忙时）：0.50元/GB</td><td style="text-align: left;" class="confluenceTd">00:00-08:00（闲时）：0.25元/GB<br />8:00-24:00（忙时）：0.50元/GB</td><td style="text-align: left;" class="confluenceTd">00:00-08:00（闲时）：0.25元/GB<br />8:00-24:00（忙时）：0.50元/GB</td></tr><tr><td style="text-align: left;" class="confluenceTd"><br /></td><td style="text-align: left;" class="confluenceTd">CDN回源流出流量</td><td style="text-align: left;" class="confluenceTd">0.15元/GB</td><td style="text-align: left;" class="confluenceTd">0.15元/GB</td><td style="text-align: left;" class="confluenceTd">0.15元/GB</td></tr><tr><td style="text-align: left;" class="confluenceTd"><br /></td><td style="text-align: left;" class="confluenceTd">跨区域复制流量</td><td style="text-align: left;" class="confluenceTd">0.50元/GB</td><td style="text-align: left;" class="confluenceTd">0.50元/GB</td><td style="text-align: left;" class="confluenceTd">0.50元/GB</td></tr><tr><td style="text-align: left;" class="confluenceTd">请求费用</td><td style="text-align: left;" class="confluenceTd">所有请求类型</td><td style="text-align: left;" class="confluenceTd">0.01元/万次</td><td style="text-align: left;" class="confluenceTd">0.1元/万次</td><td style="text-align: left;" class="confluenceTd">0.1元/万次</td></tr><tr><td style="text-align: left;" class="confluenceTd">数据处理费用 <span style="color: rgb(24,156,239);">(注②)</span></td><td style="text-align: left;" class="confluenceTd">图片处理</td><td style="text-align: left;" class="confluenceTd">每月0-10TB：免费<br />&gt;10TB：0.025元/GB</td><td style="text-align: left;" class="confluenceTd">每月0-10TB：免费<br />&gt;10TB：0.025元/GB</td><td style="text-align: left;" class="confluenceTd">无</td></tr><tr><td style="text-align: left;" class="confluenceTd"><br /></td><td style="text-align: left;" class="confluenceTd">视频截帧</td><td style="text-align: left;" class="confluenceTd">0.1元/千张</td><td style="text-align: left;" class="confluenceTd">0.1元/千张</td><td style="text-align: left;" class="confluenceTd">无</td></tr><tr><td style="text-align: left;" class="confluenceTd"><br /></td><td style="text-align: left;" class="confluenceTd">数据取回</td><td style="text-align: left;" class="confluenceTd">免费</td><td style="text-align: left;" class="confluenceTd">0.0325元/GB</td><td style="text-align: left;" class="confluenceTd">0.06元/GB</td></tr></tbody></table><p><span><span><a href="https://www.aliyun.com/price/product?spm=5176.7933691.744462.price2.5afb6a56343Lgg#/oss/detail">参考链接</a></span></span></p><p><span><span>存储费用可以买存储包，做活动99块钱1T 3年</span></span></p><p><span><span>流量费用的话，上传免费，下载内网流出免费...我们的视频网站其实是用web服务器做代理的，所以应该算是内网流量吧...应该是免费的...</span></span></p><p><span><span>不然就买个99块钱儿1T的吧...穷啊😂</span></span></p><p>ㄟ...其实9块钱买个40G1年的就行吧...老想贪小便宜啊🙈</p><p><span><span>买的存储包：</span></span></p><p><span><span><img class="confluence-embedded-image confluence-external-resource" height="250" src="http://img.daker.wang/wiki/1534918792766.png" data-image-src="http://img.daker.wang/wiki/1534918792766.png"></span></span></p><h2>介绍及配置</h2><p><img class="confluence-embedded-image confluence-external-resource" height="250" src="http://img.daker.wang/wiki/1534919204130.png" data-image-src="http://img.daker.wang/wiki/1534919204130.png"></p><p>Bucket：用来存放文件的地方</p><p>EndPoint：分为三个，用哪个地址访问它上传文件，取决于你的虚拟机在哪 - 内网访问流量免费~~</p><p>地址：我们的ESC在华北二，所以OSS也用华北二的</p><h2>视频上传/下载代码改造</h2><p>之前的上传、下载，是webserver作为代理，把真正的请求发给9001端口的StreamServer，StreamServer把文件存到本地 | 从本地读文件作为流传给webserver</p><p>改造方案</p><ul style="list-style-type: square;"><li>播放视频的时候，stream server只需要做301重定向就好，让webServer直接做OSS的代理服务器（PS.内网，依旧不收流量费的）</li><li>上传文件的时候，先传到stream server，stream server再把文件转存到OSS，最后把stream server本地的文件干掉</li></ul><h3>上传方案及改造</h3><p>要给OSS传文件，一定不能直接通过js做上传 - 因为js相当于明文，会把OSS给的各种token暴露掉</p><p>三种安全的上传方案：</p><p><img class="confluence-embedded-image confluence-external-resource" height="129" src="http://img.daker.wang/wiki/1534920081352.png" data-image-src="http://img.daker.wang/wiki/1534920081352.png"></p><p>特点：我们选择最简单的第一种，安全性高，性能较低，不需要开启跨域访问</p><p>SDK：<a href="https://github.com/aliyun/aliyun-oss-go-sdk">阿里云OSS</a></p><blockquote><p><span style="color: rgb(106,115,125);">go get <a href="http://github.com/aliyun/aliyun-oss-go-sdk/oss">github.com/aliyun/aliyun-oss-go-sdk/oss</a></span></p></blockquote><p><br /></p><p>go的包管理：</p><p>可以使用vendor，把所有的第三方包都放到vendor文件夹下，vendor文件夹放在项目的根目录下</p><ul style="list-style-type: square;"><li>不用担心绝对地址和gopath的冲突</li><li>vendor在工程上是非常有用的</li></ul><p><br /></p><p>实现文件上传的util方法</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="075ca4fc-5d5c-446d-ab91-2c1a7e282807" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>package ossops
+
+import (
+   "github.com/aliyun/aliyun-oss-go-sdk/oss"
+)
+
+var EndPoint string
+var AccessKeyId string
+var AccessKeySecret string
+
+func init() {
+   EndPoint = ""
+   AccessKeyId = ""
+   AccessKeySecret = ""
+}
+
+func UploadToOss(filename string, path string, bucketname string) (ok bool) {
+   client, err := oss.New(EndPoint, AccessKeyId, AccessKeySecret)
+   if err != nil {
+      // HandleError(err)
+      return false
+   }
+
+   bucket, err := client.Bucket("my-bucket")
+   if err != nil {
+      // HandleError(err)
+      return false
+   }
+
+   err = bucket.UploadFile(filename, path, 500 * 1024, oss.Routines(3))
+   if err != nil {
+      // HandleError(err)
+      return false
+   }
+
+   return true
+}</pre></td></tr></table><p>UploadFile(pa1, pa2, 上传的每个chunk大小, 并发上传数量)</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="0504087e-8569-4163-bf0a-99b970c95cfa" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>func uploadHandler(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
+    // ...
+    ok := ossops.UploadToOss("/videos/"+fn, uri, "daker-wang-video"); if !ok {
+      fmt.Println("上传到云OSS失败", err)
+      response.SendErrorResponse(writer, defs.ErrorInternalFaults)
+      return
+   } else {
+      //  上传成功，干掉native文件
+      os.Remove(uri)
+   }
+
+   //  报告结果
+   response.SendNormalResponse(writer, "upload successful", http.StatusCreated)
+}</pre></td></tr></table><p>上传到本地服务器成功后，往阿里云传。成功后删掉本地文件。</p><h3>播放方案及改造</h3><p>改造前：</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="bbb79d2b-cf66-48d0-b89c-0a28ab28ce68" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>func streamHandler(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
+   //  找到文件
+   fn := params.ByName("vid-id")
+   uri := filePath + fn
+   //  打开文件 - 不是读二进制哦ioutil.ReadAll()
+   file, e := os.Open(uri)
+   defer file.Close()
+
+   if e != nil {
+      log.Error(e.Error())
+      response.SendErrorResponse(writer, defs.ErrorInternalFaults)
+      return
+   }
+
+   //  写头
+   writer.Header().Set("Content-Type", "video/mp4")
+
+   //  写流
+   http.ServeContent(writer, request, "", time.Now(), file)
+}</pre></td></tr></table><p>改造后：</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="9c4ed46d-9a12-4185-bdb6-6aa940cf15df" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>func streamHandler(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
+   filename := "/videos/" + params.ByName("vid-id")
+   bucket := "daker-wang-video.oss-cn-beijing-internal.aliyuncs.com"
+   uri := bucket + filename
+
+   log.Info("☁️转发到OSS服务器 %s", filename)
+   
+   http.Redirect(writer, request, uri, http.StatusMovedPermanently)
+}</pre></td></tr></table><h1>0x2 配置修改</h1><p>做部署的时候，一般会有一个统一的配置文件，用来根据不同的服务和模块做不同的配置。</p><p>我们需要把配置抽出来写在同一个地方管理，如一个文件中</p><p>微服务架构下，有成百上千的服务，只有一个文件会带来很多不便，需要一个配置服务器</p><ul style="list-style-type: square;"><li>如<a href="https://www.cnblogs.com/sanyuanempire/p/6169517.html">CMDB配置服务器</a></li><li>用来刷新、修改各种配置</li></ul><p>待配置内容：</p><ol><li>负载均衡服务器地址<ol><li>按照我们之前的说明，三个后端服务都挂载LB上，前端服务通过LB访问后端服务(忘了的话可以返回去看一下顶部的架构图)</li></ol></li><li>OSS地址</li></ol><h2>使用Vendor管理公共资源</h2><p>如果我们给每个server都复制粘贴一个Config.go文件，会很难维护。</p><p>可以使用Vendor文件夹来解决共有文件问题</p><p>Vendor文件夹，用来放第三方包 &amp; 共用文件</p><p><img class="confluence-embedded-image confluence-external-resource" height="250" src="http://img.daker.wang/wiki/1534928106878.png" data-image-src="http://img.daker.wang/wiki/1534928106878.png"></p><p>config.go文件用来读取配置描述文件并把配置解析出来</p><ul style="list-style-type: square;"><li>错误一定要panic掉，不让服务起来</li></ul><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="c606d375-a9bb-48a7-afc3-18abad319602" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>package config
+
+import (
+   "os"
+   "encoding/json"
+)
+
+type Configuration struct {
+   LBAddress string `json:"lb_address"`
+   OSSAddress string `json:"oss_address"`
+}
+
+var configuration *Configuration
+
+func init() {
+   file, _ := os.Open("./config.json ")
+   defer file.Close()
+
+   decoder := json.NewDecoder(file)
+   config := &amp;Configuration{}
+
+   err := decoder.Decode(config); if err != nil {
+      panic(err)
+   }
+}
+
+func GetLBAddress() (lbAddress string) {
+   return configuration.LBAddress
+}
+
+func GetOSSAddress() (ossAddress string) {
+   return configuration.OSSAddress
+}</pre></td></tr></table><h2>引用Vendor中的资源</h2><p>vendor文件夹中的引用，变的非常简单：通过根目录下的第一条子目录来索引需要的包即可</p><p><strong>举个栗子🌰</strong></p><p>前面讲到的ossops.go文件，引用vendor中的config示例</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="bebba355-de90-4aa8-b9cc-23c19ba66bb5" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>package ossops
+
+import (
+   "github.com/aliyun/aliyun-oss-go-sdk/oss"
+   "azen/config" // 注意这里
+)
+
+var EndPoint string
+var AccessKeyId string
+var AccessKeySecret string
+
+func init() {
+   EndPoint = config.GetOSSAddress()
+   AccessKeyId = ""
+   AccessKeySecret = ""
+}</pre></td></tr></table><h1>0x3 负载均衡服务器</h1><p>开始的时候，我们的api转发是交给web服务器来做的。为了实现Cloud Native的「伸缩性」和「冗余」，我们引入了LB服务器。</p><p>需要让三个后端服务器挂载在LB上，web服务通过LB和后端服务交互。</p><h2>开通阿里云LB</h2><p><img class="confluence-embedded-image confluence-external-resource" width="686" src="http://img.daker.wang/wiki/1534929769691.png" data-image-src="http://img.daker.wang/wiki/1534929769691.png"></p><p>实例类型选择「私网」，网络类型选择「专有网络」，实例规格为「性能共享型实例」可以内网免费使用负载均衡服务器</p><p><img class="confluence-embedded-image confluence-external-resource" width="686" src="http://img.daker.wang/wiki/1534930047061.png" data-image-src="http://img.daker.wang/wiki/1534930047061.png"></p><p>挂载好ESC实例</p><p><img class="confluence-embedded-image confluence-external-resource" width="686" src="http://img.daker.wang/wiki/1534930226769.png" data-image-src="http://img.daker.wang/wiki/1534930226769.png"></p><p>添加端口监听</p><p><img class="confluence-embedded-image confluence-external-resource" height="250" src="http://img.daker.wang/wiki/1534930417382.png" data-image-src="http://img.daker.wang/wiki/1534930417382.png"></p><p>前端协议默认为TCP，一般情况下是四层网络，需要配置连接什么的</p><p>运维新手可以选择HTTP，使用七层负载均衡，相对简单，前端使用http进来的请求，会分别轮询后端挂载的所有端口</p><p><img class="confluence-embedded-image confluence-external-resource" height="250" src="http://img.daker.wang/wiki/1534930583480.png" data-image-src="http://img.daker.wang/wiki/1534930583480.png"></p><p>端口号9000是我们的api server端口，绑定好就好。类似的还有stream server端口</p><p>第二步的「健康检查」可以关闭</p><p><img class="confluence-embedded-image confluence-external-resource" width="686" src="http://img.daker.wang/wiki/1534930733896.png" data-image-src="http://img.daker.wang/wiki/1534930733896.png"></p><p>已经开始监听了</p><h2>改造web server</h2><p>之前直接转发给对应的后端server，改变为转发给LB。</p><p>Proxy:</p><pre><br /></pre><p><span style="color: rgb(48,190,71);"><s>&quot;http://localhost:9001&quot;</s> → </span>&quot;http://&quot; + <span style="color: rgb(144,119,198);">config</span>.<span style="color: rgb(255,227,123);">GetLBAddress</span>() + <span style="color: rgb(48,190,71);">&quot;:9001&quot;</span></p><p><span style="color: rgb(48,190,71);"><span style="color: rgb(51,51,51);">转发:</span></span></p><p><span style="color: rgb(101,152,198);">u</span>.<span style="color: rgb(91,198,0);">Host </span>= <span style="color: rgb(48,190,71);">&quot;localhost&quot; </span>+ <span style="color: rgb(48,190,71);">&quot;:&quot; </span>+ <span style="color: rgb(101,152,198);">u</span>.<span style="color: rgb(255,227,123);">Port</span>()  →   <span style="color: rgb(101,152,198);">u</span>.<span style="color: rgb(91,198,0);">Host </span>= <span style="color: rgb(144,119,198);">config</span>.<span style="color: rgb(255,227,123);">GetLBAddress</span>() + <span style="color: rgb(48,190,71);">&quot;:&quot; </span>+ <span style="color: rgb(101,152,198);">u</span>.<span style="color: rgb(255,227,123);">Port</span>()</p><h2>数据同步问题</h2><p>负载均衡服务器为了保证服务的可用性，需要做「冗余处理」，api server 1和api server 2互为对方的冗余。</p><p>但是，由于我们的服务中有类似sessions这种在内存中存在的东东，如果1和2没做内存中的sessions同步，就会出现数据不一致的情况。</p><p>解决方案：</p><p>方案一：使用Redis独立服务同时作为1和2的缓存服务器，1和2都去Redis中找数据</p><p>方案二：Cache和db强制同步数据 - 1中如果没有数据，就去db中找</p><ul style="list-style-type: square;"><li>问题：db访问速度慢，可能被堵死</li><li>要求严苛的网站建议用第一种解决方案</li></ul><h1>0x4 ECS配置</h1><p>买服务的话买就好了...之前买了个简单的小服务，但是跑JAVA虚拟机说内存不够...升了配以后好贵啊🙈</p><p>配置的话注意配置一下「实例安全组」策略，如果发现内网的服务不能相互调到报超时，可以尝试修改下安全组策略。</p><h1>0x5 Dispatcher代码改造</h1><p>Dispatcher之前的删除操作，只删除了本地Video。需要使用OSS相关操作干掉OSS中的相关资源</p><p>代码比较简单，就不贴啦~</p><h1>0x6 部署及上云</h1><p>手工部署非常不划算，在点亮「k8s &amp; docker」技能点之前，我们用半自动部署（脚本部署）</p><p>我们会做的事情：</p><ol><li>build production脚本：每次build出来，上传到gitlab</li><li>deploy脚本：从云服务端拉下来build好的二进制包，部署在本地并把服务起起来</li><li>sql脚本：创表的脚本</li></ol><p><br /></p><p>创建一个bin文件夹，放打包后的东西</p><ul style="list-style-type: square;"><li>生产环境打包后的东西应该放到「部署服务器」，然后再推上去</li><li>这里比较简陋，直接传到gitlab了，因为部署服务比较贵...贫穷限制了我...</li></ul><p><br /></p><p>bin目录下写好config.json文件，用于服务起起来以后读取配置（oss地址和BL地址）</p><ul style="list-style-type: square;"><li>lb_address在本地的时候，用localhost就好</li><li>部署到服务端以后，需要改为LB的真实地址（内网）</li></ul><h2>创建脚本</h2><p>buildprod.sh</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="e6ca7ca3-8275-4056-b1ca-4f0435f7d933" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>#! /bin/bash
+
+# 编译web、api、stream、dispatcher四个服务
+
+cd ${GOPATH}/src/daker.wang/Azen/Go-execise/Streaming/api
+env GOOS=linux GOARCH=amd64 go build -o ../../bin/api
+
+cd ${GOPATH}/src/daker.wang/Azen/Go-execise/Streaming/dispatcher
+env GOOS=linux GOARCH=amd64 go build -o ../../bin/dispatcher
+
+cd ${GOPATH}/src/daker.wang/Azen/Go-execise/Streaming/stream
+env GOOS=linux GOARCH=amd64 go build -o ../../bin/stream
+
+cd ${GOPATH}/src/daker.wang/Azen/Go-execise/Streaming/web
+env GOOS=linux GOARCH=amd64 go build -o ../../bin/web</pre></td></tr></table><p><br /></p><p>deploy.sh</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="d07f1d03-fc65-44f2-aabb-ae14f41827c5" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>#!/usr/bin/env bash
+
+# 部署脚本
+cp ./template ./bin/
+
+mkdir ./bin/videos
+
+cd bin
+
+nohup ./api &amp;
+nohup ./dispatcher &amp;
+nohup ./stream &amp;
+nohup ./web &amp;
+
+
+echo  "🎉 deploy done~ have fun~~~"</pre></td></tr></table><p>我们之前上传video会先传到本地，所以需要创建一个videos文件夹</p><p>起服务：</p><ul style="list-style-type: square;"><li>nohup指令：打印不会输出到terminal中，而是打印到nohub.log文件中</li><li>&amp; 表示以后台程序的方式起服务，类似docker的-it什么的</li></ul><p><br /></p><p>initdb.sql - 创表的</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="92ac5668-a0b2-4c49-924a-bc5a361e6423" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>create table comments (
+ id varchar(64) not null,
+ video_id varchar(64),
+ author_id int(10),
+ content text,
+ time datetime default current_timestamp, primary key(id)
+);
+
+create table sessions (
+ session_id tinytext not null,
+ TTL tinytext,
+ login_name text
+);
+alter table sessions add primary key (session_id(64));
+
+create table users (
+ id int unsigned not null auto_increment,
+ login_name varchar(64),
+ pwd text not null,
+ unique key (login_name),
+ primary key (id)
+);
+
+create table video_del_rec (
+ video_id varchar(64) not null,
+ primary key (video_id)
+);</pre></td></tr></table><p>注意：</p><p>1.session表设置主键很怪异，原因在于常规设置法无法把tinytext设置为主键。这样设置的目的是绕开这个限制</p><p>2.生产环境中，我们的库中不应该存pwd，而是应该存加密之后的串 - 几年前CSDN的密码被明文存在了数据库中导致泄密</p><h2>开始部署</h2><ol><li>本地运行buildprod.sh</li><li>push到git仓库</li><li>云服务器上从git仓库拉文件</li><li>编辑config.json，写正确的address们</li><li>运行deploy.sh</li><li>检查四个服务有木有跑起来<ol><li>ps aux | grep api ...</li></ol></li></ol><p><br /></p><p>打完收工</p>
+        <p>&nbsp;</p>
+    
+</div>
+
+
+    </div>
+
+    
+  </body>
+</html>

@@ -319,6 +319,20 @@ at 和 crontabat：处理只发生一次的事件</description>
     </item>
     
     <item>
+      <title>3 网站上云</title>
+      <link>http://azen.me/code/micro/golang-server-vii/</link>
+      <pubDate>Sat, 07 Jul 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://azen.me/code/micro/golang-server-vii/</guid>
+      <description>&amp;nbsp;
+0x0 CloudNative概述是什么：借助于大规模分布式系统在资源利用上的灵活使用、服务化拆分，演变出来的一种软件部署、架构、上线的流程方面的最佳实践
+Cloud Native在云刚出来的时候就有了没有任何组织清晰定义云原生，而是一种习惯用法和最佳实践参考：百度百科
+特点松耦合(SOA)每一个独立拆分的服务，具有独立完整的生命周期，不受别的服务影响和制约。
+微服务领域，涉及其他知识点：服务注册微服务网关契约调用等以防止每一个服务调用之间出现不一致不统一的情况项目实现无状态(Stateless)RESTful中提到过，参考
+伸缩性(scalability)伸缩性分为：纵向的伸缩(scale up)、横向的伸缩(scale out)</description>
+    </item>
+    
+    <item>
       <title>2-x 复习 &amp;amp; 完善Comments功能模块</title>
       <link>http://azen.me/code/micro/golang-server-vi/</link>
       <pubDate>Fri, 06 Jul 2018 00:00:00 +0000</pubDate>
