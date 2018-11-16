@@ -3,112 +3,112 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>http://azen.me/code/micro-server-iii/</loc>
+    <loc>http://azen.me/code/micro/micro-server-iii/</loc>
     <lastmod>2018-11-12T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://azen.me/code/micro-server-iv/</loc>
+    <loc>http://azen.me/code/micro/micro-server-iv/</loc>
     <lastmod>2018-11-12T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://azen.me/code/micro-server-v/</loc>
+    <loc>http://azen.me/code/micro/micro-server-v/</loc>
     <lastmod>2018-11-12T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://azen.me/code/micro-server-i/</loc>
+    <loc>http://azen.me/code/micro/micro-server-i/</loc>
     <lastmod>2018-11-07T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://azen.me/code/micro-service-ii/</loc>
+    <loc>http://azen.me/code/micro/micro-service-ii/</loc>
     <lastmod>2018-11-07T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://azen.me/code/react-container/</loc>
+    <loc>http://azen.me/code/fe/react-container/</loc>
     <lastmod>2018-10-17T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://azen.me/code/react-business-prepare/</loc>
+    <loc>http://azen.me/code/fe/react-business-prepare/</loc>
     <lastmod>2018-10-13T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://azen.me/code/react-ssr-done/</loc>
+    <loc>http://azen.me/code/fe/react-ssr-done/</loc>
     <lastmod>2018-10-11T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://azen.me/code/react-project-network-web-server-proxy/</loc>
+    <loc>http://azen.me/code/fe/react-project-network-web-server-proxy/</loc>
     <lastmod>2018-09-24T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://azen.me/code/react-project-store/</loc>
+    <loc>http://azen.me/code/fe/react-project-store/</loc>
     <lastmod>2018-09-23T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://azen.me/code/react-project-router-config/</loc>
+    <loc>http://azen.me/code/fe/react-project-router-config/</loc>
     <lastmod>2018-09-22T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://azen.me/code/react-ssr-optimize/</loc>
+    <loc>http://azen.me/code/fe/react-ssr-optimize/</loc>
     <lastmod>2018-09-20T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://azen.me/code/react-ssr-dev-hotload/</loc>
+    <loc>http://azen.me/code/fe/react-ssr-dev-hotload/</loc>
     <lastmod>2018-09-19T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://azen.me/code/fe-arch-overview/</loc>
+    <loc>http://azen.me/code/fe/fe-arch-overview/</loc>
     <lastmod>2018-09-18T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://azen.me/code/react-ssr-config/</loc>
+    <loc>http://azen.me/code/fe/react-ssr-config/</loc>
     <lastmod>2018-09-18T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://azen.me/code/lean-startup-guess/</loc>
+    <loc>http://azen.me/pd/lean-startup-guess/</loc>
     <lastmod>2018-09-13T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://azen.me/code/lean-startup-verify/</loc>
+    <loc>http://azen.me/pd/lean-startup-verify/</loc>
     <lastmod>2018-09-13T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://azen.me/code/lean-startup-one/</loc>
+    <loc>http://azen.me/pd/lean-startup-one/</loc>
     <lastmod>2018-09-11T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://azen.me/code/%E5%8C%BA%E5%9D%97%E9%93%BE%E5%9F%BA%E7%A1%80-amp-%E5%85%AC%E9%93%BE%E5%8E%9F%E7%90%86/</loc>
+    <loc>http://azen.me/code/block-chain-i/</loc>
     <lastmod>2018-09-10T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://azen.me/code/product-create-path/</loc>
+    <loc>http://azen.me/pd/product-create-path/</loc>
     <lastmod>2018-09-08T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://azen.me/code/golang%E4%B8%8E%E5%AF%86%E7%A0%81%E5%AD%A6/</loc>
+    <loc>http://azen.me/code/golang-and-security/</loc>
     <lastmod>2018-09-06T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://azen.me/code/%E5%90%AF%E7%A4%BA%E5%BD%95---%E4%BA%92%E8%81%94%E7%BD%91%E5%9B%A2%E9%98%9F%E6%9E%84%E6%88%90/</loc>
+    <loc>http://azen.me/pd/product-create-team/</loc>
     <lastmod>2018-09-05T00:00:00+00:00</lastmod>
   </url>
   
@@ -118,22 +118,42 @@
   </url>
   
   <url>
+    <loc>http://azen.me/code/micro/2-1-%E6%B5%81%E5%AA%92%E4%BD%93---api%E6%A8%A1%E5%9D%97/</loc>
+    <lastmod>2018-07-01T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>http://azen.me/code/qiniu-xushiwei/</loc>
     <lastmod>2018-06-15T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://azen.me/code/git%E6%8A%80%E5%B7%A7%E4%B8%BAgit%E5%88%9B%E5%BB%BA%E4%B8%80%E4%B8%AA%E5%AD%A4%E7%AB%8B%E5%88%86%E6%94%AF/</loc>
+    <loc>http://azen.me/code/git-branch/</loc>
     <lastmod>2018-04-19T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>http://azen.me/code/</loc>
+    <lastmod>2018-09-10T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://azen.me/code/crack/</loc>
+  </url>
+  
+  <url>
+    <loc>http://azen.me/code/fe/</loc>
+    <lastmod>2018-10-17T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://azen.me/code/micro/</loc>
     <lastmod>2018-11-12T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://azen.me/gaga/</loc>
+    <loc>http://azen.me/pd/</loc>
+    <lastmod>2018-09-13T00:00:00+00:00</lastmod>
   </url>
   
   <url>

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>细胞的作战实验室</title>
+    <link>http://azen.me/code/micro/</link>
+    <description>Recent content on 细胞的作战实验室</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Mon, 12 Nov 2018 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="http://azen.me/code/micro/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>2 微服务开发</title>
+      <link>http://azen.me/code/micro/micro-server-iii/</link>
+      <pubDate>Mon, 12 Nov 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://azen.me/code/micro/micro-server-iii/</guid>
+      <description>&amp;nbsp;
+0x0 微服务业务分析业务场景需求一：用户可以注册和登录
+单点登录，但是需要支持跨域 - 使用其他系统的时候就不需要登录了不用session - 避免使用状态需求二：登录用户可对课程进行CURD操作
+架构设计Tips：图的目的，是让我们的开发思路更清晰，开发效率更高的。所有想到的开发中应该注意到的点，都在图上标记出来就好，防止自己踩坑。不要为了作图而作图哟！
+说明：</description>
+    </item>
+    
+    <item>
+      <title>3 服务编排前奏 - Docker容器化</title>
+      <link>http://azen.me/code/micro/micro-server-iv/</link>
+      <pubDate>Mon, 12 Nov 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://azen.me/code/micro/micro-server-iv/</guid>
+      <description>&amp;nbsp;
+服务Docker化
+搭建Docker仓库，存image
+搭建高可用的集群环境，优雅的调度程序
+
+服务的Docker化把服务放在一个合适的运行环境里面
+运行环境，又叫基础镜像
+套路（Java为例）现在docker hub中寻找合适的镜像（搜Java）docker pull openjdk:7-jredocker run -it --entrypoint bash openjdk:7-jrerun个container起来把服务部署到镜像里（写DockerFile）经常变的东西不能写死到镜像里，否则一旦变更就需要重新构建这个镜像如数据库的访问地址，需要提出去而不是在配置文件里写死localhost应该写成变量的形式把要部署的服务打包成一个文件，xxx.</description>
+    </item>
+    
+    <item>
+      <title>4 服务编排 - Mesos</title>
+      <link>http://azen.me/code/micro/micro-server-v/</link>
+      <pubDate>Mon, 12 Nov 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://azen.me/code/micro/micro-server-v/</guid>
+      <description>&amp;nbsp;
+初见Program against your datacenter, like it&#39;s a single pool of resources.</description>
+    </item>
+    
+    <item>
+      <title>0 初识微服务</title>
+      <link>http://azen.me/code/micro/micro-server-i/</link>
+      <pubDate>Wed, 07 Nov 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://azen.me/code/micro/micro-server-i/</guid>
+      <description>&amp;nbsp;
+0x0 微服务导学微服务：就是普通的项目模块，运行在Docker里面，使用K8S管理Docker们
+为什么要做微服务？
+系统越来越复杂不同模块之间技术栈差异很大，管理复杂0x1 认识微服务软件架构的进化软件架构：在软件内部，经过综合各种因素的考量、权衡，选择特定的技术，将系统划分成不同的部分并使这些部分相互分工，彼此协作，为用户提供需要的价值。
+考虑的因素业务需求（首位）已有技术栈成本组织架构（多少个小组，每个小组能做什么）可扩展性可维护性（系统的学习成本、新人上手成本、Bug修复成本）Java web的架构演进一层架构老系统：JSP - 页面、业务逻辑、数据库都放在一起MVC三层架构，纠结M到底是啥 - 其实很多概念就是用来迷惑我们的让我们纠结解决了代码调用杂乱无章的问题。通过在各层之间定义接口，让接口和维护分离，降低了维护成本dubbo背景：业务代码50w+行，产品需求不断，新人一个月上不了手，需要做拆分 - 一个大项拆成两个小项系统前端和后端服务可以从物理上管理开，变成两个可以单独维护的模块把一个单体架构变成了两个单体架构单体架构：</description>
+    </item>
+    
+    <item>
+      <title>1 微服务的着眼点及解决方案</title>
+      <link>http://azen.me/code/micro/micro-service-ii/</link>
+      <pubDate>Wed, 07 Nov 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://azen.me/code/micro/micro-service-ii/</guid>
+      <description>&amp;nbsp;
+0x0 微服务带来的问题服务之间的通讯问题？单体架构中需要通讯的情况少见，而微服务之间的相互调用非常频繁微服务如何发现彼此？单体架构使用Dubbo做服务发现：服务消费者需要对服务的提供者进行发现。发现的原理是通过KV存储有一个中间人，提供者把自己的信息告诉中间人，消费者去中间人那里拿提供者的地址微服务有各种语言，如何彼此发现？微服务怎样部署？更新？扩容？自动化流程？Jekins部署到预发环境，没问题部署到生产环境？微服务少的情况下可以这么做，但是一般很难这么做，因为需要同时上线的微服务器可能非常多，无法手动搞0x1 微服务间如何通讯通讯：socket、tcp/ip、http...
+两个角度考虑通讯：
+通讯模式通讯协议通讯模式角度通讯协议角度REST API特点：
+请求方式描述动作类REST并不是适合于所有业务场景RPCMQ - 消息队列发布订阅的模式，可以使用MQ的方式实现</description>
+    </item>
+    
+    <item>
+      <title>2-1 流媒体 - API模块</title>
+      <link>http://azen.me/code/micro/2-1-%E6%B5%81%E5%AA%92%E4%BD%93---api%E6%A8%A1%E5%9D%97/</link>
+      <pubDate>Sun, 01 Jul 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://azen.me/code/micro/2-1-%E6%B5%81%E5%AA%92%E4%BD%93---api%E6%A8%A1%E5%9D%97/</guid>
+      <description>&amp;nbsp;
+0x0 基础概念API是什么后端对外形成Service的接口
+REST是一种设计风格，不是任何架构标准RESTful API通常使用HTTP作为通信协议，JSON作数据格式RESTful API特点统一接口无状态无论什么时候调用，返回的都是我想要的东西API这个Service这个节点不具备状态可缓存分层（Layerd System）API的service可以分过好多层，每一层负责其中一部分功能CS模式REST设计原则以URL（统一资源定位符）风格设计API 资源路径类似本地文件系统风格通过不同的method区分对资源的CURDgetpostputdelete返回码（Status Code）需要符合HTTP资源描述的规定0x1 API模块设计 (RESTful风格)分析实体及关系三个实体用户资源用户上传的视频视频下面的评论用户和资源发生的互动实体间的关系资源属于用户评论属于资源</description>
+    </item>
+    
+  </channel>
+</rss>

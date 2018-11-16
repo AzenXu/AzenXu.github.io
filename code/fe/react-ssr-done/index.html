@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="//gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.46-DEV" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>7 React项目架构 - Router和Store的服务端渲染 &middot; 细胞的作战实验室</title>
+
+  
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/print.css" media="print">
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/poole.css">
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/syntax.css">
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/hyde.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Abril+Fatface|PT+Sans:400,400i,700">
+
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+  
+  <link href="" rel="alternate" type="application/rss+xml" title="细胞的作战实验室" />
+
+  
+</head>
+
+  <body class=" ">
+  <div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <a href="http://azen.me/"><h1>细胞的作战实验室</h1></a>
+      <p class="lead">
+      Power by <a href="http://hugo.spf13.com">hugo</a>
+      </p>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li><a href="http://azen.me/">Home</a> </li>
+      
+    </ul>
+
+    <p>&copy; 2018. All rights reserved. </p>
+  </div>
+</div>
+
+    <div class="content container">
+    <div class="post">
+  <h1>7 React项目架构 - Router和Store的服务端渲染</h1>
+  <span class="post-date">Thu, Oct 11, 2018</span>
+  <p>&nbsp;</p>         <h1>0x0 概述</h1><p>加入了router和store，会对服务端渲染有影响：</p><ul><li>需要控制router的渲染，服务端渲染的内容要根据不同的url进行<ul><li>需要在服务端渲染中集成路由跳转功能<br /><ul><li>使用者可以从任意路由进入网站</li><li>除了前端做路由跳转外，服务端也需要支持路由跳转，返回给客户端正确的页面</li></ul></li></ul></li><li>store数据同步：<ul><li>服务端渲染的时候会渲染一遍，拿到html，内容扔给客户端</li><li>客户端js又会渲染一次</li><li>如果没拿到服务端渲染时，通过API请求到的数据，那么就需要客户端再次通过api请求，去拿数据<ul><li>多次api请求导致浪费</li><li>需要服务端渲染时请求到的数据，让客户端直接用</li></ul></li></ul></li></ul><p><br /></p><h1>0x1 store和router的服务端渲染基础配置</h1><p>实现</p><p>server-entry.js</p><p>修改前</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="8beb3f53-ca88-4d5e-8fa0-e39aac59c25d" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>import React from 'react'
+import App from './views/App'
+
+export default &lt;App /></pre></td></tr></table><p>修改后</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="701b7a67-f7dc-4fe0-9608-cabeb8601573" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>import React from 'react'
+import { StaticRouter } from 'react-router-dom' // #1
+import { Provider, useStaticRendering } from 'mobx-react' // #2
+import App from './views/App'
+
+import { createStoreMap } from './store/store'
+
+//  让mobx在服务端渲染的时候不会重复数据变换
+useStaticRendering(true)  //  #3
+
+//  传入对象格式：{appStore: xxx}
+export default (store, routerContext, url) => ( // #5
+    &lt;Provider {...store}>  {/* #4 */}
+      &lt;StaticRouter context={routerContext} location={url}>  {/* #6 */}
+        &lt;App/>
+      &lt;/StaticRouter>
+    &lt;/Provider>
+)
+
+export { createStoreMap } // #7</pre></td></tr></table><p>说明：</p><ol><li>StaticRouter是专门做服务端渲染提供的组件</li><li>Mobx提供的服务端渲染工具</li><li>mobx会导致每一次数据变化，引起其他方法的调用<ul><li>如computed相关方法</li><li>服务端渲染的时候，如果使用客户端的代码做，会有bug<ul><li>一次渲染会导致computed执行很多次</li><li>而且改的变量多的时候，会造成重复引用、重复调用</li><li>进而导致内存溢出</li></ul></li><li>这个方法就是解决这个问题的</li></ul></li><li>Provider - 需要接受Store的内容<br /><ul><li>store需要在服务端渲染的时候生成</li><li>服务端渲染的时候会有很多请求进来（如列表页的请求、详情页的请求），不可能同一个store在不同的请求里使用<ul><li>因为一个store，在第一次请求的时候可能已经初始化过一些数据了</li><li>第二次又使用这个store，又初始化另一部分数据，会造成数据的改来改去。所以每次都要重新创建一个store</li><li>更而且，如果所有请求用同一个store，并发的时候怎么修改呢？</li></ul></li><li>{...store}：<br /><ul><li>使用解构的方式，指定store们</li><li>相当于：appState=a对象 bppState=b对象</li></ul></li></ul></li><li>需要让store、routerContext从外界传入进来</li><ul><li><p><span style="color: rgb(95,90,96);">传入对象格式：{appStore: xxx}</span></p></li></ul><li>context和url<ul><li>context - 会在静态渲染的时候，对这个对象进行一些操作，返回一些信息<ul><li>如：需要做redirect的时候，会在context中加一个url，告诉我们需要redirect到哪个地方，我们就在服务端302到那个地方</li></ul></li><li>location - 就是当前页的url</li></ul></li><li><p>为啥import进来又export出去</p><ul><li>因为server.js那边，只能拿到编译后的server-entry.js包</li><li>想要调用client下的某个方法，这个方法必须得通过server-entry拿才行</li><li>所以，这里需要「透传」出去</li></ul></li></ol><p><br /></p><p>store.js</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="000c7536-428d-43e9-83d0-bfb1ae574488" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>import AppStateClass from './app-state'
+
+export const AppState = AppStateClass
+
+export default {
+  AppState,
+}
+
+export const createStoreMap = () => {
+  return {
+    appState: new AppState()
+  }
+}</pre></td></tr></table><p>说明：</p><ul style="list-style-type: square;"><li>这个文件中的方法，用于创建「所有」store PS.现在只有appState这一个store，以后会多</li></ul><p><br /></p><p>修改开发阶段，服务端渲染的相关逻辑</p><ul><li>之前是直接拿到server-entry.js导出来的&lt;App /&gt;做渲染的（见server-entry.js修改前）<ul><li><pre><span style="color: rgb(205,168,105);">const </span><span style="color: rgb(117,135,166);">m </span><span style="color: rgb(205,168,105);">= new </span><span style="color: rgb(117,135,166);">Module</span>();<br /><span style="color: rgb(117,135,166);">m</span>._compile(<span style="color: rgb(117,135,166);">serverBundleString</span>, <span style="color: rgb(143,157,106);">'server-entry.js'</span>);<br /><span style="color: rgb(117,135,166);">serverBundle </span><span style="color: rgb(205,168,105);">= </span><span style="color: rgb(117,135,166);">m</span>.<span style="color: rgb(117,135,166);">exports</span>.<span style="color: rgb(117,135,166);">default</span>;</pre><p>...</p></li><li><pre><span style="color: rgb(205,168,105);">const </span><span style="color: rgb(117,135,166);">appString </span><span style="color: rgb(205,168,105);">= </span><span style="color: rgb(117,135,166);">ReactDomServer</span>.renderToString(<span style="color: rgb(117,135,166);">serverBundle</span>);</pre></li></ul></li><li>现在server-entry导出的已经改为一个方法了，需要传参，然后生成一个&lt;App /&gt;</li></ul><p>dev-static.js</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="e1b257a7-353c-4f20-8a3b-5df81f8af5dd" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>/* 旧方法
+module.exports = function (app) {
+    ...
+    app.get('*', function (req, res) {
+        getTemplate().then((index) => {
+            const appString = ReactDomServer.renderToString(serverBundle);
+
+            console.log('appString:' + appString);
+            res.send(index.replace('&lt;!--app-->', appString));
+        })
+    })
+};
+*/
+let serverBundle, createStoreMap
+serverCompiler.watch({}, (err, stats) => {
+  ...
+  const m = new Module()
+  m._compile(serverBundleString, 'server-entry.js')
+  serverBundle = m.exports.default
+  createStoreMap = m.exports.createStoreMap // #1
+});
+
+const ReactDomServer = require('react-dom/server')
+
+module.exports = function(app) {
+  ...
+  app.get('*', function(req, res) {
+    getTemplate().then((index) => {
+
+      const routerContext = {}
+      const app = serverBundle(createStoreMap(), routerContext, req.url)
+
+      const appString = ReactDomServer.renderToString(app)
+      console.log('appString:' + appString)
+      res.send(index.replace('&lt;!--app-->', appString))
+    })
+  })
+};说明：</pre></td></tr></table><ol><li>注意，想要导到createMapStore方法，需要从编译好的模块里导<ul><li>千万不要直接require('../../client/server-entry.js')这样</li><li>楼上的，文件里用的是es6的语法，nodejs的server里是识别不了的</li><li>只能识别编译后的文件的呀！</li></ul></li><li>由于导出来的已经是一个方法了，需要传参进去调用，才能生成&lt;App /&gt;<ol><li>createStoreMap是server-entry.js透传的，创建store的方法</li><li>routerContext，传个空对象就好</li></ol></li></ol><p><br /></p><p>结果</p><p>执行：</p><ol><li>dev:client</li><li>dev:web:start</li></ol><p><img class="confluence-embedded-image confluence-external-resource" height="250" src="http://img.daker.wang/wiki/1537499852176.png" data-image-src="http://img.daker.wang/wiki/1537499852176.png"></p><p><br /></p><h1>0x2 重定向的服务端渲染</h1><p>问题：如上配置，当我们访问 view-source:localhost:2333/ 查看源码的时候，不会把重定向之后的内容展示出来。</p><p>方案：判断「上下文」有木有url - 说明是否重定向，有的话，丢给浏览器302，以便进行重定向</p><p>dev-static.js</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="b0645156-121f-40a1-9eeb-34bf201f2653" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>...
+module.exports = function(app) {
+  ...
+  app.get('*', function(req, res) {
+    getTemplate().then((index) => {
+
+      const routerContext = {}
+      const app = serverBundle(createStoreMap(), routerContext, req.url)
+
+      const appString = ReactDomServer.renderToString(app)
+      if (routerContext.url) {
+        res.status(302).setHeader('Location', routerContext.url)
+        res.end()
+        return
+      }
+  ...
+    })
+  })
+};</pre></td></tr></table><p>说明：</p><ul><li>routerContext.url需要在ReactDomServer.renderToString之后，才可能有值</li><li>我们直接做302跳转，通过设置Location，让浏览器端也做跳转</li></ul><p><br /></p><h1>0x3 服务端异步渲染</h1><h2>概述</h2><p>场景：实际业务开发中，有许多需要「异步」处理的场景，如「请求服务端数据」等。我们希望，异步数据，可以在异步执行完毕之后，再进行服务端渲染 &amp; 客户端内容生成。</p><p><a href="https://gitee.com/azen/FE-execise/commit/a5abb5ece565d073183ec19c3023d992309dd8b0">相关commit</a></p><p>核心工具：</p><ol><li><a href="https://github.com/ctrlplusb/react-async-bootstrapper">react-async-bootstrapper</a><ul><li>安装：`npm i react-async-bootstrapper -S`</li></ul></li><li><a href="https://github.com/tj/ejs">ejs</a></li></ol><p>案例：实现count的延时更改</p><h2>服务端渲染 &amp; 执行异步任务</h2><p><span>client/views/topic-list/index.jsx</span></p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="882dab59-c990-4b16-877d-d5b52656573d" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>class TopicList extends React.Component {
+  ...
+  bootstrap() {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        this.props.appState.count = 3
+        resolve(true)
+      })
+    })
+  }
+  ...
+}</pre></td></tr></table><p>说明：</p><ul><li>异步操作需要放在bootstrap方法下执行，return一个Promise</li><li>该方法类似于react-async-bootstrapper声明的一个协议方法，服务端渲染的地方，会等待这个方法的Promise返回true后，再执行渲染逻辑。<ul><li>在dev-static里面，调用asyncBootstrap方法的时候，会去执行组件中的这个方法</li><li>组件中执行完毕这个方法后，才会继续渲染相关工作</li><li>这个方法里可以很好的执行异步任务</li></ul></li></ul><p><span><br /></span></p><p><span>server/util/dev-static.js</span></p><p><em>开发环境下，会使用如下逻辑</em></p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="516250a0-b9ea-452a-a170-5005ed5ef9da" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>module.exports = function(app) {
+  ...
+  app.get('*', function(req, res) {
+    getTemplate().then((template) => {
+      ...
+      const asyncBootstrapper = require('react-async-bootstrapper')
+      asyncBootstrapper(app).then(() => {
+        const appString = ReactDomServer.renderToString(app)
+        ...
+        res.send(index.replace('&lt;!--app-->', appString))
+      })
+    })
+  })
+};</pre></td></tr></table><p>说明：</p><ul><li>get到Template后，执行组件的bootstrap方法，执行完毕，拼接字符串返回响应</li></ul><p><br /></p><p>结果：查看源码，可以发现，服务端渲染已经把count渲染成3了</p><p>问题：页面展示内容中，count仍然为0</p><p>解决：使用ejs模板，将服务端渲染后的正确state传给前端展示</p><h2>将服务端渲染后的state传给前端（ejs）</h2><p>安装工具：</p><ul><li>安装：`npm i ejs <span>ejs-compiled-loader</span> -S`</li></ul><p><span><br /></span></p><p><span>client/server.template.ejs</span></p><p>未来服务端渲染的内容，都以这个文件作为模板渲染。</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="1d48dbc3-20d4-4a1d-8f74-47740b0583f6" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>&lt;!doctype html>
+&lt;html lang="en">
+&lt;head>
+  &lt;meta charset="UTF-8">
+  &lt;meta name="viewport"
+        content='"width=device-width, user-scalable=no, initial-scale=1.0'>
+  &lt;meta http-equiv="X-UA-Compatible" content="ie=edge">
+  &lt;title>由我来组成扁桃体٩(●˙▿˙●)۶…⋆ฺ&lt;/title>
+&lt;/head>
+&lt;body>
+  &lt;div id="root">&lt;%%- appString %>&lt;/div> &lt;!--#1-->
+  &lt;script>
+    window.__INITIAL__STATE__ = &lt;%%- initialState %> &lt;!--#2-->
+  &lt;/script>
+&lt;/body>
+&lt;/html></pre></td></tr></table><p>说明</p><ol><li><pre>会把appString作为一个变量，在webpack编译的时候，把这个变量放到当前位置</pre><ol><li>&lt;%%这种写法：在webpack的HTMLPlagin在编译模板的时候，是可以识别这样的ejs的语法的</li><li>会自动通过ejs的一个loader，把编译出来的结果中，多出来的%去掉，输出一个完整的模板文件，服务端渲染的时候使用</li></ol></li><li>initialState变量，用于把服务端渲染后的state传进来<br /><ol><li>__INITIAL__STATE__是个添加给window的自定义属性，前端展示时，可以通过这个属性，拿到服务端渲染好的State<ol><li>命名方式是为了防止客户端定义的名称和这里的模板属性名称发生命名冲突，所以定义的比较怪异</li></ol></li></ol></li></ol><p><br /></p><p>指定ejs模板文件的loader</p><p><span>build/webpack.config.client.js</span></p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="c7788f64-aa0a-4b05-bd74-288ca279c27b" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>const config = webpackMerge(baseConfig,{
+    ...
+    plugins: [
+        ...
+        new HTMLPlugin({
+            template: '!!ejs-compiled-loader!' + path.join(__dirname, '../client/server.template.ejs'), // #1
+            filename: 'server.ejs' // #2
+        })
+    ],
+    ...
+});</pre></td></tr></table><p>说明：</p><ol><li>指定模板loader的方法</li><li>指定编译后的文件名，方便其他地方获取这个文件</li></ol><p><br /></p><p>修改server端渲染template</p><p><br /></p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="9226223a-437a-4de4-813d-a8397a7c3d26" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>const getTemplate = () => {
+  return new Promise((resolve, reject) => {
+    axios.get('http://localhost:8787/public/server.ejs') // #1
+      .then((res) => {
+        resolve(res.data)
+      })
+      .catch(reject)
+  })
+};
+...
+let serverBundle, createStoreMap
+serverCompiler.watch({}, (err, stats) => {
+  ...
+  const m = new Module()
+  m._compile(serverBundleString, 'server-entry.js')
+  serverBundle = m.exports.default
+  createStoreMap = m.exports.createStoreMap
+});
+
+const getStoreState = (stores) => {
+  return Object.keys(stores).reduce((result, storeName) => {
+    result[storeName] = stores[storeName].toJson()
+    return result
+  }, {})
+} // #2
+
+const ReactDomServer = require('react-dom/server')
+module.exports = function(app) {
+  ...
+  app.get('*', function(req, res) {
+    getTemplate().then((template) => {
+
+      const routerContext = {}
+      const stores = createStoreMap()
+      const app = serverBundle(stores, routerContext, req.url)
+
+      const asyncBootstrapper = require('react-async-bootstrapper')
+      asyncBootstrapper(app).then(() => {
+        const appString = ReactDomServer.renderToString(app)
+        ...
+        const state = getStoreState(stores) // #3
+
+        const ejs = require('ejs')
+        const serialize = require('serialize-javascript') // #4
+        const html = ejs.render(template, { // #5-1
+          appString: appString,
+          initialState: serialize(state), // #5-2
+        })
+
+        console.log('appString:' + appString)
+        console.log(stores.appState.count)
+
+        res.send(html)  // #6
+      })
+    })
+  })
+};</pre></td></tr></table><p>说明：</p><ol><li>改用编译好的server.ejs模板文件</li><li>创建将stores转成state的方法</li><li>获得新的state</li><li>用于把js对象转为string的库<ol><li>安装`npm i <span>serialize-javascript</span> -S`</li></ol></li><li>把ejs模板和要插入其中的变量结合，输出最终的html文件<ol><li>指定ejs模板</li><li>initialState需要是一个字符串才行</li></ol></li></ol><p><br /></p><p><span>client/store/app-state.js</span></p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="d623c25b-48ce-405c-83f2-cbf57b7c11f8" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>class AppState {
+  ...
+  toJson() { // #1
+    return {
+      count: this.count,
+      name: this.name,
+    }
+  }
+}
+
+export { AppState as default }</pre></td></tr></table><p>说明：</p><ol><li>toJson方法：让AppState这个实例，可以以Json的格式获取到</li></ol><p><br /></p><h2>将State展示到前端</h2><p>client/store/app-state.js</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="f7b074e5-791b-4f4a-92ba-334aa1eed55a" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>class AppState {
+  constructor({ count, name } = { count: 0, name: 'Azen' }) { // #1
+    this.count = count
+    this.name = name
+  }
+
+  @observable count
+  @observable name
+  @computed get msg() {
+    return `${this.name} say count is ${this.count}`
+  }
+
+  @action add() {
+    this.count += 1
+  }
+
+  @action changeName(name) {
+    this.name = name
+  }
+
+  toJson() {
+    return {
+      count: this.count,
+      name: this.name,
+    }
+  }
+}
+
+export { AppState as default }</pre></td></tr></table><p>说明：</p><ol><li>定义state的构造方法，允许通过传入对象构造State</li></ol><p><br /></p><p>app.js</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="c446d402-3f9c-4474-9a69-db154d058c85" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>const initialState = window.__INITIAL__STATE__ || {} // eslint-disable-line // #1
+
+const root = document.getElementById('root')
+
+const render = (Component) => {
+  ReactDOM.hydrate(
+    &lt;AppContainer>
+      &lt;Provider appState={new AppState(initialState.appState)}> // #2
+        &lt;BrowserRouter>
+          &lt;Component />
+        &lt;/BrowserRouter>
+      &lt;/Provider>
+    &lt;/AppContainer>, root,
+  )
+};
+
+render(App)
+
+
+...</pre></td></tr></table><p>说明：</p><ol><li>通过window.__INITIAL__STATE__拿到服务端传来的渲染后的state<ol><li>防止eslint因为方法名而报错</li></ol></li><li>使用渲染后的state，生成页面展示需要的state</li></ol><p><br /></p><h2>SEO标签添加</h2><p>待完善</p><p>目前只做到了客户端生效，服务端未能生效...</p><p>相关工具：<a href="https://github.com/nfl/react-helmet">helmet</a></p><p><a href="https://gitee.com/azen/FE-execise/commit/463ece22e0c8a3a601ad642bdcfc62a3c75fc804">相关提交</a></p><h2>开发环境代码优化 &amp; 逻辑抽取</h2><p><a href="https://gitee.com/azen/FE-execise/commit/b3b01e7e829201c36204bdd93a535d3a030586d5">相关commit</a></p><h2>生产环境服务端渲染逻辑调整</h2><p><a href="https://gitee.com/azen/FE-execise/commit/7d6bfb5f5980aff1369a3f9440cd5fe3404abb91">相关commit</a></p>
+        <p>&nbsp;</p>
+    
+
+</div>
+
+
+    </div>
+
+    
+  </body>
+</html>

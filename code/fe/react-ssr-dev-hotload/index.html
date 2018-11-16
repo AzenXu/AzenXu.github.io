@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="//gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.46-DEV" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>2 React前端工程架构 - 开发环境实时更新 &middot; 细胞的作战实验室</title>
+
+  
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/print.css" media="print">
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/poole.css">
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/syntax.css">
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/hyde.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Abril+Fatface|PT+Sans:400,400i,700">
+
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+  
+  <link href="" rel="alternate" type="application/rss+xml" title="细胞的作战实验室" />
+
+  
+</head>
+
+  <body class=" ">
+  <div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <a href="http://azen.me/"><h1>细胞的作战实验室</h1></a>
+      <p class="lead">
+      Power by <a href="http://hugo.spf13.com">hugo</a>
+      </p>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li><a href="http://azen.me/">Home</a> </li>
+      
+    </ul>
+
+    <p>&copy; 2018. All rights reserved. </p>
+  </div>
+</div>
+
+    <div class="content container">
+    <div class="post">
+  <h1>2 React前端工程架构 - 开发环境实时更新</h1>
+  <span class="post-date">Wed, Sep 19, 2018</span>
+  <p>&nbsp;</p>         <p>dev server &amp; hot load相关commit</p><p><a href="https://gitee.com/azen/FE-execise/commit/c1cb475ef49a8cc4eacb6bc2bb3c4faaecb6e51f">相关commit</a></p><p><a href="https://gitee.com/azen/FE-execise/commit/01690c5e36ad221a981480891bde1855646e7e7f">解决hot load缓慢的commit</a></p><p>服务端实时渲染相关commit</p><p><a href="https://gitee.com/azen/FE-execise/commit/dd48c1a7d3a8502dd9313fb7fd494739b6c06fe6">服务端实时渲染</a></p><h1>0x0 问题 &amp; 解决方案概述</h1><p><strong>问题一</strong>：每次client代码改动，都需要手动重新编译打包，导致开发效率低下</p><p><strong>工具</strong>：webpack dev server</p><ul style="list-style-type: square;"><li>通过webpack配置，启动一个资源server<ul style="list-style-type: square;"><li>服务于：css js html等静态资源文件</li><li>作用：可以通过该server访问到这些资源</li></ul></li><li>原理：<ol><li>文件在编译的过程中，会存在server的内存中</li><li>每当文件有变化，会自动执行编译过程</li><li>刷新浏览器就能看到效果</li></ol></li></ul><p><strong>问题二</strong>：每次代码变动，都需要刷新浏览器才能看到效果，开发效率低下</p><p><strong>工具</strong>：hot module replacement</p><ul style="list-style-type: square;"><li>代码变动，可以在页面上无刷新的立刻看到效果</li><li>保持当前状态，不用重新获取数据</li></ul><h1>0x1 动态编译</h1><h2>1 功能启动</h2><p>安装webpack-dev-server</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="f8a47faa-fcb5-47ef-a2b7-f40b71ee32d3" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>npm i webpack-dev-server -D</pre></td></tr></table><p>修改文件</p><p>webpack.config.client.js</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="d5c5ba5d-4221-4a82-b2ac-bb7dfa14e714" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>...
+const isDev = process.env.NODE_ENV === "development";
+...
+const config = {
+    ...
+    mode: 'production'
+};
+if (isDev) {
+    config.devServer = {
+        host: '0.0.0.0',
+        port: '8787',
+        contentBase: path.join(__dirname, '../dist'),
+        hot: false,
+        overlay: {
+            error: true
+        },
+        publicPath: '/public',
+        historyApiFallback: {
+            index: '/public/index.html'
+        },
+    }
+}
+
+module.exports = config;</pre></td></tr></table><p>说明：</p><ol><li>通过启动webpack的时，传入的参数，判断当前环境</li><li>若为dev，则配置devserver<ol><li>contentBase应该和楼上的output的path一致</li><li>hot：是否启动hot module replacement<ul style="list-style-type: square;"><li>因为还没做相关配置，暂时关掉</li></ul></li><li>overlay：发生哪些情况，需要在浏览器弹窗提示</li><li>publicPath：把静态资源自动挂载到publicPath路径下<ul style="list-style-type: square;"><li>应该和config中的publicPath对应</li></ul></li><li>historyApiFallback：history中可以配置很多对应关系<ol><li>配置之后，我们所有无法返回的404的内容，都会返回给浏览器这个index.html文件</li></ol></li></ol></li><li>【注意】跑dev服务器之前，需要干掉之前本地编译生成的/dist目录<ul style="list-style-type: square;"><li>dev server会检测硬盘上有木有dist这个目录，有的话直接访问这个目录下的js文件，没办法动态编译了</li></ul></li></ol><p> 配置服务器启动方法</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="5fa97090-f96c-4fd3-9cbb-fb9cda70c47d" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>{
+  ...
+  "scripts": {
+    ...
+    "dev:client": "cross-env NODE_ENV=development  webpack-dev-server --config build/webpack.config.client.js",
+    ...
+},</pre></td></tr></table><p>说明：</p><ul style="list-style-type: square;"><li>cross-env：一个抹平操作系统差异的包，需要安装它 `npm i cross-env -D`</li></ul><p>效果：</p><ul style="list-style-type: square;"><li>修改静态资源相关代码后，浏览器会自动刷新，展现新内容出来 - 再也不用`npm run build:client`了</li></ul><h1>0x2 热更新</h1><p>配置好dev server之后，可以实现「自动编译」功能</p><p>热更新希望达成的效果，是「不用刷新页面」展示修改后的代码</p><h2>1 配置</h2><p>.babelrc</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="662941e3-1627-42e9-b465-3159c382d048" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>{
+  ...
+  "plugins": [
+    "react-hot-loader/babel"
+  ]
+}</pre></td></tr></table><p>安装</p><p>@next表示是测试版，还没发布到主包</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="dcebd97b-296d-4691-9b95-5cc12635b5fd" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>npm i react-hot-loader@next -D</pre></td></tr></table><p>重新组织app.js</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="3c559d81-598b-46b4-b1e7-0055f3a13902" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>...
+import { AppContainer } from 'react-hot-loader'
+
+const root = document.getElementById("root")
+const render = (Component) => {
+    ReactDOM.render(
+        &lt;AppContainer>
+            &lt;Component />
+        &lt;/AppContainer>
+        ,
+        root
+    )
+};
+
+render(App);
+
+if (module.hot) {
+     module.hot.accept('./App.jsx', () => {
+         const NextApp = require('./App.jsx').default;
+         render(NextApp)
+     })
+}</pre></td></tr></table><p>说明：</p><ol><li>自定义了一个render方法，用来实现，把组件挂载到id为root的标签中<ul style="list-style-type: square;"><li>AppContainer：实现hot load必须要用这个标签包裹整个App才行</li></ul></li><li>if语句部分<ul style="list-style-type: square;"><li>逻辑：当需要热更新的时候，需要重新渲染整个App</li></ul></li></ol><p><br /></p><p>基本功能完成，但是有很多warning，而且刷新很慢，下面为优化方法 - 设置mode</p><p><br />webpack.config.client.js</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="abe47b26-c7cc-4128-ac5d-9a9b13cc51ca" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>...
+if (isDev) {
+    config.entry = {
+        app: [
+            'react-hot-loader/patch',
+            path.join(__dirname, '../client/app.js')
+        ]
+    };
+
+    config.devServer = {
+        ...
+        hot: true,
+        ...
+    };
+
+    config.mode = 'development';
+    
+    config.plugins.push(new webpack.HotModuleReplacementPlugin())
+}
+...</pre></td></tr></table><p>说明：</p><ol><li>webpack的entry可以是一个数组，代表这个entry里面包含了很多引用文件，需要打包到同一个文件中去<br /><ul style="list-style-type: square;"><li>这里是要把hot-loader的patch打到app.js中</li><li>以实现hot load功能</li></ul></li><li>需要打开hot选项</li><li>需要把模式设置为development，否则webpack会默认当前为生产环境，导致hot load的时候异常缓慢</li><li>需要把hotmodule插件，配置到plugins里</li></ol><h1>0x3 实时服务端渲染</h1><p><a href="https://gitee.com/azen/FE-execise/commit/dd48c1a7d3a8502dd9313fb7fd494739b6c06fe6">本节Commit</a></p><p>开发过程中，也有「实时服务端渲染」需求</p><p>服务端渲染：将实时编译好 &amp; 存在dev server中的「服务端js-bundle」，和dev server中的index.html结合起来，返回最终内容</p><p>server.js：渲染服务器，需要区分是否为开发环境</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="990a1194-6e0b-4d14-a8d0-7f95759579dc" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>const express = require('express');
+const ReactSSR = require('react-dom/server');
+const fs = require('fs');
+const path = require('path');
+
+const isDev = process.env.NODE_ENV === "development";
+const app = express();
+
+if (!isDev) {
+    const template = fs.readFileSync(path.join(__dirname, '../dist/index.html'), 'utf-8');
+    const serverEntry = require('../dist/server-entry.js').default;
+    app.use('/public', express.static(path.join(__dirname, '../dist')));
+    app.get('*', function (req, res) {
+        const appString = ReactSSR.renderToString(serverEntry);
+        res.send(template.replace('&lt;!--app-->', appString))
+    });
+} else {
+    const devStatic = require('./util/dev-static');
+    devStatic(app);
+}
+
+app.listen(2333, function () {
+   console.log('🚀 服务起来了，正在监听2333端口(✌ﾟ∀ﾟ)☞')
+});</pre></td></tr></table><p><br /></p><p>server/util/dev-static.js：用来实现server的dev环境下相关逻辑</p><p><strong>part I：获取index.html</strong></p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="075b03c4-2ae4-446e-8ab2-18dea1701ba9" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>const axios = require('axios');
+
+const getTemplate = () => {
+    return new Promise((resolve, reject) => {
+        axios.get('http://localhost:8787/public/index.html')
+            .then((res) => {
+                resolve(res.data)
+            })
+            .catch(reject)
+    })
+};</pre></td></tr></table><p>需要返回渲染完成之后的内容。我们知道，服务端渲染需要<strong>两个东东</strong>：</p><ol><li>编译好的server端jsbundle</li><li>index.html（注入了client端jsbundle的）</li></ol><ul style="list-style-type: square;"><li style="list-style-type: none;background-image: none;"><ul style="list-style-type: square;"><li>问题：开发环境下，index.html存在dev server中，不在dist目录下（没有dist目录）</li><li>思路：通过http请求，向dev server要这个文件</li><li>工具：axios（nodejs下做http请求的包）<ul style="list-style-type: square;"><li>安装：`npm i axios -S`</li></ul></li></ul></li></ul><p><strong>part II：获取编译好的server-jsbundle</strong></p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="5308076a-0105-42f7-bef7-78bc188f960f" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>... part I ...
+
+
+const webpack = require('webpack');
+const path = require('path');
+const serverConfig = require('../../build/webpack.config.server'); // #1
+
+const serverCompiler = webpack(serverConfig);   // #2
+
+const MemoryFs = require('memory-fs');
+const mfs = new MemoryFs;
+serverCompiler.outputFileSystem = mfs;  //  #4
+
+const Module = module.constructor;
+let serverBundle;   //  #5
+
+serverCompiler.watch({}, (err, stats) => {
+    if (err) throw err;
+    stats = stats.toJson();
+    stats.errors.forEach(err => console.error(err));
+    stats.warnings.forEach(warn => console.warn(warn));
+
+    const bundlePath = path.join(serverConfig.output.path, serverConfig.output.filename)    // #3
+    const serverBundleString = mfs.readFileSync(bundlePath, 'utf-8');   //  #4
+    
+    const m = new Module();
+    m._compile(serverBundleString, 'server-entry.js');
+    serverBundle = m.exports.default;   //  #5
+});
+
+const ReactDomServer = require('react-dom/server'); //  #6
+
+module.exports = function (app) {
+     app.get('*', function (req, res) {
+         getTemplate().then((index) => {
+             const appString = ReactDomServer.renderToString(serverBundle);
+             res.send(index.replace('&lt;!--app-->', appString));
+         })
+     })
+};</pre></td></tr></table><p>说明：</p><ol><li>拿到webpack的server配置文件</li><li>通过配置，启动一个webpack的编译器<ul><li>可以监听entry下的文件是否有变化，一旦变化会重新打包</li><li>这一部分，为啥能这样做呢？<ul><li>因为webpack本身就提供了一个在nodejs中作为模块调用的方式</li><li>它不仅仅是一个命令行打包工具</li><li>还让我们在服务端渲染的时候，能拿到它打包出来的内容，用于服务端渲染</li></ul></li></ul></li><li>拿到打出来的jsbundle的Path</li><li>让文件的读写都在内存中执行，而非Disk，以提高速度<ul><li>工具：memory-fs</li><li>安装：`npm i memory-fs -D`</li><li>注意：读取出来的是编译好的string，而非可执行的module，需要把string构建成module才行</li><li>提示：MemoryFs和nodejs中disk FS的api是一致的，只不过实现做了替换<ul><li>输出到内存而不是硬盘</li></ul></li></ul></li><li>string构建module<ul><li>拿到当前module的构造器</li><li>用构造器把string构造成真正的module<ul><li>使用这个api的时候，需要指定它的名字</li><li>指定文件名，不然无法在缓存中存储这部分内容</li><li>指定文件名后，下次读这部分内容，才能拿到它</li></ul></li><li>获得编译好的bundle<ul><li>注意：需要先exports出来</li><li>这个模块是通过exports挂载从模块里扔出来的东西的，所以想要获取东西，一定需要先exports</li></ul></li></ul></li><li>使用react-dom/server，把拿到的index.html和server-js-bundle渲染成最终html</li></ol><p><br /></p><p>配置npm启动脚本</p><p>package.json</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="4f6b1e76-8348-4b8f-9369-afdc3ad8a4da" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>{
+    ...
+    "dev:web:start": "cross-env NODE_ENV=development node server/server.js"
+    ...
+}</pre></td></tr></table><p><br /></p><p>问题：生成的html文件中，引入的js文件不能正确请求 - 请求返回值是index.html，而不是我们需要的js文件真正内容</p><p>解决方案：</p><ul><li>为了让「静态资源文件」可以正确请求到，需要使用中间件</li><li>开发环境下，客户端的js，都是在webpack dev server存储的，通过一个http服务请求到的</li><li>我们需要通过代理，把静态文件全部代理到webpack dev server服务，从里面拿静态资源</li></ul><p>server.js 修饰</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="469a8d52-6874-4c48-9532-077a44cf12cd" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>...
+module.exports = function (app) {
+    const proxy = require('http-proxy-middleware');
+    app.use('/public', proxy({target: 'http://localhost:8787'}));
+    ...
+};</pre></td></tr></table><p>说明：</p><ul style="list-style-type: square;"><li>安装：`npm i http-proxy-middleware -D`</li><li>指定/public下文件，使用proxy做转发</li></ul><p>启动</p><ul style="list-style-type: square;"><li>需要先启动dev:client，再启动dev:web:start</li></ul><p><br /></p><p>warning相关参考文档：</p><ol><li><span style="color: rgb(36,39,41);"><a href="https://stackoverflow.com/questions/34060968/react-warning-render">Warning: render(): Target node has markup rendered by Reac</a><a href="https://stackoverflow.com/questions/34060968/react-warning-render">t... </a></span></li></ol>
+        <p>&nbsp;</p>
+    
+
+</div>
+
+
+    </div>
+
+    
+  </body>
+</html>

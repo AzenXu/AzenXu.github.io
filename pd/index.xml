@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>细胞的作战实验室</title>
+    <link>http://azen.me/pd/</link>
+    <description>Recent content on 细胞的作战实验室</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Thu, 13 Sep 2018 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="http://azen.me/pd/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Lean Startup II 定义两个假设</title>
+      <link>http://azen.me/pd/lean-startup-guess/</link>
+      <pubDate>Thu, 13 Sep 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://azen.me/pd/lean-startup-guess/</guid>
+      <description>&amp;nbsp;
+时机：用户探索阶段
+定义用户痛点假设：
+观察用户痛点大小决定了商业模式的空间观察用户痛点持续性决定了商业模式的持续性痛点本身会不断演化痛点具有时效性定义解决方案假设：
+解决方案和用户痛点的「匹配度」能不能解决这个痛点解决方案和用户痛点的「吻合度」
+产品和市场之间的吻合度0x0 用户痛点是什么Guy Kawasaki：思考不如意的事情，然后从这些点切入，寻找新的机会
+SnapchatSituation痛点一：社交压力 传统社交媒体分享自己照片时的「点赞压力」「期望得到评论压力」</description>
+    </item>
+    
+    <item>
+      <title>Lean Startup III 用MVP验证两个假设</title>
+      <link>http://azen.me/pd/lean-startup-verify/</link>
+      <pubDate>Thu, 13 Sep 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://azen.me/pd/lean-startup-verify/</guid>
+      <description>&amp;nbsp;
+重点：
+验证解决方案和痛点的匹配度通过不断迭代，实现对真实用户的痛点、有效解决方案的不断逼近工具：Minimum Viable Product
+最小可行产品针对天使用户的「最小功能组合」关键点：只针对天使用户对产品容忍度高能看到产品的未来愿意互动，一起改进产品最小、最基本功能组合建议把想象中的产品砍成两半，再砍两半关键点：以最快的速度通过MVP获取认知，放弃一切无助于认知的功能
+速度聚焦
+举例：Zappos - 美国最大的鞋类电商网站待验证：有没有人愿意通过网购买鞋</description>
+    </item>
+    
+    <item>
+      <title>Lean Startup 概述</title>
+      <link>http://azen.me/pd/lean-startup-one/</link>
+      <pubDate>Tue, 11 Sep 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://azen.me/pd/lean-startup-one/</guid>
+      <description>&amp;nbsp;
+0x0 新思维运动三个代表Steve Blank
+《四步创业法》《创业者手册》Eric Rise
+Steve Blank的学生《精益创业》Reid Hoffman
+LinkedIn创始人核心 - 承认未知从「天才人物的天才设想、完美计划和完美执行」 → 「科学试错、民主创业」</description>
+    </item>
+    
+    <item>
+      <title>探索互联网产品的最佳实践</title>
+      <link>http://azen.me/pd/product-create-path/</link>
+      <pubDate>Sat, 08 Sep 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://azen.me/pd/product-create-path/</guid>
+      <description>&amp;nbsp;
+根据《启示录》第二部分 - 流程 相关内容，重新梳理总结而成。省略了部分「大公司」相关内容 &amp;amp; 「开发」相关内容
+0x0 概述产品探索 + 产品开发 = 完整产品</description>
+    </item>
+    
+    <item>
+      <title>启示录 - 互联网团队构成</title>
+      <link>http://azen.me/pd/product-create-team/</link>
+      <pubDate>Wed, 05 Sep 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://azen.me/pd/product-create-team/</guid>
+      <description>&amp;nbsp;
+产品成败的关紧因素：选择人员、界定工作职责
+作者在本节中反复强调了，「不同的工作要人不同的人专职来做」
+但是作为初创团队，甚至个人开发者，人力严重不足的情况下，需要「分清项目阶段」，「不同阶段让自己带上不同的思考帽」进行不掺杂无关信息的专业性思考。
+通过这一章，我们可以知道，个人开发者，在整个项目流程中：
+分别需要扮演什么样的角色？每种角色的职责是什么？每种角色需要分配多少精力？时间占比如何？每种角色的目标产出是什么？产品达成预期的关键点：有价值 + 可用 + 可行</description>
+    </item>
+    
+  </channel>
+</rss>

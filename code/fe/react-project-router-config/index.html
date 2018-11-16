@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="//gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.46-DEV" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>4 React项目架构 - 目录划分 &amp;amp; Router配置 &middot; 细胞的作战实验室</title>
+
+  
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/print.css" media="print">
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/poole.css">
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/syntax.css">
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/hyde.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Abril+Fatface|PT+Sans:400,400i,700">
+
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+  
+  <link href="" rel="alternate" type="application/rss+xml" title="细胞的作战实验室" />
+
+  
+</head>
+
+  <body class=" ">
+  <div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <a href="http://azen.me/"><h1>细胞的作战实验室</h1></a>
+      <p class="lead">
+      Power by <a href="http://hugo.spf13.com">hugo</a>
+      </p>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li><a href="http://azen.me/">Home</a> </li>
+      
+    </ul>
+
+    <p>&copy; 2018. All rights reserved. </p>
+  </div>
+</div>
+
+    <div class="content container">
+    <div class="post">
+  <h1>4 React项目架构 - 目录划分 &amp;amp; Router配置</h1>
+  <span class="post-date">Sat, Sep 22, 2018</span>
+  <p>&nbsp;</p>         <p><a href="https://gitee.com/azen/FE-execise/commit/c076983e37c802949f2b12648de19aa74ffa40ea">相关commit</a></p><h1>0x0 目录划分</h1><h2>目录划分介绍</h2><p>views文件夹</p><ul><li>存放项目功能模块<ul><li>App.jsx</li></ul></li><li>需要根据路由配置，分割子级目录</li><li>如列表页：<ul><li>index.jsx为这个页面的出口，向外抛出去</li><li>列表每一项都会建一个组件<ul><li>如：titlebar会建一个组件</li></ul></li><li>这些东西会放入同一个文件夹里，因为属于同一个页面嘛</li></ul></li></ul><p>config文件夹</p><ul><li>放app的配置 &amp; 第三方类库的引用<ul><li>router.jsx 路由的配置、映射和跳转等</li></ul></li></ul><p>store文件夹</p><ul><li>存放数据管理的文件夹（包括数据的获取和封装）<ul><li>如用户登录的信息</li></ul></li><li>全局类信息需要存起来，就存在store中的某个地方</li><li>是web app单页应用开发新增的功能</li><li>需要单独拿出来</li></ul><p>components</p><ul><li>非业务型通用组件</li><li>很多view里都用到，和业务无关</li><li>如：<ul><li>下拉组件 - drop down</li></ul></li><li>更高级的通用组件封装，会打包到npm上，如<a href="https://ant.design/docs/react/introduce-cn">Ant Design组件库</a></li></ul><h1>0x1 Router的简单实现</h1><h2>1 文件调整</h2><p>/client/views/topic-list/index.jsx</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="3c6ee41d-2f0d-44a9-9d75-3f5a96e6b0bf" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>import React from 'react'
+
+export default class TopicList extends React.Component {
+  componentDidMount() {
+    //  placeholder
+  }
+
+  render() {
+    return (
+      &lt;div>ㄟ...这里是to...topic li..li..list(｡•́-ก̀｡)&lt;/div>
+    )
+  }
+}</pre></td></tr></table><p><br /></p><p>/client/views/topic-detail/index.jsx</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="b7797d1d-d5bc-4c92-a270-932022b38f6b" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>import React from 'react'
+
+export default class TopicDetail extends React.Component {
+  componentDidMount() {
+    //  placeholder
+  }
+
+  render() {
+    return (
+      &lt;div>喂喂喂，这里是topic detail！(o˘д˘)o有人在吗？&lt;/div>
+    )
+  }
+}</pre></td></tr></table><h2>2 配置路由</h2><p>路由：区分一个网站不同功能模块的地址</p><ul><li>浏览器通过不同的地址访问不同的功能</li><li>也让开发者区分需要返回的页面</li></ul><p>前端路由：</p><ul><li>原理：html的history api<ul><li>url变化的时候，js代码可以监听到这个事件</li><li>阻止浏览器刷新页面的行为</li><li>在js代码中执行需要的操作<ul><li> 一般是渲染一个新页面出来</li><li>同时请求数据填充进去</li></ul></li></ul></li></ul><p>react-router：</p><ul><li>react中好用的路由控制插件<ul><li>写JSX组件一样，控制路由跳转</li></ul></li><li>安装：`npm i react-router react-router-dom -S`</li></ul><p><br /></p><p>client/config/router.jsx</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="8cbd3721-62de-494d-b52b-555148e66199" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>import React from 'react'
+import {
+  Route,
+
+} from 'react-router-dom'
+
+import TopicList from '../views/topic-list'
+import TopicDetail from '../views/topic-detail'
+
+export default () => [
+  &lt;Route path="/" component={TopicList} exact />,
+  &lt;Route path="/detail" component={TopicDetail} exact />,
+]</pre></td></tr></table><p>说明：</p><ul><li>Route - 用来指定哪个url对应哪个组件</li><li>如果不写exact，访问/detail的时候，/也会被匹配到</li><li>就像写一般的标签一样...</li></ul><p><br /></p><p>client/views/App.jsx</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="88671813-4662-426b-898f-5d38b3f48318" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>import React from 'react'
+import Routers from '../config/router'
+
+export default class App extends React.Component {
+  componentDidMount() {
+    //  placeholder
+  }
+
+  render() {
+    return [
+      &lt;div>初次见面，请多关照嘿嘿嘿~(๑^ں^๑)&lt;/div>,
+      &lt;Routers />,
+    ]
+  }
+}</pre></td></tr></table><p>说明：</p><ul><li>Routers的使用方法（和使用普通的标签一样...）</li></ul><p>client/app.js</p><p>需要在整个app外面，包裹一层&lt;BrowserRouter&gt;，便于整体控制</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="66698379-998a-4090-b277-817f7535a5c7" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>...
+import { BrowserRouter } from 'react-router-dom'
+...
+const render = (Component) => {
+  ReactDOM.hydrate(
+    &lt;AppContainer>
+      &lt;BrowserRouter>
+        &lt;Component />
+      &lt;/BrowserRouter>
+    &lt;/AppContainer>, root,
+  )
+};
+...</pre></td></tr></table><p><br /></p><p>webpack.config.base.js</p><p>小调整：修改webpack的配置文件，让webpack在import没有后缀文件类型的js和jsx文件的时候，也能找到它们</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="bee86ff6-44da-4169-8685-ec12b6c06d39" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>resolve: {
+  extensions: ['.js', '.jsx']
+},</pre></td></tr></table><p><br /></p><p>效果</p><p><img class="confluence-embedded-image confluence-external-resource" width="286" src="http://img.daker.wang/wiki/1537358824339.png" data-image-src="http://img.daker.wang/wiki/1537358824339.png"></p><p><img class="confluence-embedded-image confluence-external-resource" width="286" src="http://img.daker.wang/wiki/1537358844648.png" data-image-src="http://img.daker.wang/wiki/1537358844648.png"></p><h2>3 使用Link做点击跳转</h2><p>App.jsx</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="0111bc7a-2b9b-40fd-a221-e5be505271b7" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>...
+import { Link } from 'react-router-dom'
+...
+export default class App extends React.Component {
+...
+  render() {
+    return [
+      &lt;div>
+        &lt;div>初次见面，请多关照嘿嘿嘿~(๑^ں^๑)&lt;/div>
+        &lt;Link to="/">⌲ 列表页&lt;/Link>
+        &lt;br />
+        &lt;Link to="/detail">⌲ 详情页&lt;/Link>
+      &lt;/div>,
+      &lt;Routers />,
+    ]
+  }
+}</pre></td></tr></table><p>效果</p><p><img class="confluence-embedded-image confluence-external-resource" width="286" src="http://img.daker.wang/wiki/1537359504381.png" data-image-src="http://img.daker.wang/wiki/1537359504381.png"></p><ul><li>切换页面后，浏览器没有刷新，但是页面内容已经改变了</li></ul><h2>4 Redirect页面重定向</h2><p>client/config/router.jsx</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="66efba44-966a-40b4-aa57-36dbef80c387" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>import React from 'react'
+import {
+  Route,
+  Redirect,
+} from 'react-router-dom'
+...
+export default () => [
+  &lt;Route path="/" render={() => &lt;Redirect to="/list" />} exact />,
+  &lt;Route path="/list" component={TopicList} />,
+  &lt;Route path="/detail" component={TopicDetail} />,
+]</pre></td></tr></table><p>说明：</p><ul style="list-style-type: square;"><li>Redirect：做页面跳转 - 访问「/」直接跳转到「/list」<ul style="list-style-type: square;"><li>效果和服务端返回302是一样的</li></ul></li></ul>
+        <p>&nbsp;</p>
+    
+
+</div>
+
+
+    </div>
+
+    
+  </body>
+</html>

@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="//gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.46-DEV" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>9 主框架 &amp;amp; 列表页搭建 &middot; 细胞的作战实验室</title>
+
+  
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/print.css" media="print">
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/poole.css">
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/syntax.css">
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/hyde.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Abril+Fatface|PT+Sans:400,400i,700">
+
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+  
+  <link href="" rel="alternate" type="application/rss+xml" title="细胞的作战实验室" />
+
+  
+</head>
+
+  <body class=" ">
+  <div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <a href="http://azen.me/"><h1>细胞的作战实验室</h1></a>
+      <p class="lead">
+      Power by <a href="http://hugo.spf13.com">hugo</a>
+      </p>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li><a href="http://azen.me/">Home</a> </li>
+      
+    </ul>
+
+    <p>&copy; 2018. All rights reserved. </p>
+  </div>
+</div>
+
+    <div class="content container">
+    <div class="post">
+  <h1>9 主框架 &amp;amp; 列表页搭建</h1>
+  <span class="post-date">Wed, Oct 17, 2018</span>
+  <p>&nbsp;</p>         <h1>0x0 页面框架搭建</h1><h2>基本UI元素搭建</h2><p>client/views/layout/app-bar.jsx</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="499ea20f-cc12-435d-9e6d-f6fa42649bd3" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>import React from 'react'
+
+import AppBar from '@material-ui/core/AppBar'
+import ToolBar from '@material-ui/core/Toolbar'
+import Button from '@material-ui/core/Button'
+import IconButton from '@material-ui/core/IconButton'
+import HomeIcon from '@material-ui/icons/Home'
+import Typography from '@material-ui/core/Typography'
+
+class MainAppBar extends React.Component {
+  constructor() {
+    super()
+    this.onHomeIconClick = this.onHomeIconClick.bind(this)  // #1
+    this.createButtonClick = this.createButtonClick.bind(this)
+    this.loginButtonClick = this.loginButtonClick.bind(this)
+  }
+  /* eslint-disable */
+  onHomeIconClick() {
+
+  }
+
+  createButtonClick() {
+
+  }
+
+  loginButtonClick() {
+
+  }
+  /* eslint-enable */
+
+  render() {
+    return (
+      &lt;div>
+        &lt;AppBar position="fixed">
+          &lt;ToolBar>
+            &lt;IconButton color="contrast" onClick={this.onHomeIconClick}>
+              &lt;HomeIcon />
+            &lt;/IconButton>
+            &lt;Typography type="title" color="inherit">
+              JNode
+            &lt;/Typography>
+            &lt;Button raised color="accent" onClick={this.createButtonClick}>
+              新建话题
+            &lt;/Button>
+            &lt;Button color="contrast" onClick={this.loginButtonClick}>
+              登录
+            &lt;/Button>
+          &lt;/ToolBar>
+        &lt;/AppBar>
+      &lt;/div>
+    )
+  }
+}
+
+export default MainAppBar
+
+
+</pre></td></tr></table><p>说明：</p><ol><li>为啥要绑定 - 因为执行的时候，方法的调用者是window，没有当前语义中this的上下文了，所以需要绑定一下，把组件上下文传给它，让他永远使用这个组件实例上下文</li></ol><p><br /></p><p>client/views/App.jsx</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="c0dc29a6-fc6d-4bc2-b4c0-e7084c84b62f" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>import React from 'react'
+import Routers from '../config/router'
+import AppBar from './layout/app-bar'
+
+export default class App extends React.Component {
+  componentDidMount() {
+    //  placeholder
+  }
+
+  render() {
+    return [
+      &lt;AppBar />,
+      &lt;Routers key="routes" />,
+    ]
+  }
+}</pre></td></tr></table><p><br /></p><p>build/webpack.config.client.js</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="dcb4bea2-83b2-49e8-ac3b-9941f2562e12" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>if (isDev) {
+    config.devtool = '#cheap-module-eval-source-map' // #1
+    ...
+}</pre></td></tr></table><p>说明：</p><ol><li><pre>允许浏览器调试时，浏览jsx源码而非编译后的js</pre></li></ol><h2>样式搭建</h2><p>client/views/layout/app-bar.jsx</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="2719514d-4cf1-45ee-89a5-fda88548af1d" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>import { withStyles } from '@material-ui/core/styles'
+...
+const styles = {
+  root: {
+    width: '100%',
+  },
+  flex: {
+    flex: 1,
+  },
+}
+...
+class MainAppBar extends React.Component {
+...
+  render() {
+    const { classes } = this.props
+    return (
+      &lt;div className={classes.root}>
+        &lt;AppBar position="fixed">
+          &lt;ToolBar>
+            ...
+            &lt;Typography type="title" color="inherit" className={classes.flex}>
+              JNode
+            &lt;/Typography>
+            ...
+          &lt;/ToolBar>
+        &lt;/AppBar>
+      &lt;/div>
+    )
+  }
+}
+
+
+MainAppBar.propTypes = {
+  classes: PropTypes.object.isRequired,
+}
+
+export default withStyles(styles)(MainAppBar) // #1</pre></td></tr></table><p>说明：</p><ol><li>需要export的时候，用withStyle方法，会使用styles做一个组件壳，套在要使用样式的组件外面</li></ol><h2>container搭建</h2><p>我们搭建的页面简单，每个页面都是在页面正中的区域中，有一个区块，放列表或详情内容 - 这个区块可以先定义好，就是我们的Container</p><p>client/views/layout/container.jsx</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="9004b497-287c-4ee9-88cb-4f5cb4b977f7" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>import React from 'react'
+import PropTypes from 'prop-types'
+
+import { withStyles } from '@material-ui/core/styles'
+
+import Paper from '@material-ui/core/Paper'
+
+const styles = {
+  root: {
+    margin: 24,
+    marginTop: 80,
+  },
+}
+
+const Container = ({ classes, children }) => ( // #1
+  &lt;Paper elevation={4} className={classes.root}>
+    {children}                                 // #2
+  &lt;/Paper>
+)
+
+Container.propTypes = {
+  classes: PropTypes.object.isRequired,
+  children: PropTypes.oneOfType([              // #3
+    PropTypes.arrayOf(PropTypes.element),
+    PropTypes.element,
+  ]),
+}
+
+export default withStyles(styles)(Container)
+
+
+</pre></td></tr></table><p>说明：</p><ol><li>简单组件的定义方法</li><li>解构的方法，把Container的子组件都塞到Paper下</li><li>children可能是个element数组或单个element元素<ol><li>element：能在React组件下做渲染的任何东西</li></ol></li></ol><p><br /></p><p>client/views/topic-list/index.jsx</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="83b199d1-1365-4183-8cf6-45857f3ce1a9" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>...
+import Container from '../layout/container'
+...
+class TopicList extends React.Component {
+  ...
+  render() {
+    return (
+      &lt;Container>
+        ...
+      &lt;/Container>
+    )
+  }
+}
+...</pre></td></tr></table><h2>本节遗留问题</h2><p>发现使用本节说的样式定义方式，会使服务端渲染不生效。</p><p>查看了下服务端渲染结果，发现css生成了，但是组件的class名没有被赋值上。还需要再看下。</p><h1>0x1 列表页UI搭建</h1><p>我们需要实现两个东东：顶部的Tab导航条 &amp; 列表的一个cell</p><p><a href="https://gitee.com/azen/FE-execise/commit/8cc1da9b7166b7f78de94421968d8d493caf1df7?view=parallel">相关commit</a></p><p><br /></p><p><span>client/views/topic-list/index.jsx</span></p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="58fb2711-da20-4c41-9835-e62cc3fe3c47" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>...
+import Tabs from '@material-ui/core/Tabs'
+import Tab from '@material-ui/core/Tab'
+...
+import Container from '../layout/container'
+import TopicListItem from './list-item' // #1
+
+...
+class TopicList extends React.Component {
+  constructor() {
+    super()
+    this.changeTab = this.changeTab.bind(this)
+    this.listItemClick = this.listItemClick.bind(this)
+
+    this.state = {
+      tabIndex: 0,
+    }
+  }
+    ...
+
+  changeTab(e, index) {
+    this.setState({
+      tabIndex: index,
+    })
+  }
+
+  listItemClick(e) {
+    console.log(this.state, e)
+  }
+
+  render() {
+    const {
+      tabIndex,
+    } = this.state
+
+    const topic = { // #2
+      title: 'This is title',
+      username: 'Azen',
+      replay_count: 20,
+      visit_count: 30,
+      create_at: '2018-10-10',
+      tab: 'share',
+    }
+
+    return (
+      &lt;Container>
+        ...
+        &lt;Tabs value={tabIndex} onChange={this.changeTab}> // #3
+          &lt;Tab label="全部" />
+          &lt;Tab label="分享" />
+          &lt;Tab label="工作" />
+          &lt;Tab label="问答" />
+          &lt;Tab label="精品" />
+          &lt;Tab label="测试" />
+        &lt;/Tabs>
+        &lt;TopicListItem onClick={this.listItemClick} topic={topic} />
+      &lt;/Container>
+    )
+  }
+}
+...</pre></td></tr></table><p>说明：</p><ol><li>下面会实现的列表页Cell</li><li>假数据</li><li>value属性，指定当前选中的index</li></ol><p><br /></p><p><span>client/views/topic-list/list-item.jsx</span></p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="d6edc8ff-6c46-4e17-8173-338276cd7ef5" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>import React from 'react'
+
+import ListItem from '@material-ui/core/ListItem'
+import ListItemAvatar from '@material-ui/core/ListItemAvatar'
+import ListItemText from '@material-ui/core/ListItemText'
+// import Avatar from '@material-ui/core/Avatar'
+import IconHome from '@material-ui/icons/Home'
+
+import { withStyles } from '@material-ui/core/styles'
+
+import PropTypes from 'prop-types'
+
+import { topicPrimaryStyle, topicSecondaryStyle } from './styles' // #1
+
+const Primary = ({ classes, topic }) => (
+  &lt;div className={classes.root}>
+    &lt;span className={classes.tab}>{topic.tab}&lt;/span>
+    &lt;span className={classes.title}>{topic.title}&lt;/span>
+  &lt;/div>
+)
+
+const StyledPrimary = withStyles(topicPrimaryStyle)(Primary) // #2
+
+Primary.propTypes = {
+  topic: PropTypes.object.isRequired,
+  classes: PropTypes.object.isRequired,
+}
+
+const Secondary = ({ classes, topic }) => (
+  &lt;div className={classes.root}>
+    &lt;span className={classes.userName}>{topic.username}&lt;/span>
+    &lt;span className={classes.count}>
+      &lt;span className={classes.accentColor}>{topic.replay_count}&lt;/span>
+      &lt;span>/&lt;/span>
+      &lt;span>{topic.visit_count}&lt;/span>
+    &lt;/span>
+    &lt;span>
+      创建时间：
+      {topic.create_at}
+    &lt;/span>
+  &lt;/div>
+)
+
+Secondary.propTypes = {
+  topic: PropTypes.object.isRequired,
+  classes: PropTypes.object.isRequired,
+}
+
+const StyledSecondary = withStyles(topicSecondaryStyle)(Secondary)
+
+const TopicListItem = ({ onClick, topic }) => {
+  return (
+    &lt;ListItem>
+      &lt;ListItemAvatar>
+        {/* &lt;Avatar src={topic.image} /> */}
+        &lt;IconHome />
+      &lt;/ListItemAvatar>
+      &lt;ListItemText
+        primary={&lt;StyledPrimary topic={topic} />} // #3
+        secondary={&lt;StyledSecondary topic={topic} />}
+      />
+    &lt;/ListItem>
+  )
+}
+
+TopicListItem.propTypes = {
+  topic: PropTypes.object.isRequired,
+  onClick: PropTypes.func.isRequired,
+}
+
+export default TopicListItem
+
+
+</pre></td></tr></table><p>说明：</p><ol><li>下面实现的样式文件</li><li>由于需要配置style的组件，是一个简单组件，所以这样使用withStyle方法</li><li><a href="https://material-ui.com/api/list-item-text/">ListItemText</a>组件，支持传入「上下两行」的组件样式</li></ol><p><br /></p><p><span>client/views/topic-list/styles.js</span><span> </span></p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="fc0031cb-c766-4fae-9035-7ae3229573e3" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>export const topicPrimaryStyle = (theme) => {
+  return {
+    root: {
+      display: 'flex',
+      alignItems: 'center',
+    },
+    title: {
+      color: '#555',
+    },
+    tab: {
+      backgroundColor: theme.palette.primary[500],
+      textAlign: 'center',
+      display: 'inline-block',
+      padding: '0 6px',
+      color: '#fff',
+      borderRadius: 3,
+      marginRight: 10,
+      fontSize: '12px',
+    },
+  }
+}
+
+export const topicSecondaryStyle = (theme) => {
+  return {
+    root: {
+      display: 'flex',
+      alignItems: 'center',
+      paddingTop: 3,
+    },
+    count: {
+      textAlign: 'center',
+      marginRight: 20,
+    },
+    userName: {
+      marginRight: 20,
+      color: '#9e9',
+    },
+    tab: {
+      backgroundColor: theme.palette.primary[500],
+      textAlign: 'center',
+      display: 'inline-block',
+      padding: '0 6px',
+      color: '#fff',
+      borderRadius: 3,
+      marginRight: 10,
+      fontSize: '12px',
+    },
+    accentColor: {
+      color: theme.palette.accent[300],
+    },
+  }
+}
+
+
+</pre></td></tr></table><p>说明：</p><ol><li>没啥好说明的...样式的定义比较简单</li></ol><h1>0x2 列表页数据处理</h1><p><a href="https://gitee.com/azen/FE-execise/commit/dc47d07c8a4eef2c5fd8199ab38ffb3ea3dc5bcc">相关Commit</a></p><h3>Store的定义</h3><p>处理数据，首先要定义数据相关的Store。而我们使用的数据方案为mobx，这里需要用到mobx的相关工具。</p><p>可以料想，如果使用Redux的话，方法也是类似的，只不过使用Redux提供的相关工具就好</p><p><span>client/store/topic-store.js</span></p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="08b8d2f9-2e0b-4f9e-b39f-835be7276a11" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>import {
+  observable,
+  action,
+  extendObservable,
+} from 'mobx'
+
+import { topicSchema } from '../util/variable-define' // #1
+import { get } from '../util/http'  //  #2
+
+const createTopic = (topic) => {
+  return Object.assign({}, topicSchema, topic) // #3
+}
+
+class Topic { // #4
+  constructor(data) {
+    extendObservable(this, data) // #5
+  }
+
+  @observable syncing = false
+}
+
+class TopicStore {
+  @observable topics
+
+  @observable syncing
+
+  constructor({ syncing, topics } = { syncing: false, topics: [] }) { // #6
+    this.syncing = syncing
+    this.topics = topics.map(topic => new Topic(createTopic(topic)))
+  }
+
+  addTopic(topic) {
+    this.topics.push(new Topic(createTopic(topic)))
+  }
+
+  @action fetchTopics() {
+    return new Promise((resolve, reject) => {
+      this.syncing = true
+      this.topics = [] // #7
+      get('/topics', {
+        mdrender: false,    // #8
+      }).then((resp) => {
+        if (resp.success) {
+          resp.data.forEach((topic) => {
+            this.addTopic(topic)
+          })
+          this.syncing = false
+          resolve()
+        } else {
+          reject()
+        }
+        this.syncing = false
+      }).catch((err) => {
+        reject(err)
+        this.syncing = false
+      })
+    })
+  }
+}
+
+export default TopicStore
+
+
+</pre></td></tr></table><p>说明：</p><ol><li>我们知道，服务端返回的model字段可能不全（当一些字段没有值的时候，key也不会返回）。所以这里的「topicSchema」类似于iOS中的「瘦model」，规定了返回对象的全量属性</li><li>简单封装的网络请求工具方法集</li><li><span style="color: rgb(79,79,79);">Object.assign：是ES6新添加的接口，主要的用途是用来合并多个JavaScript的对象。</span><br /><ol><li><span style="color: rgb(79,79,79);"><span style="color: rgb(79,79,79);">可以接收多个参数，第一个参数是目标对象，后面的都是源对象</span></span></li><li><span style="color: rgb(79,79,79);"><span style="color: rgb(79,79,79);">assign方法将多个原对象的属性和方法都合并到了目标对象上面</span></span></li><li><span style="color: rgb(79,79,79);"><span style="color: rgb(79,79,79);">如果在合并过程中出现同名的属性（方法）：后合并的属性（方法）会覆盖之前的同名属性（方法）</span><br /></span></li><li><span style="color: rgb(79,79,79);"><span style="color: rgb(79,79,79);"><a href="https://blog.csdn.net/qs8lk88/article/details/79018481">参考文章</a></span></span></li></ol></li><li><span style="color: rgb(79,79,79);"><span style="color: rgb(79,79,79);">把服务端返回的topic这个「瘦model」扩展为可以包含一些逻辑的「胖model」</span></span></li><li><span style="color: rgb(79,79,79);"><span style="color: rgb(79,79,79);">mobx提供的工具方法，可以把目标对象data的所有属性，都转化为@observable的属性，同时赋值给源对象Topic</span></span><ol><li><span style="color: rgb(79,79,79);">作用类似Object.assign</span></li><li><span style="color: rgb(79,79,79);"><span style="color: rgb(79,79,79);"><a href="https://suprise.gitbooks.io/mobx-cn/content/refguide/extend-observable.html">文档</a></span></span></li></ol></li><li><span style="color: rgb(79,79,79);">构造方法传参 &amp; 指定默认值</span><ol><li><span style="color: rgb(79,79,79);"><a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Classes/constructor">文档</a></span></li></ol></li><li><span style="color: rgb(79,79,79);">清空数据</span></li><li><span style="color: rgb(79,79,79);">cnode提供的接口需要用到的参数，表示是否需要把md文件渲染为html格式后再返回</span></li></ol><div><span style="color: rgb(79,79,79);"><br /></span></div><h3><span style="color: rgb(79,79,79);">Store的配置</span></h3><div><span style="color: rgb(79,79,79);">首先，把store配置到入口文件上，通过Provider组件让子组件都能拿到它</span></div><div><span style="color: rgb(79,79,79);"><span>client/store/store.js</span><br /></span></div><div><p><br /></p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="f803a141-37fb-489c-8cf6-1f748283cb33" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>import AppStateClass from './app-state'
+import TopicStore from './topic-store'
+
+const AppState = AppStateClass
+
+export { AppState, TopicStore }
+
+export default {
+  AppState,
+  TopicStore,
+}
+
+export const createStoreMap = () => { // #1
+  return {
+    appState: new AppState(),
+    topicStore: new TopicStore(),
+  }
+}
+
+
+</pre></td></tr></table><p>说明：</p><ol><li>这个方法在服务端渲染的时候会用到，为了保证服务端渲染和客户端使用的数据一致而实现的方法</li></ol></div><div><span style="color: rgb(79,79,79);"><br /></span></div><div><span style="color: rgb(79,79,79);">client/app.js</span></div><div><p><br /></p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="055b04ae-03fb-43a6-9728-2307c43cb392" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>...
+import { AppState, TopicStore } from './store/store'
+...
+
+
+const appState = new AppState(initialState.appState)
+const topicStore = new TopicStore(initialState.topicStore)
+...
+
+
+const render = (Component) => {
+  ...
+  ReactDOM.hydrate(
+    ...
+      &lt;Provider appState={appState} topicStore={topicStore}>
+        ...
+      &lt;/Provider>
+    &lt;/AppContainer>, root,
+  )
+}
+...</pre></td></tr></table><p><br /></p><h3>Store的使用</h3><p><span>client/views/topic-list/index.jsx</span></p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="c9de2077-8496-4b3f-a00c-8f770be1eb2c" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>...
+import {
+  observer,
+  inject,
+} from 'mobx-react'
+...
+import List from '@material-ui/core/List'
+import CircularProgress from '@material-ui/core/CircularProgress'
+...
+
+@inject((stores) => {  // #1
+  return {
+    appState: stores.appState,
+    topicStore: stores.topicStore,
+  }
+}) @observer
+
+class TopicList extends React.Component {
+  ...
+  componentDidMount() {
+    this.props.topicStore.fetchTopics()
+  }
+
+  ...
+
+  render() {
+    ...
+    const {
+      topicStore,
+    } = this.props
+    const topicList = topicStore.topics
+    const syncingTopics = topicStore.syncing // #2
+
+    return (
+      &lt;Container>
+        ...
+        &lt;List>
+          {
+            topicList.map(topic =>
+              &lt;TopicListItem onClick={this.listItemClick} topic={topic} key={topic.id} />)
+          }
+        &lt;/List>
+        {
+          syncingTopics ? (
+            &lt;div>
+              &lt;CircularProgress color="accent" size={100} />
+            &lt;/div>
+          ) : null
+        }
+      &lt;/Container>
+    )
+  }
+}
+
+TopicList.wrappedComponent.propTypes = { // #3
+  appState: PropTypes.object.isRequired,
+  topicStore: PropTypes.object.isRequired,
+}
+
+export default TopicList
+
+
+</pre></td></tr></table><p>说明：</p><ol><li>拿到Provider中送进来的Store们，赋值给props</li><li>从props中拿需要的store，及其属性</li><li>指定TopicList的父组件的propTypes</li></ol><p><br /></p><h3>其他工具小方法</h3><p><span>build/webpack.config.server.js</span></p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="9bff760b-976b-4517-bfbe-527aaab17f9d" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>...
+const config = webpackMerge(baseConfig, {
+    ...
+    plugins: [
+      new webpack.DefinePlugin({
+        'process.env.API_BASE': '"http://127.0.0.1:8787"' // #1
+      })
+    ]
+});</pre></td></tr></table><p>说明：</p><ol><li>使用webpack的插件定义环境变量，使得客户端请求网络的baseUrl可外部配置<ol><li><a href="https://webpack.js.org/plugins/define-plugin/#src/components/Sidebar/Sidebar.jsx">DefinePlugin文档</a></li></ol></li></ol><p><br /></p><p><span>client/util/http.js</span></p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="061ad22b-e2a5-4c0b-825b-a2c1a008b1f9" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>import axios from 'axios'
+
+// /api/xxx 127.0.0.1
+const baseUrl = process.env.API_BASE || '' // #1
+
+const parseUrl = (url, params) => {
+  const str = Object.keys(params).reduce((result, key) => { // #2
+    return `${result}${key}=${params[key]}&amp;`
+  }, '')
+  return `${baseUrl}/api${url}?${str.substr(0, str.length - 1)}`
+}
+
+export const get = (url, params) => {
+  return new Promise((resolve, reject) => {
+    axios.get(parseUrl(url, params))
+      .then((resp) => {
+        const { data } = resp
+        if (data &amp;&amp; data.success === true) {
+          resolve(data)
+        } else {
+          reject(data)
+        }
+      }).catch(reject)
+  })
+}
+
+export const post = (url, params, reqData) => {
+  return new Promise((resolve, reject) => {
+    axios.post(parseUrl(url, params), reqData)
+      .then((resp) => {
+        const {
+          data,
+        } = resp
+        if (data &amp;&amp; data.success === true) {
+          resolve(data)
+        } else {
+          reject(data)
+        }
+      }).catch(reject)
+  })
+}
+
+
+</pre></td></tr></table><p>说明：</p><ol><li>从环境变量里拿baseUrl</li><li>Object.keys<ol><li><a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Object/keys">keys文档</a><ol><li>返回由指定对象可枚举属性的字符串列表</li></ol></li><li><a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Array/reduce">reduce文档</a><ol><li>对数组中的每个元素做操作</li></ol></li></ol></li></ol></div><h1>0x3 路由跳转 &amp; Tab切换</h1><p><a href="https://gitee.com/azen/FE-execise/commit/859608da47a9e3aef0be7c729ed67f0a70516f8d">相关Commit</a></p><p>如上，数据请求及使用已经实现了。</p><p>这一节，我们的目标是实现路由跳转 &amp; Tab切换</p><p>切换tab之后，页面其实没变，只是页面上的数据重新请求了而已，我们需要实现「根据tab请求对应接口」功能</p><p><span>client/store/topic-store.js</span></p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="8b81334f-5eee-47ee-909a-d5e070477b98" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>...
+class TopicStore {
+  ...
+  @action fetchTopics(tab) {
+    return new Promise((resolve, reject) => {
+      ...
+      get('/topics', {
+        mdrender: false,
+        tab,
+      })...
+}</pre></td></tr></table><p><span>client/views/topic-list/index.jsx</span></p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="4d8c7247-755f-438e-b18c-98c546dfe242" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>...
+import queryString from 'query-string'
+...
+import { tabs } from '../../util/variable-define' // #1
+
+...
+class TopicList extends React.Component {
+  ...
+  componentDidMount() {
+    const tab = this.getTab() // #2
+    this.props.topicStore.fetchTopics(tab) // #3
+  }
+
+  componentWillReceiveProps(nextProps) { // #5
+    if (nextProps.location.search !== this.props.location.search) {
+      this.props.topicStore.fetchTopics(this.getTab(nextProps.location.search))
+    }
+  }
+
+  getTab(search) {
+    const se = search || this.props.location.search
+    const query = queryString.parse(se)
+    return query.tab || 'all'
+  }
+
+
+  ...
+
+
+  changeTab(e, value) {
+    this.props.history.push({ // #4
+      pathname: '/list',
+      search: `tab=${value}`,
+    })
+  }
+  
+  ...
+
+  render() {
+    const {
+      topicStore,
+    } = this.props
+    ...
+    const query = queryString.parse(this.props.location.search) // #6
+    const { tab } = query
+
+    return (
+      &lt;Container>
+        ...
+        &lt;Tabs value={tab} onChange={this.changeTab}> // #7
+          {
+            Object.keys(tabs).map((t) => {
+              return &lt;Tab key={t} label={tabs[t]} value={t} />
+            })
+          }
+        &lt;/Tabs>
+        ...
+        {
+          syncingTopics ? (
+            &lt;div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-around',
+                padding: '40px 0',
+              }}
+            >
+              &lt;CircularProgress color="accent" size={100} />
+            &lt;/div>
+          ) : null
+        }
+      &lt;/Container>
+    )
+  }
+}
+...
+TopicList.propTypes = {
+  location: PropTypes.object.isRequired,
+  history: PropTypes.object,
+}
+
+export default TopicList</pre></td></tr></table><p>说明：</p><ol><li>tabs相关信息，拿到外面定义</li><li>根据url获取当前tab的值 - &quot;all&quot;这种</li><li>根据tab请求数据</li><li>路由跳转方法 - 把目标url push到history中，这样可以实现浏览器点击「返回」按钮的相关功能<ol><li>会唤醒componentWillReceiveProps生命周期方法</li></ol></li><li>接收到新的props，重新请求数据</li><li>解析url中，问号后面的部分</li><li>设置当前选中的tab的value值</li></ol><p><br /></p><h3>小功能点：修改「置顶」标签的样式</h3><p><span>client/views/topic-list/list-item.jsx</span></p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="5a11f98c-f4a6-443e-a84d-5fa9742aecc9" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>...
+import cx from 'classnames'
+...
+import { tabs } from '../../util/variable-define'
+...
+const Primary = ({ classes, topic }) => {
+  const classNames = cx({ // #1
+    [classes.tab]: true,
+    [classes.top]: topic.top,
+  })
+
+  return (
+    &lt;span className={classes.root}>
+      &lt;span className={classNames}>{topic.top ? '置顶' : tabs[topic.tab]}&lt;/span>
+      &lt;span className={classes.title}>{topic.title}&lt;/span>
+    &lt;/span>
+  )
+}</pre></td></tr></table><p>说明：</p><ol><li>cx的用途：根据传入的对象，返回css样式中class的最终字符串<ol><li>文档：<a href="https://www.npmjs.com/package/classnames">https://www.npmjs.com/package/classnames</a></li><li>例子：<span class="meta function-call js" style="color: rgb(0,0,0);"><span class="entity name function js" style="color: rgb(153,0,0);">classNames</span><span class="meta js"><span class="punctuation definition begin round js">(</span><span class="string quoted single js" style="color: rgb(221,17,68);"><span class="punctuation definition string begin js">'</span>foo<span class="punctuation definition string end js">'</span></span><span class="meta delimiter object comma js">,</span> <span class="meta brace curly js">{</span> bar<span class="keyword operator assignment js" style="color: rgb(34,34,34);">:</span> <span class="constant language boolean true js" style="color: rgb(96,106,161);">true</span> <span class="meta brace curly js">}</span><span class="punctuation definition end round js">)</span></span></span><span class="punctuation terminator statement js" style="color: rgb(0,0,0);">;</span><span style="color: rgb(0,0,0);"> </span><span class="comment line double-slash js" style="color: rgb(153,153,136);"><span class="punctuation definition comment js">//</span> =&gt; 'foo bar'</span></li><li>如果传入的样式类名有两个，且两个样式属性有冲突，则后一个属性值覆盖前一个属性值</li></ol></li></ol>
+        <p>&nbsp;</p>
+    
+
+</div>
+
+
+    </div>
+
+    
+  </body>
+</html>

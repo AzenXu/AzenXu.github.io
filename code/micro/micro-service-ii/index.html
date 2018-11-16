@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="//gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.46-DEV" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>1 微服务的着眼点及解决方案 &middot; 细胞的作战实验室</title>
+
+  
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/print.css" media="print">
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/poole.css">
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/syntax.css">
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/hyde.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Abril+Fatface|PT+Sans:400,400i,700">
+
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+  
+  <link href="" rel="alternate" type="application/rss+xml" title="细胞的作战实验室" />
+
+  
+</head>
+
+  <body class=" ">
+  <div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <a href="http://azen.me/"><h1>细胞的作战实验室</h1></a>
+      <p class="lead">
+      Power by <a href="http://hugo.spf13.com">hugo</a>
+      </p>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li><a href="http://azen.me/">Home</a> </li>
+      
+    </ul>
+
+    <p>&copy; 2018. All rights reserved. </p>
+  </div>
+</div>
+
+    <div class="content container">
+    <div class="post">
+  <h1>1 微服务的着眼点及解决方案</h1>
+  <span class="post-date">Wed, Nov 7, 2018</span>
+  <p>&nbsp;</p>         <h1>0x0 微服务带来的问题</h1><h3>服务之间的通讯问题？</h3><ul style="list-style-type: square;"><li>单体架构中需要通讯的情况少见，而微服务之间的相互调用非常频繁</li></ul><h3>微服务如何发现彼此？</h3><ul style="list-style-type: square;"><li>单体架构使用Dubbo做服务发现：服务消费者需要对服务的提供者进行发现。<ul style="list-style-type: square;"><li>发现的原理是通过KV存储</li><li>有一个中间人，提供者把自己的信息告诉中间人，消费者去中间人那里拿提供者的地址</li></ul></li><li>微服务有各种语言，如何彼此发现？</li></ul><h3>微服务怎样部署？更新？扩容？</h3><ul style="list-style-type: square;"><li>自动化流程？Jekins部署到预发环境，没问题部署到生产环境？<ul style="list-style-type: square;"><li>微服务少的情况下可以这么做，但是一般很难这么做，因为需要同时上线的微服务器可能非常多，无法手动搞</li></ul></li></ul><h1>0x1 微服务间如何通讯</h1><p>通讯：socket、tcp/ip、http...</p><p>两个角度考虑通讯：</p><ol><li>通讯模式</li><li>通讯协议</li></ol><h2>通讯模式角度</h2><p><img class="confluence-embedded-image confluence-external-resource" height="250" src="http://img.daker.wang/wiki/1541570247422.png" data-image-src="http://img.daker.wang/wiki/1541570247422.png"></p><h2>通讯协议角度</h2><h3>REST API</h3><p><img class="confluence-embedded-image confluence-external-resource" height="250" src="http://img.daker.wang/wiki/1541570371823.png" data-image-src="http://img.daker.wang/wiki/1541570371823.png"></p><p>特点：</p><ol><li>请求方式描述动作类</li><li>REST并不是适合于所有业务场景</li></ol><h3>RPC</h3><p><img class="confluence-embedded-image confluence-external-resource" height="250" src="http://img.daker.wang/wiki/1541570451271.png" data-image-src="http://img.daker.wang/wiki/1541570451271.png"></p><h3>MQ - 消息队列</h3><p>发布订阅的模式，可以使用MQ的方式实现</p><h2>RPC专项</h2><h3>选择RPC框架</h3><ol><li>I/O、线程调度模型<ul style="list-style-type: square;"><li>同步？非阻塞的异步？</li><li>长连接？短连接？</li><li>单线程？多线程？线程调度算法？</li></ul></li><li>序列化方式（效率影响了RPC通讯效率）<ul style="list-style-type: square;"><li>可读的<ul style="list-style-type: square;"><li>XML</li><li>JSON</li></ul></li><li>二进制<ul style="list-style-type: square;"><li>pb</li></ul></li></ul></li><li>多语言支持</li><li>服务治理<ul style="list-style-type: square;"><li>有木有服务发现？</li><li>服务监控？</li></ul></li></ol><h3>流行的RPC框架</h3><ol><li>Dubbo/Dubbox<ul style="list-style-type: square;"><li>阿里/当当</li><li><img class="confluence-embedded-image confluence-external-resource" height="250" src="http://img.daker.wang/wiki/1541570746554.png" data-image-src="http://img.daker.wang/wiki/1541570746554.png"><br /><ul style="list-style-type: square;"><li>蓝色：服务启动的时候做的事</li><li>实现：同步调用，虚线：异步调用</li></ul></li><li>特点：<ul style="list-style-type: square;"><li>只支持Java</li><li>有完善的服务治理</li></ul></li></ul></li><li>Motan<ul style="list-style-type: square;"><li>新浪微博</li><li><img class="confluence-embedded-image confluence-external-resource" height="250" src="http://img.daker.wang/wiki/1541570860010.png" data-image-src="http://img.daker.wang/wiki/1541570860010.png"></li><li>特点：<ul style="list-style-type: square;"><li>支持Java</li></ul></li></ul></li><li>Thrift<ul style="list-style-type: square;"><li>facebook/Apache</li><li><img class="confluence-embedded-image confluence-external-resource" height="250" src="http://img.daker.wang/wiki/1541570924055.png" data-image-src="http://img.daker.wang/wiki/1541570924055.png"><br /><ul style="list-style-type: square;"><li>最下面：定义一个API的文件，然后通过Thrift生成定义各种语言代码</li><li>生成之后，服务的提供者和消费者需要引用生成的API</li><li>服务端通过引用，做实现功能的实现，消费者通过API的存根直接调用提供者</li></ul></li><li>特点：<ul style="list-style-type: square;"><li>跨语言</li><li>CS模式<ul style="list-style-type: square;"><li>通过代码生成工具，讲接口定义的文件生成服务器端和客户端的代码（服务端和客户端的代码可以是不同语言的），进而实现服务端和客户端的跨语言支持</li></ul></li><li>序列化：支持很多种<ul style="list-style-type: square;"><li>二进制模式</li><li>压缩格式<ul style="list-style-type: square;"><li>线上使用，提升性能</li></ul></li><li>Json模式</li><li>Debug模式<ul style="list-style-type: square;"><li>开发中使用</li></ul></li></ul></li><li>通讯模式（多种）：<ul style="list-style-type: square;"><li>阻塞IO</li><li>NIO</li><li>专门传输文件的传输方式</li></ul></li><li>线程模型（多种）：<ul style="list-style-type: square;"><li>单线程模式</li><li>线程池模式</li><li>多线程使用非阻塞IO模式</li></ul></li><li>没有服务治理相关东西（没有服务发现和监控）<ul style="list-style-type: square;"><li>消费者只能通过提供者的IP:PORT访问</li><li>需要自己实现服务发现</li></ul></li></ul></li></ul></li><li>Grpc<ul style="list-style-type: square;"><li>Google</li><li><img class="confluence-embedded-image confluence-external-resource" height="250" src="http://img.daker.wang/wiki/1541571435241.png" data-image-src="http://img.daker.wang/wiki/1541571435241.png"></li><li>说明：和Thrift类似，需要先写API的定义文件，文件格式是protoBuffer的，然后去生成各语言接口，然后实现跨语言调用</li><li>序列化：pb（高效的序列化方式）</li><li>通讯协议：没用socket，基于http/2 - 主要面向移动端<ul style="list-style-type: square;"><li>编码和传输效率低于socket模式</li></ul></li></ul></li></ol><h3>RPC框架对比</h3><p><img class="confluence-embedded-image confluence-external-resource" width="686" src="http://img.daker.wang/wiki/1541571626186.png" data-image-src="http://img.daker.wang/wiki/1541571626186.png"></p><p><br /></p><h1>0x2 服务发现、部署更新扩容</h1><h2>服务发现</h2><p>所有服务对外的形式都是IP:PORT形式</p><p>服务发现的本质：让调用者知道提供者的IP和PORT</p><h3>传统服务「发现」</h3><p><img class="confluence-embedded-image confluence-external-resource" height="250" src="http://img.daker.wang/wiki/1541577228532.png" data-image-src="http://img.daker.wang/wiki/1541577228532.png"></p><p>虚线：主机，上面部署了两个服务</p><ol><li>客户端通过DNS解析到Nginx</li><li>Nginx中配置了两台服务器的IP和PORT</li><li>Nginx有一个负载均衡策略，如轮询，会依次访问到右边的两个服务</li></ol><p>传统的服务「发现」，其实没有发现什么东西：</p><ol><li>所有服务提供者已经写死了</li><li>配置文件的维护和更新需要运维同学「手动操作」</li></ol><h3>服务发现</h3><h4>客户端的服务发现</h4><p><img class="confluence-embedded-image confluence-external-resource" height="250" src="http://img.daker.wang/wiki/1541577512125.png" data-image-src="http://img.daker.wang/wiki/1541577512125.png"></p><p>微服务启动之后，会把IP和PORT告诉注册中心</p><p>客户端从注册中心查需要访问的服务，然后连这个服务</p><h4>服务端的服务发现</h4><p><img class="confluence-embedded-image confluence-external-resource" height="250" src="http://img.daker.wang/wiki/1541577569846.png" data-image-src="http://img.daker.wang/wiki/1541577569846.png"></p><p>客户端只固定访问一个服务器，这台服务器来做客户端消息的转发、服务内部的发现、负载均衡选择服务器之类的事情</p><h2>服务的部署、更新、扩容</h2><p><img class="confluence-embedded-image confluence-external-resource" height="250" src="http://img.daker.wang/wiki/1541577727413.png" data-image-src="http://img.daker.wang/wiki/1541577727413.png"></p><h3>传统流程</h3><h4>部署流程</h4><p>代码写好，内网测试通过准备上线→跟运维交涉找到一台空闲的服务器用来部署服务→运维把应用cp到服务器上（Jekins、脚本、其他自动化方式）-(web服务)→ cp一个Tomcat，给服务分配一个端口号（查询端口列表，找一个没有被占用的端口）→ 给域名做DNS解析，解析到对应的Nginx→ Nginx里配置反向代理，指向刚配置的Tomcat</p><h4>更新流程</h4><p>单服务器情况：替换旧代码 &amp; 重启服务</p><p>双服务器（高可用）情况：线下一台服务器→ 代码更新重启验证没问题→ 上线→ 重复部署到另一台服务器上</p><h4>扩容</h4><p>和部署差不多</p><h3>微服务流程</h3><p>特点：服务数量巨多，更新上线非常频繁，传统流程运维同学无法接受</p><p>解决方案：服务编排</p><h4>服务编排</h4><p>包括服务发现、部署、更新、扩容功能，目的是「简化」</p><h4>服务编排工具</h4><p>Mesos、Docker Swarm、Kubernetes</p><h1>0x3 SpringBoot &amp; SpringCloud</h1><p>Java世界里和微服务密切相关的东东</p><p>参考资料：<a href="https://www.yiibai.com/spring/spring-tutorial-for-beginners.html">Spring Framework</a></p><h2>SpringBoot</h2><p>目的：化繁为简</p><p>核心功能：</p><ol><li>独立运行<ol><li>以前运行Spring服务的方式<ol><li>一个web服务器，如Tomcat</li><li>把代码发布到服务器的指定位置</li><li>启动服务</li></ol></li><li>SpringBoot的运行方式<ol><li>以一个Java命令的形式运行服务<ol><li>java -jar xxxxx.jar</li></ol></li></ol></li></ol></li><li>内嵌web服务器<ol><li>内嵌了Tomcat</li></ol></li><li>简化配置</li><li>提供准生产的应用监控</li></ol><h3>与微服务的关系</h3><p>SpringBoot是Java开发微服务的润滑剂，让开发微服务的效率变高了。不是开发微服务的必须</p><p>SpringBoot的简化思路，贴合了微服务的理念</p><h2>SpringCloud</h2><p>目的：简化Java的分布式系统的通用性问题</p><ol><li>多个服务的负载均衡</li><li>服务之间的调用</li><li>事务管理</li><li>统一的注册管理</li></ol><p>理解：</p><ol><li>一系列框架的集合</li><li>简化Java的分布式系统开发 - 利用了SpringBoot</li><li>用SpringBoot对一些轮子做的封装</li></ol><h3>与微服务的关系</h3><p>专门来做微服务的，是Java的微服务解决方案</p><ul style="list-style-type: square;"><li>侧重功能开发，让开发更快</li><li>没提供资源的管理、部署等</li></ul><h3>核心组件</h3><p><img class="confluence-embedded-image confluence-external-resource" height="250" src="http://img.daker.wang/wiki/1541579697232.png" data-image-src="http://img.daker.wang/wiki/1541579697232.png"></p><h4>Eureka：服务发现</h4><p><img class="confluence-embedded-image confluence-external-resource" width="686" src="http://img.daker.wang/wiki/1541579753201.png" data-image-src="http://img.daker.wang/wiki/1541579753201.png"></p><p>发现模式：<strong>客户端发现</strong></p><ol><li>Eureka Server：是一个注册中心，运行多个实例可以避免「单点」的问题，保证高可用</li><li>Application Service：注册到Eureka且保持心跳，心跳停止会认为其不可用</li><li>Application Client：通过Eureka Server查询获取服务的注册信息（IP PORT）</li><li>Client和Service自己通信</li></ol><h4>Ribbon：客户端侧的负载均衡</h4><p><img class="confluence-embedded-image confluence-external-resource" width="686" src="http://img.daker.wang/wiki/1541580038855.png" data-image-src="http://img.daker.wang/wiki/1541580038855.png"></p><p><br /></p><ol><li>Edge Service：负责把各业务服务提供的数据串联起来，统一提供给客户端的服务（如景点信息、门票信息、景点评论等）<ol><li>特点：<ol><li>整合后端服务数据</li><li>离客户端最近</li></ol></li><li>问题：<ol><li>Edge Service和API Gateway的区别？<ol><li>答案见文章下方Zuul部分</li></ol></li></ol></li></ol></li><li>请求通过ELB来到API Service</li><li>API Service 通过Eureka的服务发现找到服务列表</li><li>根据RibbonClient提供的负载均衡策略，选择访问指定的服务<ol><li>策略：Customer Hash</li><li>策略：Zone Aware RoundRobin</li><li>还提供了完善的配置：连接超时、重试、重试的算法等</li></ol></li></ol><h4>Hystrix：断路器</h4><p><img class="confluence-embedded-image confluence-external-resource" width="686" src="http://img.daker.wang/wiki/1541580498655.png" data-image-src="http://img.daker.wang/wiki/1541580498655.png"></p><p>场景：web服务调用了数据库服务，数据库出问题无法响应，导致客户端超时。用户发现没反应，会重复操作，导致请求成倍增长。即使数据库很快恢复，也会由于后面堆积的大量请求而再次压垮，服务很长时间无法恢复。</p><p>解决方案：</p><ol><li>服务方不可用的时候，后续请求不会再次访问服务方了</li><li>服务不可用的时候，给用户一个更好的响应<ol><li>如：对时效性不高的请求，从缓存中取出数据返回给用户</li></ol></li></ol><h4>Zuul：APIGateway</h4><p><img class="confluence-embedded-image confluence-external-resource" height="250" src="http://img.daker.wang/wiki/1541580849705.png" data-image-src="http://img.daker.wang/wiki/1541580849705.png"></p><p>作用：</p><ol><li>对外提供RESTful API</li><li>提供路由服务</li><li>负载均衡</li><li>权限控制</li></ol><p><img class="confluence-embedded-image confluence-external-resource" width="586" src="http://img.daker.wang/wiki/1541580929605.png" data-image-src="http://img.daker.wang/wiki/1541580929605.png"></p><ol><li>客户端通过ELB接入云服务</li><li>请求到Zuul，Zuul对外提供统一的接口（服务路由功能）<ol><li>对内请求：转发给了不同的Service<ol><li>Edge Service对外提供RESTful API，Zuul对这些API进行整合</li><li>如何转发请求到Edge Service：<ol><li>情况一：整合SpringCloud家族的一个东东，通过服务的id访问到EdgeService，且是负载均衡德</li><li>情况二：不整合，单独使用Zuul，通过url映射的方式，找到对应微服务<ol><li>如：某个url开头的请求，转发到对应微服务的地址上，地址就是Edge Service的地址</li></ol></li></ol></li></ol></li></ol></li></ol><p><br /></p><h4>Spring Cloud Config：解决不同环境的配置问题（测试环境、开发环境、线上环境）</h4><p><img class="confluence-embedded-image confluence-external-resource" height="250" src="http://img.daker.wang/wiki/1541581387047.png" data-image-src="http://img.daker.wang/wiki/1541581387047.png"></p><p>不同环境配置问题的解决方案们：</p><p>情景：两个环境 - <strong>测试环境</strong>和<strong>生产环境</strong></p><p>原始方案：</p><ol><li>代码从测试环境切到生产环境后，手动修改代码中的环境配置 - 问题：改动了代码可能产生Bug</li><li>排除文件的方式</li><li>代码层面写上，然后通过环境变量指定的方式</li></ol>
+        <p>&nbsp;</p>
+    
+
+</div>
+
+
+    </div>
+
+    
+  </body>
+</html>

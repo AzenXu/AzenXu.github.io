@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="//gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.46-DEV" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>2 微服务开发 &middot; 细胞的作战实验室</title>
+
+  
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/print.css" media="print">
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/poole.css">
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/syntax.css">
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/hyde.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Abril+Fatface|PT+Sans:400,400i,700">
+
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+  
+  <link href="" rel="alternate" type="application/rss+xml" title="细胞的作战实验室" />
+
+  
+</head>
+
+  <body class=" ">
+  <div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <a href="http://azen.me/"><h1>细胞的作战实验室</h1></a>
+      <p class="lead">
+      Power by <a href="http://hugo.spf13.com">hugo</a>
+      </p>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li><a href="http://azen.me/">Home</a> </li>
+      
+    </ul>
+
+    <p>&copy; 2018. All rights reserved. </p>
+  </div>
+</div>
+
+    <div class="content container">
+    <div class="post">
+  <h1>2 微服务开发</h1>
+  <span class="post-date">Mon, Nov 12, 2018</span>
+  <p>&nbsp;</p>         <h1>0x0 微服务业务分析</h1><h2>业务场景</h2><p>需求一：用户可以注册和登录</p><ul><li>单点登录，但是需要支持跨域 - 使用其他系统的时候就不需要登录了</li><li>不用<a href="http://wiki.daker.wang/dosearchsite.action?queryString=session">session</a> - 避免使用状态</li></ul><p>需求二：登录用户可对课程进行CURD操作</p><h2>架构设计</h2><blockquote><p>Tips：图的目的，是让我们的开发思路更清晰，开发效率更高的。所有想到的开发中应该注意到的点，都在图上标记出来就好，防止自己踩坑。不要为了作图而作图哟！</p></blockquote><p><img class="confluence-embedded-image confluence-external-resource" width="686" src="http://img.daker.wang/wiki/1541812721803.png" data-image-src="http://img.daker.wang/wiki/1541812721803.png"></p><p>说明：</p><ol><li>信息服务使用Python开发，其他服务使用Java，目的是感受跨语言调用<ul><li>邮件验证：当用户注册的时候，由用户EdgeService发起发邮件做验证，验证通过之后再调用「用户服务」做入库进行具体的注册</li><li>「用户服务」是比较底层的，不需要干预类似「发邮件」这种信息服务类的事情</li></ul></li><li>图的目的是让我们的开发思路更清晰</li><li>Redis是为了实现：去Session、无状态而存在的</li><li>单点登录相关说明见下方</li><li>服务发现：Dubbo是基于KV存储，实现服务的发布和订阅。这里使用Zookeeper实现该功能</li><li>课程详情页需要获取老师信息，所以建立它们之间的连系，通过Thrift实现服务之间的调用<ol><li>问题：为什么不通过课程EdgeService和用户服务建立联系呢？</li><li>问题二：EdgeService和它后面的服务之间，究竟如何划分功能职责 &amp; 分层呢？</li><li>对EdgeService理解不够深刻...上面两个问题待解答</li><li>解答见：「EdgeService」部分，理解了「横向拆分」，就能理解EdgeService和Service的关系了</li></ol></li><li>课程服务，要求必须登录才能有服务，否则跳转到登录系统</li></ol><h3>关于「EdgeService」</h3><p>可以通过一下图示，了解EdgeService的作用</p><p><img class="confluence-embedded-image confluence-external-resource" width="686" src="http://img.daker.wang/wiki/1541996734943.png" data-image-src="http://img.daker.wang/wiki/1541996734943.png"></p><p class="p1">服务化架构（也叫微服务），本质上也是一种「分布式架构」</p><p class="p1">任何分布式系统遇到的问题，微服务里也是问题。分布式系统能用到的技术微服务里也适用。如：做分布式的典型招式：拆分</p><p class="p1">微服务，首先就是要把服务拆分成一个「分布式系统」</p><h4 class="p3">拆分</h4><p class="p1">左边是纵向拆分，右边是横向拆分</p><h4 class="p1">纵向拆分</h4><p class="p1">业务场景：医院挂号，根据挂号业务，拆分出不同的领域服务，根据业务流做的拆分，是纵向拆分。</p><p class="p1">特点：</p><ol><li class="p1">各个领域服务之间没有直接交互，通过顶部「预约挂号总业务」进行间接交互</li><li class="p1">每个领域里面，有自己的业务、自己的数据存储空间，自己的技术体系（业务们不必须有一致的技术体系）</li></ol><h4 class="p1">横向拆分</h4><p class="p1">把现实中的很多服务单独拎出来，粒度可以细一些。</p><p class="p1">特点：</p><ol><li class="p1">服务不知道什么时候会用，也不是为某个业务而拎服务的</li><li class="p1">业务可以像搭积木一样挑几个服务搭起来</li><li class="p1">搭积木需要一个中间的媒介，就是我们的分布式服务框架，如：<span class="s1" style="letter-spacing: 0.0px;">Dubbo</span>、<span class="s1" style="letter-spacing: 0.0px;">Thrift</span>，本质上就是中间的桥梁</li></ol><h4 class="p1">解答</h4><p>EdgeService是「业务层服务」，用来根据业务，把底层服务拼接起来的</p><p>非EdgeService是「底层服务」，功能更纯粹，用来给EdgeService调用的</p><h2>单点登录</h2><p><a href="https://www.imooc.com/learn/633">参考课程</a></p><p>架构图中可以看到：</p><p style="margin-left: 30.0px;">用户EdgeService提供了单点登录系统</p><p style="margin-left: 30.0px;">课程EdgeService想要验证登录状态，需要访问单点登录系统，以：</p><ol><li style="list-style-type: none;background-image: none;"><ol><li>校验它拿到的Token（也叫Ticket）</li><li>换取用户的基本信息，存到EdgeService中（体会下EdgeService这种「服务信息聚合」的功能）</li></ol></li></ol><h2>接下来...</h2><p>设计完毕，可以开始开发啦！</p><p>思路：选对其他模块依赖最少的模块开始开发，也就是我们在做客户端架构的时候，也常说的「<a href="https://github.com/AzenXu/LaoKe/blob/master/%E9%82%A3%E4%BA%9B%E6%9C%89%E7%9A%84%E6%B2%A1%E7%9A%84xmind/%E6%9E%B6%E6%9E%84%E5%B8%88%E4%B9%8B%E8%B7%AF.xmind">自顶向下做设计，自底向上做开发</a>」</p><p>从图中可以看到，依赖最少的模块就是「信息服务」</p><h1>0x1 Thirft安装和验证</h1><h2>基本信息</h2><p>官网：<a href="http://thrift.apache.org/">http://thrift.apache.org/</a></p><p>下载和安装：按文档来，或者`brew install thrift`</p><p>里程碑：bash可执行thrife指令</p><h2>基本使用</h2><p>使用：通过定义模板，生成不同语言文件 `<code style="letter-spacing: 0.0px;">thrift --gen &lt;language&gt; &lt;Thrift filename&gt;</code>`</p><p>demo.thrift</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="ea9014d3-e5dc-42ad-bdf5-0f1d9a1f00cc" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>namespace java com.imooc.thrift.demo # 希望生成的语言及生成包的名字
+namespace py thrift.demo # 语言二
+
+# 声明类名及接口
+service DemoService { 
+    void sayHello(1:string name); # 需要指定参数index
+}</pre></td></tr></table><p>生成Java文件：`thrift --gen java demo.thrift`</p><p>结果：xxxxx/gen-java/com/imooc/thrift/demo/DemoService.java</p><p>生成文件中的东东非常多，不用管具体内容</p><h1>0x2 Python开发信息服务</h1><p>这一节的关键点，在于理解清楚Thrift这个东东的定位：</p><ol><li>一个RPC框架（调用者：Client端、被调用者：Server端）</li><li>可以跨语言调用</li></ol><p>所以，需要我们了解，Python环境下，如何作为Server端 和 Client端使用</p><h2>1 生成Python格式API</h2><p>原料：message.thrift</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="550b07d8-1d0f-4bbf-bc65-8b5955b417b3" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>namespace java com.imooc.thrift.message
+namespace py message.api
+
+service MessageService {
+    bool SendMobilMessage(1:string mobile, 2:string message);
+    bool SendEmailMessage(1:string email, 2:string message);
+}</pre></td></tr></table><p>指令：`thrift --gen py -out .. message.thrift`</p><p>结果：/message/api/xxxxxx</p><ul><li>关键文件MessageService.py<ul><li>包含了接口函数的定义，实现Server的时候需要抄过去做实现</li><li>包含了一个Client Class，实现Client的时候可以用这个实例调用相关方法</li></ul></li></ul><p>提示：需要保证当前python库中，有thrift的包。没有的话需要通过`pip install thrift`安装之</p><h2>2 实现Python Server</h2><p>server.py</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="34b76a8d-b15f-4cd3-81c7-17739684c243" data-macro-parameters="language=py" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGU6bGFuZ3VhZ2U9cHl9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>#! /usr/bin/env python
+# -*- coding: utf-8 -*-
+
+from message.api import MessageService
+# from message.api import ttypes # 自定义类型会用到这个东东
+from thrift.transport import TSocket
+from thrift.transport import TTransport
+from thrift.protocol import TBinaryProtocol
+from thrift.server import TServer
+
+import smtplib
+import mail_sender
+
+__HOST = 'localhost'
+__PORT = 9090
+
+class MessageServiceHandler(object):
+    def SendMobilMessage(self, mobile, message):
+        print "send mobil message"
+        return True
+
+    def SendEmailMessage(self, email, message):
+
+        try:
+            mail_sender.postEmail(email, message)
+            print "send mail success"
+            return True
+        except smtplib.SMTPException, ex:
+            print "send mail failed"
+            print ex
+            return False      
+
+if __name__ == '__main__':
+    handler = MessageServiceHandler()
+    processor = MessageService.Processor(handler)
+    transport = TSocket.TServerSocket(__HOST, __PORT)
+    tfactory = TTransport.TBufferedTransportFactory()
+    pfactory = TBinaryProtocol.TBinaryProtocolFactory()
+
+    rpcServer = TServer.TSimpleServer(processor, transport, tfactory, pfactory)
+
+    print('Starting the rpc server at', __HOST, ':', __PORT)
+    rpcServer.serve()
+    print "python thrift server exit"</pre></td></tr></table><p>说明：</p><ul><li>这个文件实现了接口方法...</li><li>别的没有什么关键点了，Thrift方法调用之类的，把它理解为套路就好了</li></ul><p><br /></p><p>mail_sender.py：用于实现发送邮件功能的文件</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="d0547ec6-18e1-45cc-b744-30b0ad41f9b2" data-macro-parameters="language=py" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGU6bGFuZ3VhZ2U9cHl9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>#! /usr/bin/env python
+# -*- coding: utf-8 -*-
+
+from email.header import Header
+from email.mime.text import MIMEText
+from email.utils import formataddr
+import smtplib
+
+# 用户信息
+from_addr = 'xxx@xxx.com'
+# 腾讯企业邮箱必须使用授权码进行第三方登陆 获取方式参考：https://jingyan.baidu.com/article/d8072ac4b697cbec95cefdf3.html
+password = '*********'
+smtp_server = 'smtp.exmail.qq.com'  # 腾讯服务器地址
+
+def postEmail(to, message):
+    to_addr = to #'xxx@xxx.com'
+
+    # 内容初始化，定义内容格式（普通文本，html）
+    msg = MIMEText(message, 'plain', 'utf-8')
+
+    # 发件人收件人信息格式化 ，可防空
+    # 固定用法不必纠结，我使用lambda表达式进行简单封装方便调用
+
+    def lam_format_addr(name, addr): return formataddr(
+        (Header(name, 'utf-8').encode(), addr))
+
+    # 传入昵称和邮件地址
+    msg['From'] = lam_format_addr('', from_addr)  # 发件人昵称，腾讯邮箱可略
+    msg['To'] = lam_format_addr('', to_addr)  # 收件人昵称（服务商会自动替换成用户名），腾讯邮箱可略
+
+    # 邮件标题
+    msg['Subject'] = Header('来自服务器的邮件', 'utf-8').encode()  # 腾讯邮箱略过会导致邮件被屏蔽
+
+    # 服务端配置，账密登陆
+    server = smtplib.SMTP(smtp_server, 25)
+
+    # 腾讯邮箱支持SSL(不强制)， 不支持TLS。
+    # server = smtplib.SMTP_SSL(smtp_server, 465) # 按需开启
+    # 调试模式，打印日志
+    # server.set_debuglevel(1) # 按需开启
+
+    # 登陆服务器
+    server.login(from_addr, password)
+
+    # 发送邮件及退出
+    server.sendmail(from_addr, [to_addr], msg.as_string())  # 发送地址需与登陆的邮箱一致
+    server.quit()
+
+
+if __name__ == '__main__':
+    postEmail('xxx@xxx.com', '这是一封测试邮件')
+    print "test mail send to azen@daker.wang"</pre></td></tr></table><p>说明：</p><ul><li>腾讯邮箱要求比较严格，需要使用「安全码」才能发送邮件 <a href="https://jingyan.baidu.com/article/d8072ac4b697cbec95cefdf3.html">参考</a></li><li>其他邮箱系统的使用方法可以自己检索下 <a class="confluence-link" href="http://www.google.com/search?q=Python%E5%8F%91%E9%82%AE%E4%BB%B6%E7%BD%91%E6%98%93%E9%82%AE%E7%AE%B1" shortcut-key="google" shortcut-parameter="Python发邮件网易邮箱" data-linked-resource-shortcut="Python发邮件网易邮箱@google" data-linked-resource-type="shortcut" data-linked-resource-default-alias="unnamed link" data-base-url="http://wiki.daker.wang">Python发邮件网易邮箱@google</a></li></ul><h2>3 实现Python Client</h2><p>client.py</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="aaa08c68-4f20-4cbf-8ac3-ae69de07100b" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>#! /usr/bin/env python
+# coding: utf-8
+
+from thrift.transport import TSocket
+from thrift.transport import TTransport
+from thrift.protocol import TBinaryProtocol
+from message.api.MessageService import Client
+
+__HOST = 'localhost'
+__PORT = 9090
+
+tsocket = TSocket.TSocket(__HOST, __PORT)
+transport = TTransport.TBufferedTransport(tsocket)
+protocol = TBinaryProtocol.TBinaryProtocol(transport)
+client = Client(protocol)
+
+transport.open()
+
+print(client.SendEmailMessage("x@xxx.com","just test"))</pre></td></tr></table><p>说明：固定写法...</p><h1>0x4 开发其他服务</h1><p>其他服务就不详细说明了，一些业务代码而已，重点是后面的「服务Docker化」以及「服务编排」</p><h2>1 用户服务</h2><p>三个方法：根据ID查用户、根据username查用户、注册user</p><p>需要连个MySQL数据库，做查询和增加</p><h2>2 用户EdgeService</h2><p>从架构图调用关系可知，用户的EdgeService比较复杂：</p><ol><li>调用用户服务，对用户信息做基本操作</li><li>调信息服务，实现发短信、邮件</li><li>登录注册功能，单点登录，需要支持其他系统进行登录</li><li>无状态的，需要一个Redis缓存</li><li>对外提供一个RESTful API</li></ol><p>方法们：</p><ol><li>login(用户名, 密码)<ol><li>验证用户名密码<ol><li>需要调用UserService的thrift接口，通过用户名取用户信息（包含md5密码）</li><li>验证密码是否匹配</li></ol></li><li>生成token<ol><li>token可以是完全随机的，和用户不产生相关性</li><li>相关性是token生成好后，才和User对象建立的对应关系</li></ol></li><li>缓存用户（把用户和token的对应关系保存起来，客户端使用token进行其他url请求的时候，可以从缓存里把用户拿出来，验证token是否正确）<ol><li>准备好Redis环境<ol><li>用到Redis，通过docker起就好，镜像可使用hub.c.163.com/public/redis:2.8.4</li></ol></li><li>和Redis建立关系，key为token，value为userInfo，还需要设置过期时间</li></ol></li><li>给客户端返回Token</li></ol></li><li>register(用户名, 密码, 手机号(可选), 邮箱(可选), 验证码(证明邮箱确实是该用户的))<ol><li>需要首先调用消息服务发送验证码<ol><li>验证码是一串随机码，生成之后，一份发送给用户，一份和手机号组成kv存Redis，方便以后验证</li></ol></li><li>验证之后，调用UserServer的regist方法</li></ol></li><li>单点登录：通过传过来的token判断是否登录，返回给其他服务用户信息</li></ol><h2>3 课程服务</h2><p>方法：</p><ol><li>获取课程列表<ol><li>通过用户ID获取课程列表<ol><li>课程实体中有「teacherID」</li><li>调user服务，根据teacherID查老师信息</li></ol></li><li>返回带老师信息的课程列表</li></ol></li></ol><h2>4 课程EdgeService</h2><p>需要实现只有登录才能访问，没登录跳登录</p><h2>5 API Gateway Zuul</h2><p>其实就是流媒体项目中的「web代理服务器」</p>
+        <p>&nbsp;</p>
+    
+</div>
+
+
+    </div>
+
+    
+  </body>
+</html>

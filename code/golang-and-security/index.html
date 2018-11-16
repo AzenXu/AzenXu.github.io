@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="//gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.46-DEV" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>Golang与密码学 &middot; 细胞的作战实验室</title>
+
+  
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/print.css" media="print">
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/poole.css">
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/syntax.css">
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/hyde.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Abril+Fatface|PT+Sans:400,400i,700">
+
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+  
+  <link href="" rel="alternate" type="application/rss+xml" title="细胞的作战实验室" />
+
+  
+</head>
+
+  <body class=" ">
+  <div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <a href="http://azen.me/"><h1>细胞的作战实验室</h1></a>
+      <p class="lead">
+      Power by <a href="http://hugo.spf13.com">hugo</a>
+      </p>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li><a href="http://azen.me/">Home</a> </li>
+      
+    </ul>
+
+    <p>&copy; 2018. All rights reserved. </p>
+  </div>
+</div>
+
+    <div class="content container">
+    <div class="post">
+  <h1>Golang与密码学</h1>
+  <span class="post-date">Thu, Sep 6, 2018</span>
+  <p>&nbsp;</p>         <h1>0x0 概述</h1><p>这篇文档主要聊聊三种加密方式与Golang实现</p><ul style="list-style-type: square;"><li>哈希加密</li><li>对称加密</li><li>非对称加密</li></ul><h1>0x1 哈希加密</h1><h2>哈希算法</h2><p>我们知道，查找中，有「哈希查找」，是一种比「顺序查找」更快的查找方法。</p><p>「哈希查找」的关键点，就是实现一种「哈希算法」，使得每个任意key，经过哈希算法计算后，可以获得一个定长的散列值。</p><ul style="list-style-type: square;"><li>相同key经过相同哈希算法散列之后，获得相同的散列值</li><li>不同key经过相同哈西算法散列之后，获得不同的散列值</li></ul><p>特点：</p><ul style="list-style-type: square;"><li>可以把任意长度的「明文」，散列成固定长度的「指纹」</li><li>正向计算简单快速，逆向推算困难，基本不可能逆推出明文</li><li>明文有一点点变化，密文就会改变</li><li>优秀的散列算法需要尽量避免两个不同的明文，加密出来是相同的指纹</li></ul><p>发展：</p><p>  取模操作 → 异或运算→ 位移操作</p><p>密码学里面，一般都通过「位移操作」「取模操作」「异或操作」来实现加密 - 无论对称加密非对称加密、哈希散列加密</p><h3>成熟Hash算法</h3><ul style="list-style-type: square;"><li>MD5</li><li>SHA</li><li>RIPEMD</li></ul><h2>Golang相关hash代码片段</h2><h3>MD5</h3><p>MD5加密结果为16字节串</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="75e1b13d-965f-4615-9101-4daa3449c3d1" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>data := []byte("test string")
+s := fmt.Sprintf("%x", md5.Sum(data))</pre></td></tr></table><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="e1600fb9-f821-4e4b-ab3b-85f88a226f17" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>m := md5.New()
+m.Write(content)
+s := hex.EncodeToString(m.Sum(nil))</pre></td></tr></table><h3>SHA256</h3><p>sha256加密方式，通常用在公链中，散列结果为32字节</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="c742e51c-2be6-4d82-8b2f-f07856426c49" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>s := fmt.Sprintf("%x", sha256.Sum256(content))</pre></td></tr></table><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="e62f2a27-3d74-4c30-9c2e-2690858d006d" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>m := sha256.New()
+m.Write(content)
+fmt.Println(hex.EncodeToString(m.Sum(nil)))</pre></td></tr></table><p>文件内容加密</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="222db668-6449-45bd-bfc7-affaca79bbbc" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>f,_ := os.Open("filename")
+h := sha256.New()
+io.Copy(h,f)
+s := h.Sum(nil)
+fmt.Println(hex.EncodeToString(s))</pre></td></tr></table><h3>RIPEMD160</h3><p>ripemd160目前只在数字货币中用到了 - 以太坊</p><p>三方包：<a href="http://golang.org/x/crypto/ripemd160">golang.org/x/crypto/ripemd160</a></p><p>可以使用gopm安装</p><blockquote><p>gopm get -v -u <a href="http://golang.org/x/crypto/ripemd160">golang.org/x/crypto/ripemd160</a></p></blockquote><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="d686094b-c8f3-429b-b701-51fb42ec9132" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>hasher := ripemd160.New()
+hasher.Write([]byte("test string"))
+fmt.Println(hex.EncodeToString(hasher.Sum(nil)))</pre></td></tr></table><h1>0x2 对称加密</h1><p>对称加密，加密完之后，是可以通过密钥解密的 - 和hash加密不一样</p><p>常见对称加密算法：</p><ul style="list-style-type: square;"><li>DES</li><li>AES</li></ul><h3>补码、去码 &amp; 分组加密</h3><p>补码：给15个字符做「分组加密」，无法平均分成两组，所以需要补一个码凑成16个字符，这种操作叫做「补码」</p><p>分组之后，给两个组分别加密，之后把两部分整合起来，获得最终密文</p><p>去码：解密的时候把补码去掉</p><h3>三种补码方式</h3><ul style="list-style-type: square;"><li>NoPadding：「要补几个码」、「补入的码的内容是什么」API或算法本身不进行定义，而是由加密双方进行约定后，进行填补</li><li>PKCS5Padding：「补足8个字符」、「补入的码内容为：8 - n」<ul style="list-style-type: square;"><li>如一个分组只有3个字符，差5个字符到8位，所以补5个「数字5」到串中</li><li>去码的时候，通过最后一位的数字值，就知道补了几个码，拿到需要「去几个码」，然后做切片就好</li></ul></li><li>PKCS7Padding：可自定义分组长度</li></ul><p>补码代码片段</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="1e72f1f4-d7b0-4e2d-9d4a-1a8166e0ea10" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>func PKCS5Padding(cipherTxt []byte, blockSize int) []byte {
+    padding := blockSize - len(cipherTxt)%blockSize
+    padTxt := bytes.Repeat([]byte{byte(padding)}, padding)
+    byteTxt := append(cipherTxt, padTxt...)
+    return byteTxt
+}</pre></td></tr></table><p>去码代码片段</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="be56dc84-c522-4702-a72a-0941a7ed6160" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>func PKCS5UnPadding(cipherTxt []byte) []byte {
+    l := len(cipherTxt)
+    txt := int(cipherTxt[l-1])
+    return cipherTxt[:l-txt]
+}</pre></td></tr></table><h2>DES加密</h2><p>DES加密中，密钥的长度为：</p><ul style="list-style-type: square;"><li>DES：8</li><li>3DES：24</li></ul><h3>代码片段</h3><p>加密</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="01aade67-48a7-4eea-bde1-04b4eb1e2233" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>func DESEncrypt(origData []byte, key []byte) []byte {
+    //校验秘钥
+    block, _ := des.NewCipher(key)
+    //补码
+    origData = PKCS5Padding(origData, block.BlockSize())
+    //设置分组加密模式CBC
+    blockMode := cipher.NewCBCEncrypter(block, key)
+    //加密明文
+    crypted := make([]byte, len(origData))
+    blockMode.CryptBlocks(crypted, origData)
+    return crypted
+}</pre></td></tr></table><p>解密</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="7abadbbb-0b2d-4964-8310-5a517d031a45" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>func DESDecrypt(cryted []byte, key []byte) []byte {
+    //校验key的有效性
+    block, _ := des.NewCipher(key)
+    //使用CBC模式解密
+    blockMode := cipher.NewCBCDecrypter(block, key)
+    //实现解密
+    origData := make([]byte, len(cryted))
+    blockMode.CryptBlocks(origData, cryted)
+    //去码
+    origData = PKCS5UnPadding(origData)
+    return origData
+}</pre></td></tr></table><h2>AES加密</h2><p><span style="color: rgb(51,51,51);">Advanced Encryption Standard </span></p><p>AES是DES的替代品，算法更复杂且更安全。明文分组为128位（16字节），密钥长度可为（16、24、32字节）</p><h3>AES加解密原理</h3><p><img class="confluence-embedded-image confluence-external-resource" width="386" src="http://img.daker.wang/wiki/1536203586793.png" data-image-src="http://img.daker.wang/wiki/1536203586793.png"></p><ul style="list-style-type: square;"><li>左边是加密的过程，右边是解密的过程</li><li>前9轮用相同的步骤，最后一轮只有三个步骤（少一个步骤）</li><li>AES和DES都经过了「多轮加密」，AES的轮数根据密钥的长度而定<br /><ul style="list-style-type: square;"><li>16字节：10轮</li><li>24字节：12轮</li><li>32字节：14轮</li></ul></li><li>密钥角度 - 会做扩展密钥，如图生成了11个子密钥。每一轮加密使用不同的密钥</li></ul><p><span style="color: rgb(66,66,66);"><br /></span></p><p><span style="color: rgb(66,66,66);">AES原理动画演示（from: <a style="text-align: justify;" href="http://www.cs.bc.edu/~straubin/">Howard Straubing</a>）</span></p><table class="wysiwyg-macro" data-macro-name="html" data-macro-id="d23b3cab-2cd5-4952-bd83-60c1a7f94fd5" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2h0bWx9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>&lt;embed type="application/x-shockwave-flash" width="680" height="400" src="https://coolshell.cn/wp-content/uploads/2010/10/rijndael_ingles2004.swf" quality="high" align="middle" /></pre></td></tr></table><h2>分组加密</h2><p>两种密码算法：</p><ul style="list-style-type: square;"><li>分组密码（block cipher）：每次只处理特定长度的一块数据。分组的比特数就是「分组长度」</li><li>流密码（stream cipher）：对数据流进行连续处理的一类密码算法<ul style="list-style-type: square;"><li>缺点：需要记录加密到哪了...不便于并行处理</li></ul></li></ul><h3>ECB模式</h3><p>Electronic Code Book mode</p><p>将「明文分组」加密后的结果直接作为「密文分组」。最后一组的长度小于分组长度时，做「补码」。</p><p><img class="confluence-embedded-image confluence-external-resource" width="386" src="http://img.daker.wang/wiki/1536204138898.png" data-image-src="http://img.daker.wang/wiki/1536204138898.png"></p><p><img class="confluence-embedded-image confluence-external-resource" width="386" src="http://img.daker.wang/wiki/1536204167943.png" data-image-src="http://img.daker.wang/wiki/1536204167943.png"></p><p>特点：明文分组和密文分组一一对应，观察密文分组能知道明文分组代表什么 - 以前比较好做外挂的网游封包常采用这种加密方式...（参考：<a href="https://www.52pojie.cn/thread-581104-1-1.html">手游封包辅助教程</a>）</p><h4>攻击思路</h4><p>交换分组顺序攻击法 - 交换密文分组的顺序，解密后明文的顺序就自然发生了改变</p><p><strong>举例</strong>：分组一、二、三分别代表了付款人、收款人、转账金额，攻击者交换分组一和分组二的顺序...不是操纵算法，而是操纵密文分组的顺序</p><h3>CBC模式</h3><p>Cipher Block Chaining</p><p>密文分组链接模式</p><p><img class="confluence-embedded-image confluence-external-resource" width="486" src="http://img.daker.wang/wiki/1536204235015.png" data-image-src="http://img.daker.wang/wiki/1536204235015.png"></p><p>特点：加密的内容，是上一组的「密文分组」和下一组的「明文分组」的<strong>异或</strong></p><ul style="list-style-type: square;"><li>希望通过这种方式，保证分组之间的<strong>顺序不可被篡改</strong></li><li>一旦交换密文分组的顺序，就不能解出正确的明文</li></ul><blockquote><p><span style="color: rgb(112,112,112);">逆运算：异或的逆运算还是异或 - 按位与和按位或没有逆运算</span></p></blockquote><p>补充：由于加密第一个明文分组的时候，木有和它异或的密文分组，所以需要一个随机数和它做异或。这个随机数叫做「<strong>初始化向量IV</strong>」</p><p>解密：本组密文和上一组得出的明文（或初始化向量）做异或，可以得到本组明文（加密使用的是异或，异或的逆运算还是异或）</p><p><img class="confluence-embedded-image confluence-external-resource" width="486" src="http://img.daker.wang/wiki/1536204270059.png" data-image-src="http://img.daker.wang/wiki/1536204270059.png"></p><ul style="list-style-type: square;"><li>IV和第一组密文，获得第一组明文</li><li>第一组明文和第二组密文，获得第二组明文</li><li>...</li></ul><p>好处：</p><ol><li>由于明文和密文不是一一对应的，明文一和明文二内容即使相同，密文也不同。攻击者不能通过观察明文和密文的对应关系，发现密文内容和明文内容的对应关系。</li><li>顺序相关：要加密分组2的明文，必须知道分组1才行。</li><li>密文分组丢失任何一个比特，后面的所有密文分组，都无法正确解密出来</li></ol><h4>攻击思路</h4><p>如果初始化向量被反转，通过被反转的初始化向量解密出来的明文的分组内容也会被反转</p><p><img class="confluence-embedded-image confluence-external-resource" width="486" src="http://img.daker.wang/wiki/1536204403337.png" data-image-src="http://img.daker.wang/wiki/1536204403337.png"></p><h4>代码片段</h4><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="5c60a357-970f-43c3-8e1e-641cc9bd5974" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>//PKCS5Padding 要求分组长度只能为8
+//PKCS7Padding 要求分组的长度可以[1-255]
+func PKCS7Padding(org []byte, blockSize int) []byte {
+    pad := blockSize - len(org)%blockSize
+    padArr := bytes.Repeat([]byte{byte(pad)}, pad)
+    return append(org, padArr...)
+}
+
+
+//去掉补码
+func PKCS7Unpadding(org []byte) []byte {
+    l := len(org)
+    //获得数组中最后一个元素值
+    pad := org[l-1]
+    return org[:l-int(pad)]
+}
+
+//通过CBC分组模式，完成AES的密码过程
+//AES 也是对称加密，AES 是DES 的替代品
+//AES 秘钥长度，要么16,或者 24, 或者32
+func AesCBCEncrypt(org []byte, key []byte) []byte {
+    //校验秘钥
+    block, _ := aes.NewCipher(key)
+    //按照公钥的长度进行分组补码
+    org = PKCS7Padding(org, block.BlockSize())
+    //设置AES的加密模式
+    blockMode := cipher.NewCBCEncrypter(block, key)
+
+    //加密处理
+    cryted := make([]byte, len(org))
+    blockMode.CryptBlocks(cryted, org)
+    return cryted
+}
+
+//AES解密
+func AesCBCDecrypt(cipherTxt []byte, key []byte) []byte {
+    //校验key
+    block, _ := aes.NewCipher(key)
+    //设置解密模式CDC
+    blockMode := cipher.NewCBCDecrypter(block, key)
+
+    //开始解密
+    org := make([]byte, len(cipherTxt))
+    blockMode.CryptBlocks(org, cipherTxt)
+
+    //去除补码
+    org = PKCS7Unpadding(org)
+    return org
+}
+
+func main() {
+    ciphertxt := AesCBCEncrypt([]byte("hello 123"), []byte("1234567890123456"))
+    fmt.Println("解密后的结果", string(AesCBCDecrypt(ciphertxt, []byte("1234567890123456"))))
+}</pre></td></tr></table><p><br /></p><h3>CFB模式</h3><p>Cipher FeedBack</p><p>对CBC的安全升级 - 保护初始化向量</p><p><img class="confluence-embedded-image confluence-external-resource" width="486" src="http://img.daker.wang/wiki/1536204519959.png" data-image-src="http://img.daker.wang/wiki/1536204519959.png"></p><p>对初始化向量做加密处理，然后再和明文做异或，形成密文 - 防止初始化向量被反转</p><h4>攻击思路</h4><p><strong>重放攻击（replay attack）</strong></p><p>假设第一次发送了3个密文分组abc（对应明文ABC），攻击者截获后两个密文分组bc。</p><p>第二次又发送了3个密文分组xyz（对应明文XYZ），攻击者截获并修改密文分组为xbc。</p><p>第二次解密时：</p><ul style="list-style-type: square;"><li>vi + x 获得第一组明文X</li><li>x + b 无法获得有效明文?</li><li>b + c 获得了第一组明文C</li></ul><p>解密结果为X?C，攻击者成功把Z篡改成了C</p><p><img class="confluence-embedded-image confluence-external-resource" width="486" src="http://img.daker.wang/wiki/1536204585750.png" data-image-src="http://img.daker.wang/wiki/1536204585750.png"></p><h4>代码片段</h4><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="5b388538-dd0a-4be6-91c8-a61804a574f4" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>//通过CFB分组模式加密
+func AesCFBEncrypt(plainTxt []byte, key []byte) []byte {
+    //key是否合法
+    block, _ := aes.NewCipher(key)
+    cipherTxt := make([]byte, aes.BlockSize+len(plainTxt))
+    iv := cipherTxt[:aes.BlockSize]
+
+
+    //向iv切片数组初始化rand.Reader（随机内存流）
+    io.ReadFull(rand.Reader, iv)
+
+    //设置加密模式为CFB
+    stream := cipher.NewCFBEncrypter(block, iv)
+
+    //加密
+    stream.XORKeyStream(cipherTxt[aes.BlockSize:], plainTxt)
+
+    //cipherTxt 包含了key和明问的两部分加密的内容
+    return cipherTxt
+
+}
+
+//通过AES算法，利用CFB分组模式解密
+func AesCFBDecrypt(cipherTxt []byte, key []byte) []byte {
+    block, _ := aes.NewCipher(key)
+
+    //拆分iv和密文
+    iv := cipherTxt[:aes.BlockSize]
+    cipherTxt = cipherTxt[aes.BlockSize:]
+
+    //设置解密模式
+    stream := cipher.NewCFBDecrypter(block, iv)
+
+    var des = make([]byte, len(cipherTxt))
+
+    //解密
+    stream.XORKeyStream(des, cipherTxt)
+
+    return des
+}
+
+func main() {
+
+    //对称加密DES，key为8
+    //对称加密3DES，key为24
+    //对称加密AES，可以16,24,32
+    var cipher = AesCFBEncrypt([]byte("hello 123"), []byte("1234567890123456"))
+
+    //通过编码，编译用户可以看到的密文
+    fmt.Println(hex.EncodeToString(cipher))
+    fmt.Println(base64.StdEncoding.EncodeToString(cipher))
+
+    //解密
+    var des = AesCFBDecrypt(cipher, []byte("1234567890123456"))
+    fmt.Println(string(des))
+}</pre></td></tr></table><h3>OFB模式</h3><p>每组明文分组生成「密文分组」时，所用的密钥都不同 - 保证了CFB的攻击模式不能遂</p><ul style="list-style-type: square;"><li>分组2用的密钥由分组1用的密钥二次加密而成</li></ul><p>特点：<strong>流密码</strong></p><p><img class="confluence-embedded-image confluence-external-resource" width="438" src="http://img.daker.wang/wiki/1536204616135.png" data-image-src="http://img.daker.wang/wiki/1536204616135.png"></p><p><img class="confluence-embedded-image confluence-external-resource" width="438" src="http://img.daker.wang/wiki/1536204688577.png" data-image-src="http://img.daker.wang/wiki/1536204688577.png"></p><h4>代码片段</h4><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="f215ec80-493b-4077-8326-a7f758e6ca49" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>// 加密
+func AesEncrypt(plaintext, key []byte) ([]byte, error) {
+    block, err := aes.NewCipher(key)
+    if err != nil {
+        return nil, err
+    }
+
+    ciphertext := make([]byte, aes.BlockSize+len(plaintext))
+    iv := ciphertext[:aes.BlockSize]
+    if _, err := io.ReadFull(rand.Reader, iv); err != nil {
+        panic(err)
+    }
+
+    // NewOFB返回一个在输出反馈模式下使用分组密码b进行加密或解密的Stream。初始化矢量iv的长度必须等于b的块大小
+    stream := cipher.NewOFB(block, iv)
+    stream.XORKeyStream(ciphertext[aes.BlockSize:], plaintext)
+
+    return ciphertext, nil
+}
+
+// 解密
+func AesDecrypt(ciphertext, key []byte) ([]byte, error) {
+    block, err := aes.NewCipher(key)
+    if err != nil {
+        return nil, err
+    }
+    // The IV needs to be unique, but not secure. Therefore it's common to
+    // include it at the beginning of the ciphertext.
+
+    iv := ciphertext[:aes.BlockSize]
+
+    if len(ciphertext) &lt; aes.BlockSize {
+        panic("ciphertext too short")
+    }
+    plaintext2 := make([]byte, len(ciphertext))
+    stream := cipher.NewOFB(block, iv)
+    stream.XORKeyStream(plaintext2, ciphertext[aes.BlockSize:])
+
+    return plaintext2, nil
+}</pre></td></tr></table><p><br /></p><h3>CTR模式</h3><p>引入「计数器」的加密方式，通过对计数器加密，获得本明文分组所需要的密钥 - 也可以保证CFB的攻击模式不能遂</p><p><img class="confluence-embedded-image confluence-external-resource" width="438" src="http://img.daker.wang/wiki/1536204743982.png" data-image-src="http://img.daker.wang/wiki/1536204743982.png"></p><p>（加解密步骤一致）</p><p>特点：</p><ol><li>使用了流密码</li><li>加解密使用了完全相同的结构，容易实现</li><li>可以以任意顺序解密分组 - 只要知道分组序号就好 - 所以，可以「并行解密」</li></ol><p><br /></p><h4>代码片段</h4><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="07a7b9f0-1e45-4c6f-a31b-8d6f186b9597" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>// 加密
+func AesEncrypt(plaintext, key []byte) ([]byte, error) {
+    // 申明初始化获取一个新的密钥块。关键参数应该是AES密钥，16,24或32个字节来选择AES-128，AES-192或AES-256。
+    block, err := aes.NewCipher(key)
+    if err != nil {
+        return nil, err
+    }
+
+    // 切片处理申明初始化一个较大长度的新字符串变量
+    ciphertext := make([]byte, aes.BlockSize+len(plaintext))
+    iv := ciphertext[:aes.BlockSize]
+    if _, err := io.ReadFull(rand.Reader, iv); err != nil {
+        panic(err)
+    }
+
+    // 申明初始化，同时调用加密函数得到流接口
+    stream := cipher.NewCTR(block, iv)
+    // 流处理
+    stream.XORKeyStream(ciphertext[aes.BlockSize:], plaintext)
+
+    return ciphertext, nil
+}
+
+// 解密
+func AesDecrypt(ciphertext, key []byte) ([]byte, error) {
+    block, err := aes.NewCipher(key)
+    if err != nil {
+        return nil, err
+    }
+    // The IV needs to be unique, but not secure. Therefore it's common to
+    // include it at the beginning of the ciphertext.
+
+    iv := ciphertext[:aes.BlockSize]
+
+    if len(ciphertext) &lt; aes.BlockSize {
+        panic("ciphertext too short")
+    }
+
+    plaintext2 := make([]byte, len(ciphertext))
+
+    // 申明初始化，同时调用加密函数得到流接口
+    stream := cipher.NewCTR(block, iv)
+    stream.XORKeyStream(plaintext2, ciphertext[aes.BlockSize:])
+
+    return plaintext2, nil
+}</pre></td></tr></table><h1><span style="font-size: 24.0px;">0x3 非对称加密 &amp; 验签</span></h1><h2>非对称加密</h2><h3>概述</h3><p>有一对儿密钥，其中一个是公开的（公钥），另一个是保密的（私钥）</p><p>通过「公钥」不能得到「私钥」</p><h4>对称加密的问题</h4><p>密钥配送问题</p><ul style="list-style-type: square;"><li>传密文的时候需要一并传输密钥，会导致中间人把密钥也拿到</li></ul><p>解决方案：</p><ul style="list-style-type: square;"><li>加/解密双方事先共享密钥，不传输</li><li>密钥分配中心分配密钥</li><li>通过Diffie-Hellman密钥交换来解决</li><li>通过非对称加密解决</li></ul><h4>常用非对称加密算法</h4><ul style="list-style-type: square;"><li>RSA</li><li>椭圆加密（比特币用到）</li></ul><h3>RSA算法解析</h3><p>RSA - 三位开发者的首字母组成的名字</p><h4>加密原理</h4><p><img class="confluence-embedded-image confluence-external-resource" width="138" src="http://img.daker.wang/wiki/1536211970057.png" data-image-src="http://img.daker.wang/wiki/1536211970057.png"></p><p>明文的E次幂，对N取余，即可得到密文。 - 「E和N的组合」就是「公钥」</p><h4>解密原理</h4><p><img class="confluence-embedded-image confluence-external-resource" width="138" src="http://img.daker.wang/wiki/1536212121571.png" data-image-src="http://img.daker.wang/wiki/1536212121571.png"></p><p>密文的D次幂，对N取余，即可得到明文 - 「D和N的组合」就是「私钥」</p><h4>生成密钥对</h4><p>我们知道，所谓的密钥对，其实就是计算生成「N、E、D」三个数字</p><p>为了生成这三个数字，我们需要引入一个临时数：L</p><h5>求N</h5><blockquote><p>N = p x q (p与q为质数)</p></blockquote><p>p与q如果过小，容易被破译</p><p>p与q如果过大，计算时间会变长</p><h5>求L</h5><blockquote><p>L使p - 1和q - 1的最小公倍数，表示为：L = lcm(p - 1, q - 1)</p></blockquote><h5>求E</h5><blockquote><p>1 &lt; E &lt; L</p><p>gcd(E, L) = 1 (E和L的最大公约数为1)</p></blockquote><p>满足条件的E可能有很多，随机选一个就好</p><h5>求D</h5><blockquote><p>1 &lt; D &lt; L</p><p>(E x D) % L = 1</p></blockquote><p>只要E确定了，D的值就是唯一的14</p><h5>图示</h5><p><img class="confluence-embedded-image confluence-external-resource" height="250" src="http://img.daker.wang/wiki/1536212810505.png" data-image-src="http://img.daker.wang/wiki/1536212810505.png"></p><h5>计算密钥对 &amp; 加解密模拟</h5><h6>生成公钥 &amp; 私钥</h6><p>求N：N = q * p = 17 * 19 = 323</p><p>求L：L = lcm(p - 1, p - 1) = lcm(16, 18) = 144</p><p>求E：gcd(E, L) = 1  即gcd(E, 144) = 1, 任取E = 5</p><p>求D：E * D % L = 1 即5 * D % 144 = 1, 得D = 29</p><p>由上：</p><ul style="list-style-type: square;"><li>公钥：E = 5 N = 323</li><li>私钥：D = 29 N = 323</li></ul><h6>加密</h6><p>待加密信息为：123，公钥E=5 N=323</p><p>由 <img class="confluence-embedded-image confluence-external-resource" width="138" src="http://img.daker.wang/wiki/1536211970057.png" data-image-src="http://img.daker.wang/wiki/1536211970057.png">，密文 = 255</p><h6>解密</h6><p>由<img class="confluence-embedded-image confluence-external-resource" width="138" src="http://img.daker.wang/wiki/1536212121571.png" data-image-src="http://img.daker.wang/wiki/1536212121571.png">，明文 = 123</p><h3>代码片段</h3><p>使用外部传入的公/私钥加解密</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="bb98ece6-b73c-44d8-9814-259c835bbdcc" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>//  加密
+func RSAEncrypt(origData []byte, pubKey []byte) []byte {
+    //公钥加密
+    block, _ := pem.Decode(pubKey)
+    //解析公钥
+    pubInterface, _ := x509.ParsePKIXPublicKey(block.Bytes)
+    //加载公钥
+    pub := pubInterface.(*rsa.PublicKey)
+    //加密明文
+    bits, _ := rsa.EncryptPKCS1v15(rand.Reader, pub, origData)
+    //bits为加密的密文
+    return bits
+}
+
+//  解密
+func RSADecrypt(origData []byte, priKey []byte) []byte {
+    block, _ := pem.Decode(priKey)
+    //解析私钥
+    priv, _ := x509.ParsePKCS1PrivateKey(block.Bytes)
+    //解密
+    bts, _ := rsa.DecryptPKCS1v15(rand.Reader, priv, origData)
+    //返回明文
+    return bts
+}</pre></td></tr></table><p>使用Golang生成密钥对加解密</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="bfc18d77-d02e-42e9-af91-aea50a5c0470" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>func main() {
+    //创建私钥
+    priv, _ := rsa.GenerateKey(rand.Reader, 1024)
+    fmt.Println("私钥为：", priv)
+
+    //通过私钥创建公钥
+    pub := priv.PublicKey
+
+    //加密
+    org := []byte("hello China")
+    //通过oaep函数实现公钥加密
+    //EncryptOAEP的第一参数的作用为，将不同长度的明文，通过hash散列实现相同长度的散列值，此过程就是生成密文摘要过程
+    cipherTxt, _ := rsa.EncryptOAEP(md5.New(), rand.Reader, &amp;pub, org, nil)
+    //打印密文
+    fmt.Println(cipherTxt)
+    fmt.Println(base64.StdEncoding.EncodeToString(cipherTxt))
+
+    //解密
+    plaintext, _ := rsa.DecryptOAEP(md5.New(), rand.Reader, priv, cipherTxt, nil)
+    //打印明文
+    fmt.Println(plaintext)
+    fmt.Println(string(plaintext))
+}</pre></td></tr></table><h3>攻击：中间人</h3><p>中间人拦截公钥，窃听私钥发过来的加密消息，用公钥伪造ack内容...</p><h2>数字签名</h2><h3>概述</h3><p>只有信息发送者才能产生的，别人无法伪造的一段数字串，可以作为发送者发送信息真实性的证明</p><p>生成签名：用私钥给消息加密生成的指纹</p><p>验证签名：用公钥解密指纹得到明文，把明文和消息做比较，如果一致，说明消息木有被篡改</p><p><img class="confluence-embedded-image confluence-external-resource" width="438" src="http://img.daker.wang/wiki/1536214871328.png" data-image-src="http://img.daker.wang/wiki/1536214871328.png"></p><h4>签名方案</h4><ol><li>直接对消息签名</li><li>对消息的散列值签名（计算更便捷）</li></ol><h4>签名算法</h4><ol><li>RSA</li><li>DSA</li><li>ECC - 利用椭圆曲线密码来实现的数字签名算法</li></ol><h3>代码片段</h3><h4>RSA签名 &amp; 验签</h4><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="ebd757e2-4087-4153-aa98-c0859ecb5abf" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>func main() {
+    //生成私钥
+    priv, _ := rsa.GenerateKey(rand.Reader, 1024)
+    //通过私钥生成公钥
+    pub := &amp;priv.PublicKey
+    //通过hash散列对准备签名的名为做hash散列
+    plaitxt := []byte("hello world")
+
+    //实现散列过程
+    h := md5.New()
+    h.Write(plaitxt)
+    hashed := h.Sum(nil)
+
+    //通过pss函数，实现对明文hello world的签名
+    //pss函数可以加盐，能够使得签名过程更安全
+    opts := rsa.PSSOptions{rsa.PSSSaltLengthAuto, crypto.MD5}
+
+    //实现签名
+    sig, _ := rsa.SignPSS(rand.Reader, priv, crypto.MD5, hashed, &amp;opts)
+
+    //sig就是RSA对“hello world”签名结果
+    fmt.Println(sig)
+
+    //通过公钥实现验签
+    err := rsa.VerifyPSS(pub, crypto.MD5, hashed, sig, &amp;opts)
+    if err == nil {
+        fmt.Println("验签成功")
+    }
+}</pre></td></tr></table><h4>DSA签名 &amp; 验签</h4><p>DSA - 专业做数字签名的技术方案 - 不能用于加密和解密</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="9e58dcfc-4c5b-449d-b3b3-602189d48c90" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>func main() {
+    //设置私钥使用的参数
+    var param dsa.Parameters
+    dsa.GenerateParameters(&amp;param, rand.Reader, dsa.L1024N160)
+    //创建私钥
+    var pri dsa.PrivateKey
+    pri.Parameters = param
+    //生成私钥
+    dsa.GenerateKey(&amp;pri, rand.Reader)
+    //创建公钥
+    pub := pri.PublicKey
+
+    message := []byte("hello world")
+    //签名
+    r, s, _ := dsa.Sign(rand.Reader, &amp;pri, message)
+    //公钥验签
+    if dsa.Verify(&amp;pub, message, r, s) {
+        fmt.Println("验签成功")
+    }
+}</pre></td></tr></table><h4>ECC（椭圆加密）签名 &amp; 验签</h4><p>ECC椭圆加密</p><ul style="list-style-type: square;"><li>由DSA改进而成</li><li>密钥可以比RSA更短，安全性可以比RSA更高</li><li>比特币就是用ecc作签名的</li></ul><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="88e29277-2df9-452e-b8f8-d71063cd08e0" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>func main() {
+    message := []byte("hello world")
+    //生成私钥
+    //elliptic.P256()设置生成私钥为256
+    privatekey, _ := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
+    //创建公钥
+    publickey := privatekey.PublicKey
+    //hash散列明文
+    digest := sha256.Sum256(message)
+    //用私钥签名
+    r, s, _ := ecdsa.Sign(rand.Reader, privatekey, digest[:])
+
+    //设置私钥的参数类型
+    param := privatekey.Curve.Params()
+    //获取私钥的长度(字节)
+    curveOrderBytes := param.P.BitLen() / 8
+    //获得签名返回的字节
+    rByte, sByte := r.Bytes(), s.Bytes()
+
+    //创建数组
+    signature := make([]byte, curveOrderBytes*2)
+    copy(signature[:len(rByte)], rByte)
+    copy(signature[len(sByte):], sByte)
+
+    //现在signature中就存放了完整的签名的结果
+    //验签
+    digest = sha256.Sum256(message)
+    //获得公钥的字节长度
+    curveOrderBytes = publickey.Curve.Params().P.BitLen() / 8
+
+    //创建大整数类型保存rbyte,sbyte
+    r, s = new(big.Int), new(big.Int)
+    r.SetBytes(signature[:curveOrderBytes])
+    s.SetBytes(signature[curveOrderBytes:])
+
+    //开始认证
+    e := ecdsa.Verify(&amp;publickey, digest[:], r, s)
+    if e == true {
+        fmt.Println("验签成功")
+    }
+}</pre></td></tr></table>
+        <p>&nbsp;</p>
+    
+
+</div>
+
+
+    </div>
+
+    
+  </body>
+</html>

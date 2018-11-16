@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="//gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.46-DEV" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>3 服务编排前奏 - Docker容器化 &middot; 细胞的作战实验室</title>
+
+  
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/print.css" media="print">
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/poole.css">
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/syntax.css">
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/hyde.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Abril+Fatface|PT+Sans:400,400i,700">
+
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+  
+  <link href="" rel="alternate" type="application/rss+xml" title="细胞的作战实验室" />
+
+  
+</head>
+
+  <body class=" ">
+  <div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <a href="http://azen.me/"><h1>细胞的作战实验室</h1></a>
+      <p class="lead">
+      Power by <a href="http://hugo.spf13.com">hugo</a>
+      </p>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li><a href="http://azen.me/">Home</a> </li>
+      
+    </ul>
+
+    <p>&copy; 2018. All rights reserved. </p>
+  </div>
+</div>
+
+    <div class="content container">
+    <div class="post">
+  <h1>3 服务编排前奏 - Docker容器化</h1>
+  <span class="post-date">Mon, Nov 12, 2018</span>
+  <p>&nbsp;</p>         <p>服务Docker化</p><p>搭建Docker仓库，存image</p><p>搭建高可用的集群环境，优雅的调度程序</p><p><br /></p><h1>服务的Docker化</h1><p>把服务放在一个合适的运行环境里面</p><p>运行环境，又叫基础镜像</p><h3>套路（Java为例）</h3><ol><li>现在docker hub中寻找<a href="https://hub.docker.com/r/library/openjdk/tags/">合适的镜像</a>（搜Java）</li><li>docker pull openjdk:7-jre</li><li>docker run -it --entrypoint bash openjdk:7-jre<ol><li>run个container起来</li></ol></li><li>把服务部署到镜像里（写DockerFile）</li><li>经常变的东西不能写死到镜像里，否则一旦变更就需要重新构建这个镜像<ol><li>如数据库的访问地址，需要提出去而不是在配置文件里写死</li><li>localhost应该写成变量的形式</li></ol></li><li>把要部署的服务打包成一个文件，xxx.jar</li><li>把jar包放到docker里：写DockerFile</li></ol><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="ee507246-a152-4191-846a-f071c0e6d209" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>FROM openjdk:7-jre # 指定基础image 
+MAINTAINER xxx xxx@xxx.com # 作者信息
+
+
+COPY target/xxx.jar /容器路径/xxx-service.jar # 把xxx.jar拷贝到容器中的指定目录下
+
+
+ENTRYPOINT ["java", "-jar", "/容器路径/xxx-service.jar"] # 把服务跑起来
+
+</pre></td></tr></table><p>说明：</p><ol><li><p><code>ENTRYPOINT</code></p></li><ol><li><p><code>格式和 <code>RUN</code> 指令格式一样，分为 <code>exec</code> 格式和 <code>shell</code> 格式</code></p></li><li><p><code>目的和 <code>CMD</code> 一样，都是在指定容器启动程序及参数。<br /></code></p></li></ol></ol><div><span style="font-family: SFMono-Medium , &quot;SF Mono&quot; , &quot;Segoe UI Mono&quot; , &quot;Roboto Mono&quot; , &quot;Ubuntu Mono&quot; , Menlo , Courier , monospace;"><br /></span></div><div><span style="font-family: SFMono-Medium , &quot;SF Mono&quot; , &quot;Segoe UI Mono&quot; , &quot;Roboto Mono&quot; , &quot;Ubuntu Mono&quot; , Menlo , Courier , monospace;">编译成image：`docker build -t 自定义image名字（如：user-service:latest） .`</span></div><div><span style="font-family: SFMono-Medium , &quot;SF Mono&quot; , &quot;Segoe UI Mono&quot; , &quot;Roboto Mono&quot; , &quot;Ubuntu Mono&quot; , Menlo , Courier , monospace;">启动image：`docker run -it user-service:latest --mysql.address=192.168.x.x`</span></div><div><ul><li>--mysql.address是为容器配置变量值</li><li>IP地址通过ipconfig查看</li></ul><h3>Python服务写镜像</h3><p>DockerFile.base</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="ce7f1e01-f47b-4903-9c10-4c9e4431a3bc" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>FROM python:3.6
+MAINTAINER xxx xxx@xxx.com
+
+
+RUN pip install thrift</pre></td></tr></table><p>说明：</p><ol><li>需要自己把thrift模块做进去 `docker build -t python-base:lastest -f Docker.base .`</li></ol><p><br /></p><p>DockerFile</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="4bd8f804-dfb4-4ff9-ad8f-9e113194f8a9" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>FROM python-base:latest
+MAINTAINER xxx xxx@xxx.com
+
+
+ENV PYTHONPATH / # 把python的索引加到环境变量里
+COPY message /message # 直接拷贝文件夹到根目录
+
+
+ENTRYPOINT ["python", "/message/message_service.py"]</pre></td></tr></table><p>编译：`docker build -t message-service:latest .`</p><p>运行：`docker run -it message-service:lastest`</p><p><br /></p></div><h1><span style="font-family: SFMono-Medium , &quot;SF Mono&quot; , &quot;Segoe UI Mono&quot; , &quot;Roboto Mono&quot; , &quot;Ubuntu Mono&quot; , Menlo , Courier , monospace;">Docker服务之间的通讯</span></h1><p><span style="font-family: SFMono-Medium , &quot;SF Mono&quot; , &quot;Segoe UI Mono&quot; , &quot;Roboto Mono&quot; , &quot;Ubuntu Mono&quot; , Menlo , Courier , monospace;">通讯方案：</span></p><ol><li><span style="font-family: SFMono-Medium , &quot;SF Mono&quot; , &quot;Segoe UI Mono&quot; , &quot;Roboto Mono&quot; , &quot;Ubuntu Mono&quot; , Menlo , Courier , monospace;">直接通讯：通过容器的IP和PORT访问服务</span></li><ol><li><span style="font-family: SFMono-Medium , &quot;SF Mono&quot; , &quot;Segoe UI Mono&quot; , &quot;Roboto Mono&quot; , &quot;Ubuntu Mono&quot; , Menlo , Courier , monospace;">用的少，Docker的IP不稳定，重启之类的操作可能会导致IP发生变化</span></li></ol><li><span style="font-family: SFMono-Medium , &quot;SF Mono&quot; , &quot;Segoe UI Mono&quot; , &quot;Roboto Mono&quot; , &quot;Ubuntu Mono&quot; , Menlo , Courier , monospace;">Container把端口映射给主机，通过访问主机的端口访问到容器的端口</span></li><li><span style="font-family: SFMono-Medium , &quot;SF Mono&quot; , &quot;Segoe UI Mono&quot; , &quot;Roboto Mono&quot; , &quot;Ubuntu Mono&quot; , Menlo , Courier , monospace;">Docker-link机制，link到一个容器之后，可以直接通过名字访问该容器了</span></li></ol><div><span style="font-family: SFMono-Medium , &quot;SF Mono&quot; , &quot;Segoe UI Mono&quot; , &quot;Roboto Mono&quot; , &quot;Ubuntu Mono&quot; , Menlo , Courier , monospace;"><br /></span></div><div><span style="font-family: SFMono-Medium , &quot;SF Mono&quot; , &quot;Segoe UI Mono&quot; , &quot;Roboto Mono&quot; , &quot;Ubuntu Mono&quot; , Menlo , Courier , monospace;">方案选择：自己构建的image，使用方案3，原生image，使用方案2</span></div><div><span style="font-family: SFMono-Medium , &quot;SF Mono&quot; , &quot;Segoe UI Mono&quot; , &quot;Roboto Mono&quot; , &quot;Ubuntu Mono&quot; , Menlo , Courier , monospace;"><br /></span></div><div><span style="font-family: SFMono-Medium , &quot;SF Mono&quot; , &quot;Segoe UI Mono&quot; , &quot;Roboto Mono&quot; , &quot;Ubuntu Mono&quot; , Menlo , Courier , monospace;">使用docker-compose描述关系</span></div><div><span style="font-family: SFMono-Medium , &quot;SF Mono&quot; , &quot;Segoe UI Mono&quot; , &quot;Roboto Mono&quot; , &quot;Ubuntu Mono&quot; , Menlo , Courier , monospace;"><br /></span></div><p><span style="font-family: SFMono-Medium , &quot;SF Mono&quot; , &quot;Segoe UI Mono&quot; , &quot;Roboto Mono&quot; , &quot;Ubuntu Mono&quot; , Menlo , Courier , monospace;">docker-compose.yml</span></p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="a8cb90e7-5c9b-4a0f-8daf-298707b2b43f" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>version: '3'
+
+
+services:
+  message-service:
+    image: message-service:latest
+
+
+  user-service:
+    image: user-service:lastest
+    command:
+    - "--mysql-address=192.168.1.7"
+
+
+  user-edge-service:
+    image: user-edge-service:latest
+    links: # 这个container依赖的container们
+    - user-service
+    - message-service
+    command:
+    - "--redis.address=192.168.1.7"
+    ports: 
+    - 8080:8080 # 做和主机的端口映射 - 仅为示例</pre></td></tr></table><p><span style="font-family: SFMono-Medium , &quot;SF Mono&quot; , &quot;Segoe UI Mono&quot; , &quot;Roboto Mono&quot; , &quot;Ubuntu Mono&quot; , Menlo , Courier , monospace;"><br /></span></p><p><span style="font-family: SFMono-Medium , &quot;SF Mono&quot; , &quot;Segoe UI Mono&quot; , &quot;Roboto Mono&quot; , &quot;Ubuntu Mono&quot; , Menlo , Courier , monospace;">运行：</span></p><ol><li><span style="font-family: SFMono-Medium , &quot;SF Mono&quot; , &quot;Segoe UI Mono&quot; , &quot;Roboto Mono&quot; , &quot;Ubuntu Mono&quot; , Menlo , Courier , monospace;">首先运行基础服务，如mysql、redis</span></li><li><span style="font-family: SFMono-Medium , &quot;SF Mono&quot; , &quot;Segoe UI Mono&quot; , &quot;Roboto Mono&quot; , &quot;Ubuntu Mono&quot; , Menlo , Courier , monospace;">docker-compose up -d</span></li><ol><li><span style="font-family: SFMono-Medium , &quot;SF Mono&quot; , &quot;Segoe UI Mono&quot; , &quot;Roboto Mono&quot; , &quot;Ubuntu Mono&quot; , Menlo , Courier , monospace;">后台运行</span></li></ol></ol><div><span style="font-family: SFMono-Medium , &quot;SF Mono&quot; , &quot;Segoe UI Mono&quot; , &quot;Roboto Mono&quot; , &quot;Ubuntu Mono&quot; , Menlo , Courier , monospace;">说明：</span></div><div><ol><li><span style="font-family: SFMono-Medium , &quot;SF Mono&quot; , &quot;Segoe UI Mono&quot; , &quot;Roboto Mono&quot; , &quot;Ubuntu Mono&quot; , Menlo , Courier , monospace;"><span style="font-family: SFMono-Medium , &quot;SF Mono&quot; , &quot;Segoe UI Mono&quot; , &quot;Roboto Mono&quot; , &quot;Ubuntu Mono&quot; , Menlo , Courier , monospace;">如user-edge-service配置之后，若要访问</span></span>message-service，可直接通过类似 <a href="http://message-service:8888/xxxx">http://message-service:8888/xxxx</a> 的url访问到改容器<ol><li>可以把container名作为host，以访问该容器</li></ol></li></ol><h1>搭建Docker镜像仓库</h1><p>私有仓库：走内网，安全、快</p><p>公共仓库：hub.docker.com</p><h3>公共仓库镜像上传</h3><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="44a3f163-ec53-432d-92a5-4f256630ff32" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>docker tag zookeeper:3.5 imooc/zookeeper:3.5 # 打tag
+docker login ......
+docker push imooc/zookeeper:3.5 # 可push成功</pre></td></tr></table><p><br /></p><h3>私有仓库</h3><h4>基础配置</h4><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="3e57a7a2-6552-4cab-9c82-f757770d78fa" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>docker pull registry:2 # 下载仓库搭建镜像
+docker run -d -p 5000:5000 registry:2 # 运行镜像
+# 做测试
+docker tag zookeeper:3.5 localhost:5000/zookeeper:3.5
+docker push localhost:5000/zookeeper:3.5
+docker pull localhost:5000/zookeeper:3.5</pre></td></tr></table><p>问题：</p><ol><li>只能配置在一台机器，不能做跨机器</li><li>没有可视化界面</li></ol><h4>harbor配置</h4><p>项目：<a href="https://github.com/goharbor/harbor">地址</a></p><p>方法：</p><ol><li>下载一个最新的release的offline-install包，做线下安装</li><li>解压，cd到harbor中，有个harbor.cfg文件，描述对harbor的配置</li><li>vim barbor.cfg<ol><li>修改hostname = hub.xxx.com:port</li></ol></li><li>非mac系统已经可以跑了<ol><li>mac系统：vim docker-compose.yml修改的挂载点<ol><li>改所有的volumes，都放到可读目录下</li><li>把80:80端口都改成8080:80</li></ol></li></ol></li><li>./install.sh</li></ol><h4>推送image</h4><p>修改DockerFile的FROM字段，为推送后的私有镜像地址路径</p></div>
+        <p>&nbsp;</p>
+    
+</div>
+
+
+    </div>
+
+    
+  </body>
+</html>

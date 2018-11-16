@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="//gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.46-DEV" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>6 React项目架构 - web server网络请求转发 &middot; 细胞的作战实验室</title>
+
+  
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/print.css" media="print">
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/poole.css">
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/syntax.css">
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/hyde.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Abril+Fatface|PT+Sans:400,400i,700">
+
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+  
+  <link href="" rel="alternate" type="application/rss+xml" title="细胞的作战实验室" />
+
+  
+</head>
+
+  <body class=" ">
+  <div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <a href="http://azen.me/"><h1>细胞的作战实验室</h1></a>
+      <p class="lead">
+      Power by <a href="http://hugo.spf13.com">hugo</a>
+      </p>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li><a href="http://azen.me/">Home</a> </li>
+      
+    </ul>
+
+    <p>&copy; 2018. All rights reserved. </p>
+  </div>
+</div>
+
+    <div class="content container">
+    <div class="post">
+  <h1>6 React项目架构 - web server网络请求转发</h1>
+  <span class="post-date">Mon, Sep 24, 2018</span>
+  <p>&nbsp;</p>         <p><a href="https://gitee.com/azen/FE-execise/commit/416511e5fd99a6bda638f2205e80531b58c04b19">相关commit</a></p><p>开发环境工程架构示意图</p><p><img class="confluence-embedded-image confluence-external-resource" width="786" src="http://img.daker.wang/wiki/1537445014191.png" data-image-src="http://img.daker.wang/wiki/1537445014191.png"></p><p>接口地址：<a href="https://cnodejs.org/api">https://cnodejs.org/api</a></p><h1>accessToken</h1><p>问题：</p><ul><li>部分接口需要带accessToken才有权限请求</li><li>accesstoken是用户登录后，cnodejs服务器返回的</li><li>accesstoken不能存在浏览器里，有安全风险</li></ul><p>解决方案：</p><ul><li>获取accessToken后，存在web服务器里，通过session机制，在web服务端检测有木有token，没就给用户弹登录，有就转发请求</li></ul><h2>实现</h2><h3>安装工具</h3><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="8c7d1da6-4052-4003-96fc-23c7376d72e5" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>$ npm i body-parser express-session query-string -S</pre></td></tr></table><p>说明：</p><ul><li>body-parser是用来转化request的body的，转化成json格式的数据</li><li>espress-sisson是express插件，用来存放服务端session</li><li>query-string是用来把url「?」后面的内容转化为一个json的</li></ul><h3>配置web服务器</h3><p>server.js</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="837039e5-b048-49e1-9741-47bc375acfc7" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>...
+const bodyParser = require('body-parser')
+app.use(bodyParser.json())  // #1-1
+app.use(bodyParser.urlencoded({ extended: false })) //  #1-2
+
+const session = require('express-session')
+app.use(session({   // #2
+  maxAge: 10 * 60 * 1000,   // #2-1
+  name: 'sid',  // #2-2
+  resave: false,    // #2-3
+  saveUninitialized: false,
+  secret: '(‘◇’)?'  // #2-4
+}))
+...</pre></td></tr></table><p>说明：</p><ol><li>body-parser用于解析request的body中的参数<ol><li>把application json的数据，转化成req.body的数据</li><li>对应formdate的数据 - 把这些数据也转换到req.body中，之后通过req.body就能拿到请求里的参数了</li></ol></li><li>配置服务器session相关功能的<ol><li>设置session的过期时长<ul><li>10分钟</li><li>做测试用的，所以不需要太长</li><li>线上的session是要存在数据库中的，如redis</li><li>现在是存在内存中，服务关掉了，相关数据就没了，所有人都需要重新登录一遍</li></ul></li><li>指定sessionID对应的cookieID，浏览器端可以通过cookieID拿到sessionID的值</li><li>是否每次请求都申请一个cookieID</li><li>secret是一个密钥串，用于对session加密，保证cookie在浏览器端无法解密</li></ol></li></ol><h3>验证accessToken</h3><blockquote><p>接口：</p><h4>post /accesstoken 验证 accessToken 的正确性</h4><p>接收 post 参数</p><ul style="margin-left: 25.0px;"><li>accesstoken <code>String</code> 用户的 accessToken</li></ul><p>如果成功匹配上用户，返回成功信息。否则 403。</p><p>返回值示例</p><pre class="prettyprint language-js"><code><span class="pun" style="color: rgb(102,102,0);">{</span><span class="pln" style="color: rgb(0,0,0);">success</span><span class="pun" style="color: rgb(102,102,0);">:</span><span class="pln" style="color: rgb(0,0,0);"> </span><span class="kwd" style="color: rgb(0,0,136);">true</span><span class="pun" style="color: rgb(102,102,0);">,</span><span class="pln" style="color: rgb(0,0,0);"> loginname</span><span class="pun" style="color: rgb(102,102,0);">:</span><span class="pln" style="color: rgb(0,0,0);"> req</span><span class="pun" style="color: rgb(102,102,0);">.</span><span class="pln" style="color: rgb(0,0,0);">user</span><span class="pun" style="color: rgb(102,102,0);">.</span><span class="pln" style="color: rgb(0,0,0);">loginname</span><span class="pun" style="color: rgb(102,102,0);">,</span><span class="pln" style="color: rgb(0,0,0);"> id</span><span class="pun" style="color: rgb(102,102,0);">:</span><span class="pln" style="color: rgb(0,0,0);"> req</span><span class="pun" style="color: rgb(102,102,0);">.</span><span class="pln" style="color: rgb(0,0,0);">user</span><span class="pun" style="color: rgb(102,102,0);">.</span><span class="pln" style="color: rgb(0,0,0);">id</span><span class="pun" style="color: rgb(102,102,0);">,</span><span class="pln" style="color: rgb(0,0,0);"> avatar_url</span><span class="pun" style="color: rgb(102,102,0);">:</span><span class="pln" style="color: rgb(0,0,0);"> req</span><span class="pun" style="color: rgb(102,102,0);">.</span><span class="pln" style="color: rgb(0,0,0);">user</span><span class="pun" style="color: rgb(102,102,0);">.</span><span class="pln" style="color: rgb(0,0,0);">avatar_url</span><span class="pun" style="color: rgb(102,102,0);">}</span></code></pre></blockquote><p class="prettyprint language-js">逻辑：</p><ul><li class="prettyprint language-js">客户端调用web服务器的/login接口，发post请求，传accessToken到web服务里来</li><li class="prettyprint language-js">web服务器把请求转发给cnode服务器</li><li class="prettyprint language-js">如果验证通过（accessToken有效）：<ul><li class="prettyprint language-js">构建一个user对象作为value，赋给sessionID为key的map里面 - 信息存在web服务器的内存中（业务逻辑中不用处理，express的session模块已经做好相关逻辑了）</li><li class="prettyprint language-js">把服务端消息返回给客户端</li></ul></li></ul><p class="prettyprint language-js"><span style="color: rgb(51,51,51);"><code><span class="pun">server/util/handler_login.js</span></code></span></p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="4f7c0129-887b-4b59-a9e6-0575cc17d1bb" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>const router = require('express').Router()
+const axios = require('axios')
+
+const baseUrl = 'https://cnodejs.org/api/v1'
+
+router.post('/login', function(req, res, next) {
+  axios.post(`${baseUrl}/accesstoken`, {
+    accesstoken: req.body.accessToken
+  })
+    .then((resp) => {
+      if (resp.status === 200 &amp;&amp; resp.data.success) {
+        req.session.user = {
+          accessToken: req.body.accessToken,
+          loginName: resp.data.loginname,
+          id: resp.data.id,
+          avatarUrl: resp.data.avatar_url,
+        }
+        res.json({
+          success: true,
+          data: resp.data
+        })
+      }
+    })
+    .catch((err) => {
+      if (err.response) {   // #1
+        res.json({
+          success: false,
+          data: err.response.data   // #3
+        })
+      } else {  // #2
+        next(err)
+      }
+    })
+})
+
+
+module.exports = router</pre></td></tr></table><p class="prettyprint language-js"><span class="pun" style="color: rgb(51,51,51);">说明：</span></p><ol><li class="prettyprint language-js"><span class="pun" style="color: rgb(51,51,51);">如果cnode服务端返回了报错信息，表明是业务逻辑报错，直接返回err.response给用户<br class="_mce_tagged_br" /></span></li><li class="prettyprint language-js"><span class="pun" style="color: rgb(51,51,51);">如果cnode没报错（发生了非业务逻辑错误），则把错误交给「全局错误处理器」处理</span></li><li class="prettyprint language-js"><span class="pun" style="color: rgb(51,51,51);">如果直接写err.response的话，res.json会把err.response这串东东整个转成字符串，但是response对象太大了，无法转成字符串，会导致响应一致无法返回客户端</span><ol><li class="prettyprint language-js"><span class="pun" style="color: rgb(51,51,51);">报错信息：(node:9519) UnhandledPromiseRejectionWarning: Unhandled promise rejection (rejection id: 2): TypeError: Converting circular structure to JSON</span></li></ol></li></ol><p><br /></p><h3>其他接口的代理转发</h3><p>server/util/proxy.js</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="ecf04e32-bdb1-4eb6-9bca-89283659cc9b" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>const axios = require('axios')
+const querystring = require('query-string') // #7
+
+const baseUrl = 'https://cnodejs.org/api/v1'
+
+module.exports = function(req, res, next) {
+  const path = req.path
+  const user = req.session.user || { }  // #2 防止undfine产生报错
+  const needAccessToken = req.query.needAccessToken // #1
+
+  if (needAccessToken &amp;&amp; !user.accessToken) {
+    res.status(401).send({
+      success: false,
+      msg: 'need login'
+    })
+  }
+
+  const query = Object.assign({}, req.query, {
+    accesstoken: (needAccessToken &amp;&amp; req.method === 'GET') ? user.accessToken : '' // #8
+  })
+
+  if (query.needAccessToken) delete query.needAccessToken // #3
+
+  axios(`${baseUrl}${path}`, {
+    method: req.method,
+    params: query,
+    data: querystring.stringify(Object.assign({}, req.body, {
+        (needAccessToken &amp;&amp; req.method === 'POST') ? user.accessToken : ''  // #4 所有POST请求都加accessToken
+    })),
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded' // #5 指定使用form-data格式发送请求-由于服务端设定导致的
+    }
+  }).then((resp) => {
+    if (resp.status === 200) {
+      res.send(resp.data)
+    } else {
+      res.status(resp.status).send(resp.data) // #6 链式调用，给client返回错误信息
+    }
+  }).catch((err) => {
+    if (err.response) {
+      res.status(500).send(err.response.data)
+    } else {
+      res.status(500).send({
+        success: false,
+        msg: '未知错误'
+      })
+    }
+  })
+}</pre></td></tr></table><p>说明：</p><ol><li><p>通过客户端传过来的url中，是否有needAccessToken=true判断是否需要给服务端传accessToken</p></li><li><p>下面需要通过user.xxx调用相关方法，需要防止user为undefine时导致报错，故在此处做初始化</p></li><li><p>干掉web服务器和client之间的私自约定的query参数</p></li><li>所有发向cnode的POST请求，在body里拼上accessToken，即使cnode接口不需要，加上也OK<ol><li>虽然表面上看上去，是从session.user中拿accessToken的，但是其实，user信息是存在web服务器中的，session.user这步操作，会通过sessionID，在web服务器中找到对应的user，然后拿accessToken</li></ol></li><li>cnode的api有些无法接收json，所以需要指定下Content-Type，用form-data的格式去发请求</li><li><p>链式调用，给client返回错误信息和状态码</p></li><li><p>如果不用querystring.<span style="color: rgb(155,112,63);">stringify</span><span style="color: rgb(155,112,63);">转码，会报500错误 - accesstoken不正确</span></p><ol><li><p>插件：`npm i query-string -S`</p></li><li><p>如果不使用格式转换工具的话，格式会类似：{&quot;accesstoken&quot;: &quot;xxx&quot;}</p></li><li><p>使用后，格式类似我们在浏览器端使用「表单」请求数据的格式一样</p></li></ol></li><li>GET方法，把accessToken拼在query后面...Object.assign语法蛮好玩的...</li></ol><p><br /></p><p>server.js调用相关转发方法</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="6ff460e6-b11f-4804-9d51-1a6356f568e3" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>...
+app.use('/api/user', require('./util/handler-login'))
+app.use('/api', require('./util/proxy'))
+
+if (!isDev) {
+...</pre></td></tr></table><p>说明：</p><ul><li>转发相关方法，需要在服务起来之前调用</li></ul><p><br /></p><p>测试</p><p>普通接口：<a href="http://localhost:2333/api/topics">http://localhost:2333/api/topics</a></p><p><br /></p><p>accessToken接口：</p><p>实现测试页面 client/views/test/api.test.js</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="12487ef0-ccff-4ab1-8de4-d600d57420c1" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>import React from 'react'
+import axios from 'axios'
+
+/* eslint-disable */    // #1
+export default class TestApi extends React.Component {
+
+  getTopics() {
+    axios.get('/api/topics')
+      .then((resp) => {
+        console.log(resp)
+      }).catch((err) => {
+        console.log(err)
+    })
+  }
+
+  login() {
+    axios.post('/api/user/login', {
+      accessToken: 'xxxxxx-xxx-xxxx-xx'
+    }).then(resp => {
+      console.log(resp)
+    })
+  }
+
+  markAll() {
+    axios.post('/api/message/mark_all?needAccessToken=true')
+      .then(resp => {
+        console.log(resp)
+      })
+  }
+
+  render() {
+    return (
+      &lt;div>
+        &lt;button onClick={this.getTopics}>topics&lt;/button>
+        &lt;button onClick={this.login}>login&lt;/button>
+        &lt;button onClick={this.markAll}>markAll&lt;/button>
+      &lt;/div>
+    )
+  }
+}
+/* eslint-enable */
+
+
+</pre></td></tr></table><p>说明：</p><ol><li>禁止eslint检测区块</li></ol><p><br /></p><h3>router.jsx添加测试页面入口</h3><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="910d421d-cb5d-4f16-b5d1-4b6515584fa8" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>...
+import TestApi from '../views/test/api.test'
+
+export default () => [
+...
+  &lt;Route path='/test' component={TestApi} key="test" />,
+]</pre></td></tr></table><p>注意：</p><ul><li>dev:web:server还不支持router和mobx，通过dev:web:server访问index.html的话，访问不到东西...</li><li>依然需要通过dev:client访问我们的测试页面 <a href="http://localhost:8787/test">http://localhost:8787/test</a></li><li>又因为，默认情况下，通过dev:client走的请求，默认都是走8787端口的，点击「login」按钮，会发的请求是类似：「https://localhost:8787/api/user/login」<ul><li>这样的请求dev:client下的server无法处理</li><li>需要让我们的web:server处理才行，即：「<a href="https://localhost:8787/api/user/login">https://localhost:2333/api/user/login</a>」</li></ul></li><li>需要配置webpack的dev服务器的时候，指定下/api相关的请求，转发给2333端口</li></ul><p>webpack.config.client.js</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="b038bfc6-6cf0-4a11-b4cf-cc7f4dc8987a" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>if (isDev) {
+    ...
+    config.devServer = {
+        host: '0.0.0.0',
+        port: '8787',
+        ...
+        proxy: {
+          '/api': 'http://localhost:2333'
+        }
+    };
+    ...
+}</pre></td></tr></table><p>测试方式：</p><ol><li>起服务：dev:client dev:web:start</li><li>访问<a href="http://localhost:8787/test">http://localhost:8787/test</a></li><li>点击login</li><li>观察Network</li></ol><p><br /></p>
+        <p>&nbsp;</p>
+    
+
+</div>
+
+
+    </div>
+
+    
+  </body>
+</html>

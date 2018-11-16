@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>细胞的作战实验室</title>
+    <link>http://azen.me/code/fe/</link>
+    <description>Recent content on 细胞的作战实验室</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 17 Oct 2018 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="http://azen.me/code/fe/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>9 主框架 &amp;amp; 列表页搭建</title>
+      <link>http://azen.me/code/fe/react-container/</link>
+      <pubDate>Wed, 17 Oct 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://azen.me/code/fe/react-container/</guid>
+      <description>&amp;nbsp;
+0x0 页面框架搭建基本UI元素搭建client/views/layout/app-bar.jsx
+import React from &#39;react&#39; import AppBar from &#39;@material-ui/core/AppBar&#39; import ToolBar from &#39;@material-ui/core/Toolbar&#39; import Button from &#39;@material-ui/core/Button&#39; import IconButton from &#39;@material-ui/core/IconButton&#39; import HomeIcon from &#39;@material-ui/icons/Home&#39; import Typography from &#39;@material-ui/core/Typography&#39; class MainAppBar extends React.</description>
+    </item>
+    
+    <item>
+      <title>8 React业务开发 - 准备工作</title>
+      <link>http://azen.me/code/fe/react-business-prepare/</link>
+      <pubDate>Sat, 13 Oct 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://azen.me/code/fe/react-business-prepare/</guid>
+      <description>&amp;nbsp;
+0x0 React16新特性官网：https://reactjs.org/
+新特性官方说明
+react+react-dom包大小：40k → 30k整个代码都用Fiber重新了error boundary捕获react渲染过程中的错误可以在正式环境中，弹个提醒告诉用户错误日志，辅助排错开发中排错new render return typesrender function中支持直接返回数组、字符串Protals：可以在组件中，把一个标签强制插入到页面任意其他标签下服务端渲染的升级 - 可以使用「流」的方式做渲染了</description>
+    </item>
+    
+    <item>
+      <title>7 React项目架构 - Router和Store的服务端渲染</title>
+      <link>http://azen.me/code/fe/react-ssr-done/</link>
+      <pubDate>Thu, 11 Oct 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://azen.me/code/fe/react-ssr-done/</guid>
+      <description>&amp;nbsp;
+0x0 概述加入了router和store，会对服务端渲染有影响：
+需要控制router的渲染，服务端渲染的内容要根据不同的url进行需要在服务端渲染中集成路由跳转功能
+使用者可以从任意路由进入网站除了前端做路由跳转外，服务端也需要支持路由跳转，返回给客户端正确的页面store数据同步：服务端渲染的时候会渲染一遍，拿到html，内容扔给客户端客户端js又会渲染一次如果没拿到服务端渲染时，通过API请求到的数据，那么就需要客户端再次通过api请求，去拿数据多次api请求导致浪费需要服务端渲染时请求到的数据，让客户端直接用
+0x1 store和router的服务端渲染基础配置实现
+server-entry.js
+修改前
+import React from &#39;react&#39; import App from &#39;.</description>
+    </item>
+    
+    <item>
+      <title>6 React项目架构 - web server网络请求转发</title>
+      <link>http://azen.me/code/fe/react-project-network-web-server-proxy/</link>
+      <pubDate>Mon, 24 Sep 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://azen.me/code/fe/react-project-network-web-server-proxy/</guid>
+      <description>&amp;nbsp;
+相关commit
+开发环境工程架构示意图
+接口地址：https://cnodejs.org/api
+accessToken问题：
+部分接口需要带accessToken才有权限请求accesstoken是用户登录后，cnodejs服务器返回的accesstoken不能存在浏览器里，有安全风险解决方案：
+获取accessToken后，存在web服务器里，通过session机制，在web服务端检测有木有token，没就给用户弹登录，有就转发请求实现安装工具$ npm i body-parser express-session query-string -S说明：</description>
+    </item>
+    
+    <item>
+      <title>5 React项目架构 - Store</title>
+      <link>http://azen.me/code/fe/react-project-store/</link>
+      <pubDate>Sun, 23 Sep 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://azen.me/code/fe/react-project-store/</guid>
+      <description>&amp;nbsp;
+相关commit
+什么是Storestore - 数据流解决方案
+mvc模式在前端并不特别适用：很多数据都是异步的页面之间共享一部分数据，数据更新的时候需要让view层检测到数据的更新否则会导致view层和model层脱节，渲染出错store：「flux单向数据流模式」中，整个app有个单独存放数据的地方，叫store页面上的所有内容都是根据store上的内容渲染出来的store里的任何数据的变化，都会影响到view的渲染效果store决定了页面展示成什么样子解决mvc中数据维护问题，把数据维护集中在一个地方只要使用action处理数据，view就能自动更新react：是一个视图层解决方案它的虚拟dom特性，让我们即便把整个数据对象都彻底更新了（换了个数据树object），react也能高效处理视图重新渲染过程虚拟dom的出现，让这种单一数据流模式得以实现Mobx - 一种flux模式下，数据流解决方案的后起之秀
+文档安装：`npm i mobx mobx-react -S`它的所有数据一旦更改，绑定数据的地方会立刻更新使用方法比Redux简单很多Redux涉及Action、Dispatcher、Reducer、Store，概念比较多，学习成本较高数据一旦更新，需要做整棵数据树的全拷贝，生成一棵新树，浪费资源每发一个action都会产生一个新对象新对象的到来，会触发所有Component的重新渲染由于虚拟dom，这种重新渲染成本不高，所以可以这么做，效率高vue没有虚拟dom机制，所以无法这么做Mobx声明Store的时候，声明其为Observable就好值改变会自动通知对应view，触发该view刷新整个数据都只有一份，不会生成新的一个对象只不过它有数据变动，会通知对应的view执行效率高一些，不需要每次都拷贝一个新的数据树</description>
+    </item>
+    
+    <item>
+      <title>4 React项目架构 - 目录划分 &amp;amp; Router配置</title>
+      <link>http://azen.me/code/fe/react-project-router-config/</link>
+      <pubDate>Sat, 22 Sep 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://azen.me/code/fe/react-project-router-config/</guid>
+      <description>&amp;nbsp;
+相关commit
+0x0 目录划分目录划分介绍views文件夹
+存放项目功能模块App.jsx需要根据路由配置，分割子级目录如列表页：index.jsx为这个页面的出口，向外抛出去列表每一项都会建一个组件如：titlebar会建一个组件这些东西会放入同一个文件夹里，因为属于同一个页面嘛config文件夹
+放app的配置 &amp;amp; 第三方类库的引用router.jsx 路由的配置、映射和跳转等store文件夹
+存放数据管理的文件夹（包括数据的获取和封装）如用户登录的信息全局类信息需要存起来，就存在store中的某个地方是web app单页应用开发新增的功能需要单独拿出来components</description>
+    </item>
+    
+    <item>
+      <title>3 React前端工程架构 - eslint &amp;amp; 其他优化</title>
+      <link>http://azen.me/code/fe/react-ssr-optimize/</link>
+      <pubDate>Thu, 20 Sep 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://azen.me/code/fe/react-ssr-optimize/</guid>
+      <description>&amp;nbsp;
+相关commit
+安装eslint：`npm i eslint -D`
+创建eslint配置文件/.eslintrc
+{ &#34;extends&#34;: &#34;standard&#34; }</description>
+    </item>
+    
+    <item>
+      <title>2 React前端工程架构 - 开发环境实时更新</title>
+      <link>http://azen.me/code/fe/react-ssr-dev-hotload/</link>
+      <pubDate>Wed, 19 Sep 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://azen.me/code/fe/react-ssr-dev-hotload/</guid>
+      <description>&amp;nbsp;
+dev server &amp;amp; hot load相关commit
+相关commit
+解决hot load缓慢的commit
+服务端实时渲染相关commit</description>
+    </item>
+    
+    <item>
+      <title>0 前端项目技术选型</title>
+      <link>http://azen.me/code/fe/fe-arch-overview/</link>
+      <pubDate>Tue, 18 Sep 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://azen.me/code/fe/fe-arch-overview/</guid>
+      <description>&amp;nbsp;
+0x0 单页应用 &amp;amp; 多页应用 相关技术选型不同项目需求不同：
+传统的多页网站不会用React单页应用用jQuery实现困难，需要自己处理技术细节，出错的可能性多两大类站点多页应用每个新页面都需要做页面的跳转，是通过浏览器发请求到服务端的
+日常：前端拿到设计图做好模板，后端用jsp等模板引擎填充数据，拼html代码，形成真实的html给浏览器做显示
+特点：
+每个页面跳转都经过服务端新页面出现需要刷新浏览器用户需要有一定的等待时间js定位：js主要做动画，数据处理都是在后端做好的</description>
+    </item>
+    
+    <item>
+      <title>1 React前端工程架构 - 基本配置</title>
+      <link>http://azen.me/code/fe/react-ssr-config/</link>
+      <pubDate>Tue, 18 Sep 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://azen.me/code/fe/react-ssr-config/</guid>
+      <description>&amp;nbsp;
+0x0 概述上一篇文章我们聊过，工程架构的目标，主要是保证「开发效率」的。包括：
+解放生产力环境搭建质量保障本篇文章，将会就React的实际配置做下做下初步说明
+内容包括：
+npm、webpack、babel编译打包基础配置SSR（服务端渲染）基础配置dev server实现代码实时编译hot module实现代码热更新服务端渲染的实时更新eslint保证代码质量0x1 编译打包基础配置本节commit
+webpackwebpack是一个模块打包器，核心是他的loader</description>
+    </item>
+    
+  </channel>
+</rss>

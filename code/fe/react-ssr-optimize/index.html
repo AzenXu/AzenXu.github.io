@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="//gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.46-DEV" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>3 React前端工程架构 - eslint &amp;amp; 其他优化 &middot; 细胞的作战实验室</title>
+
+  
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/print.css" media="print">
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/poole.css">
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/syntax.css">
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/hyde.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Abril+Fatface|PT+Sans:400,400i,700">
+
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+  
+  <link href="" rel="alternate" type="application/rss+xml" title="细胞的作战实验室" />
+
+  
+</head>
+
+  <body class=" ">
+  <div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <a href="http://azen.me/"><h1>细胞的作战实验室</h1></a>
+      <p class="lead">
+      Power by <a href="http://hugo.spf13.com">hugo</a>
+      </p>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li><a href="http://azen.me/">Home</a> </li>
+      
+    </ul>
+
+    <p>&copy; 2018. All rights reserved. </p>
+  </div>
+</div>
+
+    <div class="content container">
+    <div class="post">
+  <h1>3 React前端工程架构 - eslint &amp;amp; 其他优化</h1>
+  <span class="post-date">Thu, Sep 20, 2018</span>
+  <p>&nbsp;</p>         <p><a href="https://gitee.com/azen/FE-execise/commit/c719964cc394407f4087d4ef82c20433f8d8a8c9">相关commit</a></p><p>安装eslint：`npm i eslint -D`</p><p>创建eslint配置文件/.eslintrc</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="04346853-b79c-4a35-82f0-6d1871155e4a" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>{
+  "extends": "standard"
+}</pre></td></tr></table><p><br /></p><p>client目录下，用到了jsx，需要另一套eslint规范</p><p><span>client/.eslintrc</span></p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="63b2051f-4531-4d2b-aec1-b580363edadb" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>{
+  "parser": "babel-eslint",
+  "env": {
+    "browser": true,
+    "es6": true,
+    "node": true
+  },
+  "parserOptions": {
+    "emacVersion": 6,
+    "sourceType": "module"
+  },
+  "extends": "airbnb",
+  "rules": {
+    "semi":[0]
+  }
+}</pre></td></tr></table><p>说明：<a href="https://eslint.org/docs/user-guide/">eslint文档</a></p><ul style="list-style-type: square;"><li>babel-eslint：指定用这个工具解析js代码，用这个是因为我们也用这个做编译</li><li><p>env - 指定环境：</p><ul style="list-style-type: square;"><li>browser是告诉他我们在浏览器中，有document之类的，不然调document会报错</li><li>因为我们使用了webpack提供的部分api，所以可以把node的环境变量也包含进来</li></ul></li><li>parserOptions：<ul style="list-style-type: square;"><li>emacVersion：定义使用的es版本 - es6</li><li>sourceType：是使用模块的方式的，而不是传统的js引用方式</li></ul></li><li>extends：使用规则<ul style="list-style-type: square;"><li>airbnb的规则很赞</li></ul></li><li>rules：配置自定义规则</li></ul><p><br /></p><p>webpack配置编译前检测 - webpack.config.client.js</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="1b460dca-3b9c-4e97-a959-aaecc7448665" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>...
+const config = {
+    ...
+    module: {
+        rules: [
+            {
+                enforce: "pre",
+                test: /.(jsx|js)/,
+                loader: 'eslint-loader',
+                exclude: [
+                    path.join(__dirname, '../node_modules')
+                ]
+            },
+            {
+                test: /.jsx$/,
+                loader: 'babel-loader',
+            },
+            {
+                test: /.js$/,
+                loader: 'babel-loader',
+                exclude: [
+                    path.join(__dirname, '../node_modules')
+                ]
+            }
+        ]
+    },
+    ...
+}</pre></td></tr></table><p>安装一大堆插件：</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="4eda01dc-7df0-4d60-9197-9b798a46b1b3" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>$ npm i babel-eslint eslint-config-airbnb eslint-config-standard eslint-loader eslint-plugin-import eslint-plugin-jsx-a11y eslint-plugin-node eslint-plugin-promise eslint-plugin-react eslint-plugin-standard -D</pre></td></tr></table><p>编译的时候会报一大堆错，没关系，先配置下格式化文件</p><p>.editorconfig</p><p><a href="https://editorconfig.org/">文档</a></p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="b1a5a292-cc5f-4b62-b183-0e1bf5070d26" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>root = true
+
+[*]
+charset = utf-8
+indent_style = space
+indent_size = 2
+end_of_line = lf
+insert_final_new_line = true
+trim_trailing_whitespace = true</pre></td></tr></table><p>禁止eslint检测的方法</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="4f4c8b99-fe4a-43c1-b62a-d440ba155f56" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>import {AppContainer} from 'react-hot-loader' // eslint-disable-line</pre></td></tr></table><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="7218c5b7-22f0-4972-bdb9-9acd07d1cb59" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>"rules": {
+  "semi":[0],
+  "react/jsx-filename-extension":[0]
+}</pre></td></tr></table><p><br /></p><h3>git-commit之前检测</h3><p>工具：哈士奇</p><p>安装：`npm i husky -D`</p><p>定义npm script</p><p>package.json</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="04adc740-f371-4011-befd-6693b519c087" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>{
+...
+  "scripts": {
+    ...
+    "lint": "eslint --ext .js --ext .jsx client/",
+    "precommit": "npm run lint"
+  },
+...
+}</pre></td></tr></table><p>说明：</p><ul style="list-style-type: square;"><li>定义lint方法 - 所有client文件夹下的js和jsx文件，都需要检测</li><li>precommit这个东东，是哈士奇包里提供的git钩子，通过钩子，指定在commit之前强制运行lint方法</li></ul><h1>优化</h1><p><a href="https://gitee.com/azen/FE-execise/commit/ba6a2e7da9c5ab205edce7266adb12ac44cc2b5e">相关commit</a></p><h2>webpack.config优化</h2><p>client和server两个config中module有一些配置内容是一样，我们抽取baseConfig解决代码复用问题</p><p>说明：</p><ul><li>工具：`npm i webpack-merge -D`</li><li>用webpackMerge串联两个配置 - 如果有冲突内容，后者覆盖前者</li></ul><p>build/webpack.config.base.js</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="49430dff-2dcf-473f-a1a3-105ed764f273" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>const path = require('path');
+
+const config = {
+  output: {
+    filename: '[name].[hash].js',
+    path: path.join(__dirname, '../dist'),
+    publicPath: '/public/'
+  },
+  module: {
+    rules: [
+      {
+        enforce: "pre",
+        test: /.(jsx|js)/,
+        loader: 'eslint-loader',
+        exclude: [
+          path.join(__dirname, '../node_modules')
+        ]
+      },
+      {
+        test: /.jsx$/,
+        loader: 'babel-loader',
+      },
+      {
+        test: /.js$/,
+        loader: 'babel-loader',
+        exclude: [
+          path.join(__dirname, '../node_modules')
+        ]
+      }
+    ]
+  }
+};
+
+module.exports = config;</pre></td></tr></table><p>build/webpack.config.client.js</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="64a2de80-9329-4459-a60e-0702743d92b0" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>const path = require('path');
+const HTMLPlugin = require('html-webpack-plugin');
+const webpack = require('webpack');
+const webpackMerge = require('webpack-merge');
+const baseConfig = require('./webpack.config.base');
+
+const isDev = process.env.NODE_ENV === "development";
+
+const config = webpackMerge(baseConfig,{
+    target: 'web',
+    entry: {
+        app: path.join(__dirname, '../client/app.js')
+    },
+    output: {
+        filename: '[name].[hash].js',
+    },
+    plugins: [
+        new HTMLPlugin({
+            template: path.join(__dirname, '../client/template.html')
+        })
+    ],
+    mode: 'production'
+});
+
+if (isDev) {
+    config.entry = {
+        app: [
+            'react-hot-loader/patch',
+            path.join(__dirname, '../client/app.js')
+        ]
+    };
+
+    config.devServer = {
+        host: '0.0.0.0',
+        port: '8787',
+        contentBase: path.join(__dirname, '../dist'),
+        hot: true,
+        overlay: {
+            error: true
+        },
+        publicPath: '/public/',
+        historyApiFallback: {
+            index: '/public/index.html'
+        },
+    };
+
+    config.mode = 'development';
+
+    config.plugins.push(new webpack.HotModuleReplacementPlugin())
+}
+
+module.exports = config;</pre></td></tr></table><p>build/webpack.config.server.js</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="1a391400-db97-458a-bbfb-4c055f93d44e" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>const path = require('path');
+const webpackMerge = require('webpack-merge');
+const baseConfig = require('./webpack.config.base');
+
+const config = webpackMerge(baseConfig, {
+    target: 'node',
+    entry: {
+        app: path.join(__dirname, '../client/server-entry.js')
+    },
+    output: {
+        filename: 'server-entry.js',
+        libraryTarget: 'commonjs2'
+    }
+});
+
+module.exports = config;</pre></td></tr></table><h2>站点图标的正确渲染</h2><p>工具：`npm i serve-favicon -S`</p><p>创建图标：<a href="https://tool.lu/favicon">https://tool.lu/favicon</a></p><p>server.js</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="4cc6d4bc-a416-4f0f-85b1-7f9c604b6789" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>...
+const favicon = require('serve-favicon');
+...
+app.use(favicon(path.join(__dirname, '../favicon.ico')));
+...</pre></td></tr></table><h2>web server实时更新</h2><p>问题：服务端代码每次更新需要重启服务</p><p>解决方案：`npm i nodemon -D`</p><p>配置文件：nodemon.json</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="04c15fbf-5441-4c8b-8f19-9f0d0051b9b7" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>{
+  "restartable":"rs",
+  "ignore": [
+    ".git",
+    "node_modules/**/node_modules",
+    ".eslintrc",
+    "client",
+    "build"
+  ],
+  "env": {
+    "NODE_ENV": "development"
+  },
+  "verbose": true,
+  "ext": "js"
+}</pre></td></tr></table><p>更新npm-script</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="368038f0-70a3-44ff-839a-7250174f0c36" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>"dev:web:start": "nodemon server/server.js"</pre></td></tr></table>
+        <p>&nbsp;</p>
+    
+
+</div>
+
+
+    </div>
+
+    
+  </body>
+</html>

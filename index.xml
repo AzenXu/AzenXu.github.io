@@ -13,10 +13,10 @@
     
     <item>
       <title>2 微服务开发</title>
-      <link>http://azen.me/code/micro-server-iii/</link>
+      <link>http://azen.me/code/micro/micro-server-iii/</link>
       <pubDate>Mon, 12 Nov 2018 00:00:00 +0000</pubDate>
       
-      <guid>http://azen.me/code/micro-server-iii/</guid>
+      <guid>http://azen.me/code/micro/micro-server-iii/</guid>
       <description>&amp;nbsp;
 0x0 微服务业务分析业务场景需求一：用户可以注册和登录
 单点登录，但是需要支持跨域 - 使用其他系统的时候就不需要登录了不用session - 避免使用状态需求二：登录用户可对课程进行CURD操作
@@ -26,10 +26,10 @@
     
     <item>
       <title>3 服务编排前奏 - Docker容器化</title>
-      <link>http://azen.me/code/micro-server-iv/</link>
+      <link>http://azen.me/code/micro/micro-server-iv/</link>
       <pubDate>Mon, 12 Nov 2018 00:00:00 +0000</pubDate>
       
-      <guid>http://azen.me/code/micro-server-iv/</guid>
+      <guid>http://azen.me/code/micro/micro-server-iv/</guid>
       <description>&amp;nbsp;
 服务Docker化
 搭建Docker仓库，存image
@@ -42,20 +42,20 @@
     
     <item>
       <title>4 服务编排 - Mesos</title>
-      <link>http://azen.me/code/micro-server-v/</link>
+      <link>http://azen.me/code/micro/micro-server-v/</link>
       <pubDate>Mon, 12 Nov 2018 00:00:00 +0000</pubDate>
       
-      <guid>http://azen.me/code/micro-server-v/</guid>
+      <guid>http://azen.me/code/micro/micro-server-v/</guid>
       <description>&amp;nbsp;
 初见Program against your datacenter, like it&#39;s a single pool of resources.</description>
     </item>
     
     <item>
       <title>0 初识微服务</title>
-      <link>http://azen.me/code/micro-server-i/</link>
+      <link>http://azen.me/code/micro/micro-server-i/</link>
       <pubDate>Wed, 07 Nov 2018 00:00:00 +0000</pubDate>
       
-      <guid>http://azen.me/code/micro-server-i/</guid>
+      <guid>http://azen.me/code/micro/micro-server-i/</guid>
       <description>&amp;nbsp;
 0x0 微服务导学微服务：就是普通的项目模块，运行在Docker里面，使用K8S管理Docker们
 为什么要做微服务？
@@ -65,10 +65,10 @@
     
     <item>
       <title>1 微服务的着眼点及解决方案</title>
-      <link>http://azen.me/code/micro-service-ii/</link>
+      <link>http://azen.me/code/micro/micro-service-ii/</link>
       <pubDate>Wed, 07 Nov 2018 00:00:00 +0000</pubDate>
       
-      <guid>http://azen.me/code/micro-service-ii/</guid>
+      <guid>http://azen.me/code/micro/micro-service-ii/</guid>
       <description>&amp;nbsp;
 0x0 微服务带来的问题服务之间的通讯问题？单体架构中需要通讯的情况少见，而微服务之间的相互调用非常频繁微服务如何发现彼此？单体架构使用Dubbo做服务发现：服务消费者需要对服务的提供者进行发现。发现的原理是通过KV存储有一个中间人，提供者把自己的信息告诉中间人，消费者去中间人那里拿提供者的地址微服务有各种语言，如何彼此发现？微服务怎样部署？更新？扩容？自动化流程？Jekins部署到预发环境，没问题部署到生产环境？微服务少的情况下可以这么做，但是一般很难这么做，因为需要同时上线的微服务器可能非常多，无法手动搞0x1 微服务间如何通讯通讯：socket、tcp/ip、http...
 两个角度考虑通讯：
@@ -78,10 +78,10 @@
     
     <item>
       <title>9 主框架 &amp;amp; 列表页搭建</title>
-      <link>http://azen.me/code/react-container/</link>
+      <link>http://azen.me/code/fe/react-container/</link>
       <pubDate>Wed, 17 Oct 2018 00:00:00 +0000</pubDate>
       
-      <guid>http://azen.me/code/react-container/</guid>
+      <guid>http://azen.me/code/fe/react-container/</guid>
       <description>&amp;nbsp;
 0x0 页面框架搭建基本UI元素搭建client/views/layout/app-bar.jsx
 import React from &#39;react&#39; import AppBar from &#39;@material-ui/core/AppBar&#39; import ToolBar from &#39;@material-ui/core/Toolbar&#39; import Button from &#39;@material-ui/core/Button&#39; import IconButton from &#39;@material-ui/core/IconButton&#39; import HomeIcon from &#39;@material-ui/icons/Home&#39; import Typography from &#39;@material-ui/core/Typography&#39; class MainAppBar extends React.</description>
@@ -89,10 +89,10 @@ import React from &#39;react&#39; import AppBar from &#39;@material-ui/core/AppB
     
     <item>
       <title>8 React业务开发 - 准备工作</title>
-      <link>http://azen.me/code/react-business-prepare/</link>
+      <link>http://azen.me/code/fe/react-business-prepare/</link>
       <pubDate>Sat, 13 Oct 2018 00:00:00 +0000</pubDate>
       
-      <guid>http://azen.me/code/react-business-prepare/</guid>
+      <guid>http://azen.me/code/fe/react-business-prepare/</guid>
       <description>&amp;nbsp;
 0x0 React16新特性官网：https://reactjs.org/
 新特性官方说明
@@ -101,10 +101,10 @@ react+react-dom包大小：40k → 30k整个代码都用Fiber重新了error bou
     
     <item>
       <title>7 React项目架构 - Router和Store的服务端渲染</title>
-      <link>http://azen.me/code/react-ssr-done/</link>
+      <link>http://azen.me/code/fe/react-ssr-done/</link>
       <pubDate>Thu, 11 Oct 2018 00:00:00 +0000</pubDate>
       
-      <guid>http://azen.me/code/react-ssr-done/</guid>
+      <guid>http://azen.me/code/fe/react-ssr-done/</guid>
       <description>&amp;nbsp;
 0x0 概述加入了router和store，会对服务端渲染有影响：
 需要控制router的渲染，服务端渲染的内容要根据不同的url进行需要在服务端渲染中集成路由跳转功能
@@ -117,10 +117,10 @@ import React from &#39;react&#39; import App from &#39;.</description>
     
     <item>
       <title>6 React项目架构 - web server网络请求转发</title>
-      <link>http://azen.me/code/react-project-network-web-server-proxy/</link>
+      <link>http://azen.me/code/fe/react-project-network-web-server-proxy/</link>
       <pubDate>Mon, 24 Sep 2018 00:00:00 +0000</pubDate>
       
-      <guid>http://azen.me/code/react-project-network-web-server-proxy/</guid>
+      <guid>http://azen.me/code/fe/react-project-network-web-server-proxy/</guid>
       <description>&amp;nbsp;
 相关commit
 开发环境工程架构示意图
@@ -132,10 +132,10 @@ accessToken问题：
     
     <item>
       <title>5 React项目架构 - Store</title>
-      <link>http://azen.me/code/react-project-store/</link>
+      <link>http://azen.me/code/fe/react-project-store/</link>
       <pubDate>Sun, 23 Sep 2018 00:00:00 +0000</pubDate>
       
-      <guid>http://azen.me/code/react-project-store/</guid>
+      <guid>http://azen.me/code/fe/react-project-store/</guid>
       <description>&amp;nbsp;
 相关commit
 什么是Storestore - 数据流解决方案
@@ -145,10 +145,10 @@ mvc模式在前端并不特别适用：很多数据都是异步的页面之间�
     
     <item>
       <title>4 React项目架构 - 目录划分 &amp;amp; Router配置</title>
-      <link>http://azen.me/code/react-project-router-config/</link>
+      <link>http://azen.me/code/fe/react-project-router-config/</link>
       <pubDate>Sat, 22 Sep 2018 00:00:00 +0000</pubDate>
       
-      <guid>http://azen.me/code/react-project-router-config/</guid>
+      <guid>http://azen.me/code/fe/react-project-router-config/</guid>
       <description>&amp;nbsp;
 相关commit
 0x0 目录划分目录划分介绍views文件夹
@@ -159,10 +159,10 @@ mvc模式在前端并不特别适用：很多数据都是异步的页面之间�
     
     <item>
       <title>3 React前端工程架构 - eslint &amp;amp; 其他优化</title>
-      <link>http://azen.me/code/react-ssr-optimize/</link>
+      <link>http://azen.me/code/fe/react-ssr-optimize/</link>
       <pubDate>Thu, 20 Sep 2018 00:00:00 +0000</pubDate>
       
-      <guid>http://azen.me/code/react-ssr-optimize/</guid>
+      <guid>http://azen.me/code/fe/react-ssr-optimize/</guid>
       <description>&amp;nbsp;
 相关commit
 安装eslint：`npm i eslint -D`
@@ -172,10 +172,10 @@ mvc模式在前端并不特别适用：很多数据都是异步的页面之间�
     
     <item>
       <title>2 React前端工程架构 - 开发环境实时更新</title>
-      <link>http://azen.me/code/react-ssr-dev-hotload/</link>
+      <link>http://azen.me/code/fe/react-ssr-dev-hotload/</link>
       <pubDate>Wed, 19 Sep 2018 00:00:00 +0000</pubDate>
       
-      <guid>http://azen.me/code/react-ssr-dev-hotload/</guid>
+      <guid>http://azen.me/code/fe/react-ssr-dev-hotload/</guid>
       <description>&amp;nbsp;
 dev server &amp;amp; hot load相关commit
 相关commit
@@ -185,10 +185,10 @@ dev server &amp;amp; hot load相关commit
     
     <item>
       <title>0 前端项目技术选型</title>
-      <link>http://azen.me/code/fe-arch-overview/</link>
+      <link>http://azen.me/code/fe/fe-arch-overview/</link>
       <pubDate>Tue, 18 Sep 2018 00:00:00 +0000</pubDate>
       
-      <guid>http://azen.me/code/fe-arch-overview/</guid>
+      <guid>http://azen.me/code/fe/fe-arch-overview/</guid>
       <description>&amp;nbsp;
 0x0 单页应用 &amp;amp; 多页应用 相关技术选型不同项目需求不同：
 传统的多页网站不会用React单页应用用jQuery实现困难，需要自己处理技术细节，出错的可能性多两大类站点多页应用每个新页面都需要做页面的跳转，是通过浏览器发请求到服务端的
@@ -199,10 +199,10 @@ dev server &amp;amp; hot load相关commit
     
     <item>
       <title>1 React前端工程架构 - 基本配置</title>
-      <link>http://azen.me/code/react-ssr-config/</link>
+      <link>http://azen.me/code/fe/react-ssr-config/</link>
       <pubDate>Tue, 18 Sep 2018 00:00:00 +0000</pubDate>
       
-      <guid>http://azen.me/code/react-ssr-config/</guid>
+      <guid>http://azen.me/code/fe/react-ssr-config/</guid>
       <description>&amp;nbsp;
 0x0 概述上一篇文章我们聊过，工程架构的目标，主要是保证「开发效率」的。包括：
 解放生产力环境搭建质量保障本篇文章，将会就React的实际配置做下做下初步说明
@@ -213,10 +213,10 @@ webpackwebpack是一个模块打包器，核心是他的loader</description>
     
     <item>
       <title>Lean Startup II 定义两个假设</title>
-      <link>http://azen.me/code/lean-startup-guess/</link>
+      <link>http://azen.me/pd/lean-startup-guess/</link>
       <pubDate>Thu, 13 Sep 2018 00:00:00 +0000</pubDate>
       
-      <guid>http://azen.me/code/lean-startup-guess/</guid>
+      <guid>http://azen.me/pd/lean-startup-guess/</guid>
       <description>&amp;nbsp;
 时机：用户探索阶段
 定义用户痛点假设：
@@ -228,10 +228,10 @@ SnapchatSituation痛点一：社交压力 传统社交媒体分享自己照片�
     
     <item>
       <title>Lean Startup III 用MVP验证两个假设</title>
-      <link>http://azen.me/code/lean-startup-verify/</link>
+      <link>http://azen.me/pd/lean-startup-verify/</link>
       <pubDate>Thu, 13 Sep 2018 00:00:00 +0000</pubDate>
       
-      <guid>http://azen.me/code/lean-startup-verify/</guid>
+      <guid>http://azen.me/pd/lean-startup-verify/</guid>
       <description>&amp;nbsp;
 重点：
 验证解决方案和痛点的匹配度通过不断迭代，实现对真实用户的痛点、有效解决方案的不断逼近工具：Minimum Viable Product
@@ -242,10 +242,10 @@ SnapchatSituation痛点一：社交压力 传统社交媒体分享自己照片�
     
     <item>
       <title>Lean Startup 概述</title>
-      <link>http://azen.me/code/lean-startup-one/</link>
+      <link>http://azen.me/pd/lean-startup-one/</link>
       <pubDate>Tue, 11 Sep 2018 00:00:00 +0000</pubDate>
       
-      <guid>http://azen.me/code/lean-startup-one/</guid>
+      <guid>http://azen.me/pd/lean-startup-one/</guid>
       <description>&amp;nbsp;
 0x0 新思维运动三个代表Steve Blank
 《四步创业法》《创业者手册》Eric Rise
@@ -255,10 +255,10 @@ LinkedIn创始人核心 - 承认未知从「天才人物的天才设想、完美
     
     <item>
       <title>区块链基础 &amp;amp; 公链原理</title>
-      <link>http://azen.me/code/%E5%8C%BA%E5%9D%97%E9%93%BE%E5%9F%BA%E7%A1%80-amp-%E5%85%AC%E9%93%BE%E5%8E%9F%E7%90%86/</link>
+      <link>http://azen.me/code/block-chain-i/</link>
       <pubDate>Mon, 10 Sep 2018 00:00:00 +0000</pubDate>
       
-      <guid>http://azen.me/code/%E5%8C%BA%E5%9D%97%E9%93%BE%E5%9F%BA%E7%A1%80-amp-%E5%85%AC%E9%93%BE%E5%8E%9F%E7%90%86/</guid>
+      <guid>http://azen.me/code/block-chain-i/</guid>
       <description>&amp;nbsp;
 0x0 区块链相关概念法币：日常生活中用到的纸币
 去中心化：比特币不需要中间机构做货币的发行工作 - 货币是被「发现」的，而不是「发明」的。需要注意的是，并不是所有的区块链项目都是去中心化的
@@ -268,10 +268,10 @@ LinkedIn创始人核心 - 承认未知从「天才人物的天才设想、完美
     
     <item>
       <title>探索互联网产品的最佳实践</title>
-      <link>http://azen.me/code/product-create-path/</link>
+      <link>http://azen.me/pd/product-create-path/</link>
       <pubDate>Sat, 08 Sep 2018 00:00:00 +0000</pubDate>
       
-      <guid>http://azen.me/code/product-create-path/</guid>
+      <guid>http://azen.me/pd/product-create-path/</guid>
       <description>&amp;nbsp;
 根据《启示录》第二部分 - 流程 相关内容，重新梳理总结而成。省略了部分「大公司」相关内容 &amp;amp; 「开发」相关内容
 0x0 概述产品探索 + 产品开发 = 完整产品</description>
@@ -279,10 +279,10 @@ LinkedIn创始人核心 - 承认未知从「天才人物的天才设想、完美
     
     <item>
       <title>Golang与密码学</title>
-      <link>http://azen.me/code/golang%E4%B8%8E%E5%AF%86%E7%A0%81%E5%AD%A6/</link>
+      <link>http://azen.me/code/golang-and-security/</link>
       <pubDate>Thu, 06 Sep 2018 00:00:00 +0000</pubDate>
       
-      <guid>http://azen.me/code/golang%E4%B8%8E%E5%AF%86%E7%A0%81%E5%AD%A6/</guid>
+      <guid>http://azen.me/code/golang-and-security/</guid>
       <description>&amp;nbsp;
 0x0 概述这篇文档主要聊聊三种加密方式与Golang实现
 哈希加密对称加密非对称加密0x1 哈希加密哈希算法我们知道，查找中，有「哈希查找」，是一种比「顺序查找」更快的查找方法。
@@ -294,10 +294,10 @@ LinkedIn创始人核心 - 承认未知从「天才人物的天才设想、完美
     
     <item>
       <title>启示录 - 互联网团队构成</title>
-      <link>http://azen.me/code/%E5%90%AF%E7%A4%BA%E5%BD%95---%E4%BA%92%E8%81%94%E7%BD%91%E5%9B%A2%E9%98%9F%E6%9E%84%E6%88%90/</link>
+      <link>http://azen.me/pd/product-create-team/</link>
       <pubDate>Wed, 05 Sep 2018 00:00:00 +0000</pubDate>
       
-      <guid>http://azen.me/code/%E5%90%AF%E7%A4%BA%E5%BD%95---%E4%BA%92%E8%81%94%E7%BD%91%E5%9B%A2%E9%98%9F%E6%9E%84%E6%88%90/</guid>
+      <guid>http://azen.me/pd/product-create-team/</guid>
       <description>&amp;nbsp;
 产品成败的关紧因素：选择人员、界定工作职责
 作者在本节中反复强调了，「不同的工作要人不同的人专职来做」
@@ -319,6 +319,17 @@ at 和 crontabat：处理只发生一次的事件</description>
     </item>
     
     <item>
+      <title>2-1 流媒体 - API模块</title>
+      <link>http://azen.me/code/micro/2-1-%E6%B5%81%E5%AA%92%E4%BD%93---api%E6%A8%A1%E5%9D%97/</link>
+      <pubDate>Sun, 01 Jul 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://azen.me/code/micro/2-1-%E6%B5%81%E5%AA%92%E4%BD%93---api%E6%A8%A1%E5%9D%97/</guid>
+      <description>&amp;nbsp;
+0x0 基础概念API是什么后端对外形成Service的接口
+REST是一种设计风格，不是任何架构标准RESTful API通常使用HTTP作为通信协议，JSON作数据格式RESTful API特点统一接口无状态无论什么时候调用，返回的都是我想要的东西API这个Service这个节点不具备状态可缓存分层（Layerd System）API的service可以分过好多层，每一层负责其中一部分功能CS模式REST设计原则以URL（统一资源定位符）风格设计API 资源路径类似本地文件系统风格通过不同的method区分对资源的CURDgetpostputdelete返回码（Status Code）需要符合HTTP资源描述的规定0x1 API模块设计 (RESTful风格)分析实体及关系三个实体用户资源用户上传的视频视频下面的评论用户和资源发生的互动实体间的关系资源属于用户评论属于资源</description>
+    </item>
+    
+    <item>
       <title>Go 语言狂人许式伟：编程的意义就是让世界变得有趣一些</title>
       <link>http://azen.me/code/qiniu-xushiwei/</link>
       <pubDate>Fri, 15 Jun 2018 00:00:00 +0000</pubDate>
@@ -335,10 +346,10 @@ at 和 crontabat：处理只发生一次的事件</description>
     
     <item>
       <title>【Git技巧】为Git创建一个孤立分支</title>
-      <link>http://azen.me/code/git%E6%8A%80%E5%B7%A7%E4%B8%BAgit%E5%88%9B%E5%BB%BA%E4%B8%80%E4%B8%AA%E5%AD%A4%E7%AB%8B%E5%88%86%E6%94%AF/</link>
+      <link>http://azen.me/code/git-branch/</link>
       <pubDate>Thu, 19 Apr 2018 00:00:00 +0000</pubDate>
       
-      <guid>http://azen.me/code/git%E6%8A%80%E5%B7%A7%E4%B8%BAgit%E5%88%9B%E5%BB%BA%E4%B8%80%E4%B8%AA%E5%AD%A4%E7%AB%8B%E5%88%86%E6%94%AF/</guid>
+      <guid>http://azen.me/code/git-branch/</guid>
       <description>&amp;nbsp;
 问题描述有时候我们需要在GIT里面创建一个空分支，该分支不继承任何提交，没有父节点，完全是一个干净的分支，例如我们需要在某个分支里存放项目文档。
 使用传统的git checkout命令创建的分支是有父节点的，意味着新branch包含了历史提交，所以我们无法直接使用该命令。

@@ -6,259 +6,17 @@
     <description>Recent content on 细胞的作战实验室</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 12 Nov 2018 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 10 Sep 2018 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="http://azen.me/code/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
-      <title>2 微服务开发</title>
-      <link>http://azen.me/code/micro-server-iii/</link>
-      <pubDate>Mon, 12 Nov 2018 00:00:00 +0000</pubDate>
-      
-      <guid>http://azen.me/code/micro-server-iii/</guid>
-      <description>&amp;nbsp;
-0x0 微服务业务分析业务场景需求一：用户可以注册和登录
-单点登录，但是需要支持跨域 - 使用其他系统的时候就不需要登录了不用session - 避免使用状态需求二：登录用户可对课程进行CURD操作
-架构设计Tips：图的目的，是让我们的开发思路更清晰，开发效率更高的。所有想到的开发中应该注意到的点，都在图上标记出来就好，防止自己踩坑。不要为了作图而作图哟！
-说明：</description>
-    </item>
-    
-    <item>
-      <title>3 服务编排前奏 - Docker容器化</title>
-      <link>http://azen.me/code/micro-server-iv/</link>
-      <pubDate>Mon, 12 Nov 2018 00:00:00 +0000</pubDate>
-      
-      <guid>http://azen.me/code/micro-server-iv/</guid>
-      <description>&amp;nbsp;
-服务Docker化
-搭建Docker仓库，存image
-搭建高可用的集群环境，优雅的调度程序
-
-服务的Docker化把服务放在一个合适的运行环境里面
-运行环境，又叫基础镜像
-套路（Java为例）现在docker hub中寻找合适的镜像（搜Java）docker pull openjdk:7-jredocker run -it --entrypoint bash openjdk:7-jrerun个container起来把服务部署到镜像里（写DockerFile）经常变的东西不能写死到镜像里，否则一旦变更就需要重新构建这个镜像如数据库的访问地址，需要提出去而不是在配置文件里写死localhost应该写成变量的形式把要部署的服务打包成一个文件，xxx.</description>
-    </item>
-    
-    <item>
-      <title>4 服务编排 - Mesos</title>
-      <link>http://azen.me/code/micro-server-v/</link>
-      <pubDate>Mon, 12 Nov 2018 00:00:00 +0000</pubDate>
-      
-      <guid>http://azen.me/code/micro-server-v/</guid>
-      <description>&amp;nbsp;
-初见Program against your datacenter, like it&#39;s a single pool of resources.</description>
-    </item>
-    
-    <item>
-      <title>0 初识微服务</title>
-      <link>http://azen.me/code/micro-server-i/</link>
-      <pubDate>Wed, 07 Nov 2018 00:00:00 +0000</pubDate>
-      
-      <guid>http://azen.me/code/micro-server-i/</guid>
-      <description>&amp;nbsp;
-0x0 微服务导学微服务：就是普通的项目模块，运行在Docker里面，使用K8S管理Docker们
-为什么要做微服务？
-系统越来越复杂不同模块之间技术栈差异很大，管理复杂0x1 认识微服务软件架构的进化软件架构：在软件内部，经过综合各种因素的考量、权衡，选择特定的技术，将系统划分成不同的部分并使这些部分相互分工，彼此协作，为用户提供需要的价值。
-考虑的因素业务需求（首位）已有技术栈成本组织架构（多少个小组，每个小组能做什么）可扩展性可维护性（系统的学习成本、新人上手成本、Bug修复成本）Java web的架构演进一层架构老系统：JSP - 页面、业务逻辑、数据库都放在一起MVC三层架构，纠结M到底是啥 - 其实很多概念就是用来迷惑我们的让我们纠结解决了代码调用杂乱无章的问题。通过在各层之间定义接口，让接口和维护分离，降低了维护成本dubbo背景：业务代码50w+行，产品需求不断，新人一个月上不了手，需要做拆分 - 一个大项拆成两个小项系统前端和后端服务可以从物理上管理开，变成两个可以单独维护的模块把一个单体架构变成了两个单体架构单体架构：</description>
-    </item>
-    
-    <item>
-      <title>1 微服务的着眼点及解决方案</title>
-      <link>http://azen.me/code/micro-service-ii/</link>
-      <pubDate>Wed, 07 Nov 2018 00:00:00 +0000</pubDate>
-      
-      <guid>http://azen.me/code/micro-service-ii/</guid>
-      <description>&amp;nbsp;
-0x0 微服务带来的问题服务之间的通讯问题？单体架构中需要通讯的情况少见，而微服务之间的相互调用非常频繁微服务如何发现彼此？单体架构使用Dubbo做服务发现：服务消费者需要对服务的提供者进行发现。发现的原理是通过KV存储有一个中间人，提供者把自己的信息告诉中间人，消费者去中间人那里拿提供者的地址微服务有各种语言，如何彼此发现？微服务怎样部署？更新？扩容？自动化流程？Jekins部署到预发环境，没问题部署到生产环境？微服务少的情况下可以这么做，但是一般很难这么做，因为需要同时上线的微服务器可能非常多，无法手动搞0x1 微服务间如何通讯通讯：socket、tcp/ip、http...
-两个角度考虑通讯：
-通讯模式通讯协议通讯模式角度通讯协议角度REST API特点：
-请求方式描述动作类REST并不是适合于所有业务场景RPCMQ - 消息队列发布订阅的模式，可以使用MQ的方式实现</description>
-    </item>
-    
-    <item>
-      <title>9 主框架 &amp;amp; 列表页搭建</title>
-      <link>http://azen.me/code/react-container/</link>
-      <pubDate>Wed, 17 Oct 2018 00:00:00 +0000</pubDate>
-      
-      <guid>http://azen.me/code/react-container/</guid>
-      <description>&amp;nbsp;
-0x0 页面框架搭建基本UI元素搭建client/views/layout/app-bar.jsx
-import React from &#39;react&#39; import AppBar from &#39;@material-ui/core/AppBar&#39; import ToolBar from &#39;@material-ui/core/Toolbar&#39; import Button from &#39;@material-ui/core/Button&#39; import IconButton from &#39;@material-ui/core/IconButton&#39; import HomeIcon from &#39;@material-ui/icons/Home&#39; import Typography from &#39;@material-ui/core/Typography&#39; class MainAppBar extends React.</description>
-    </item>
-    
-    <item>
-      <title>8 React业务开发 - 准备工作</title>
-      <link>http://azen.me/code/react-business-prepare/</link>
-      <pubDate>Sat, 13 Oct 2018 00:00:00 +0000</pubDate>
-      
-      <guid>http://azen.me/code/react-business-prepare/</guid>
-      <description>&amp;nbsp;
-0x0 React16新特性官网：https://reactjs.org/
-新特性官方说明
-react+react-dom包大小：40k → 30k整个代码都用Fiber重新了error boundary捕获react渲染过程中的错误可以在正式环境中，弹个提醒告诉用户错误日志，辅助排错开发中排错new render return typesrender function中支持直接返回数组、字符串Protals：可以在组件中，把一个标签强制插入到页面任意其他标签下服务端渲染的升级 - 可以使用「流」的方式做渲染了</description>
-    </item>
-    
-    <item>
-      <title>7 React项目架构 - Router和Store的服务端渲染</title>
-      <link>http://azen.me/code/react-ssr-done/</link>
-      <pubDate>Thu, 11 Oct 2018 00:00:00 +0000</pubDate>
-      
-      <guid>http://azen.me/code/react-ssr-done/</guid>
-      <description>&amp;nbsp;
-0x0 概述加入了router和store，会对服务端渲染有影响：
-需要控制router的渲染，服务端渲染的内容要根据不同的url进行需要在服务端渲染中集成路由跳转功能
-使用者可以从任意路由进入网站除了前端做路由跳转外，服务端也需要支持路由跳转，返回给客户端正确的页面store数据同步：服务端渲染的时候会渲染一遍，拿到html，内容扔给客户端客户端js又会渲染一次如果没拿到服务端渲染时，通过API请求到的数据，那么就需要客户端再次通过api请求，去拿数据多次api请求导致浪费需要服务端渲染时请求到的数据，让客户端直接用
-0x1 store和router的服务端渲染基础配置实现
-server-entry.js
-修改前
-import React from &#39;react&#39; import App from &#39;.</description>
-    </item>
-    
-    <item>
-      <title>6 React项目架构 - web server网络请求转发</title>
-      <link>http://azen.me/code/react-project-network-web-server-proxy/</link>
-      <pubDate>Mon, 24 Sep 2018 00:00:00 +0000</pubDate>
-      
-      <guid>http://azen.me/code/react-project-network-web-server-proxy/</guid>
-      <description>&amp;nbsp;
-相关commit
-开发环境工程架构示意图
-接口地址：https://cnodejs.org/api
-accessToken问题：
-部分接口需要带accessToken才有权限请求accesstoken是用户登录后，cnodejs服务器返回的accesstoken不能存在浏览器里，有安全风险解决方案：
-获取accessToken后，存在web服务器里，通过session机制，在web服务端检测有木有token，没就给用户弹登录，有就转发请求实现安装工具$ npm i body-parser express-session query-string -S说明：</description>
-    </item>
-    
-    <item>
-      <title>5 React项目架构 - Store</title>
-      <link>http://azen.me/code/react-project-store/</link>
-      <pubDate>Sun, 23 Sep 2018 00:00:00 +0000</pubDate>
-      
-      <guid>http://azen.me/code/react-project-store/</guid>
-      <description>&amp;nbsp;
-相关commit
-什么是Storestore - 数据流解决方案
-mvc模式在前端并不特别适用：很多数据都是异步的页面之间共享一部分数据，数据更新的时候需要让view层检测到数据的更新否则会导致view层和model层脱节，渲染出错store：「flux单向数据流模式」中，整个app有个单独存放数据的地方，叫store页面上的所有内容都是根据store上的内容渲染出来的store里的任何数据的变化，都会影响到view的渲染效果store决定了页面展示成什么样子解决mvc中数据维护问题，把数据维护集中在一个地方只要使用action处理数据，view就能自动更新react：是一个视图层解决方案它的虚拟dom特性，让我们即便把整个数据对象都彻底更新了（换了个数据树object），react也能高效处理视图重新渲染过程虚拟dom的出现，让这种单一数据流模式得以实现Mobx - 一种flux模式下，数据流解决方案的后起之秀
-文档安装：`npm i mobx mobx-react -S`它的所有数据一旦更改，绑定数据的地方会立刻更新使用方法比Redux简单很多Redux涉及Action、Dispatcher、Reducer、Store，概念比较多，学习成本较高数据一旦更新，需要做整棵数据树的全拷贝，生成一棵新树，浪费资源每发一个action都会产生一个新对象新对象的到来，会触发所有Component的重新渲染由于虚拟dom，这种重新渲染成本不高，所以可以这么做，效率高vue没有虚拟dom机制，所以无法这么做Mobx声明Store的时候，声明其为Observable就好值改变会自动通知对应view，触发该view刷新整个数据都只有一份，不会生成新的一个对象只不过它有数据变动，会通知对应的view执行效率高一些，不需要每次都拷贝一个新的数据树</description>
-    </item>
-    
-    <item>
-      <title>4 React项目架构 - 目录划分 &amp;amp; Router配置</title>
-      <link>http://azen.me/code/react-project-router-config/</link>
-      <pubDate>Sat, 22 Sep 2018 00:00:00 +0000</pubDate>
-      
-      <guid>http://azen.me/code/react-project-router-config/</guid>
-      <description>&amp;nbsp;
-相关commit
-0x0 目录划分目录划分介绍views文件夹
-存放项目功能模块App.jsx需要根据路由配置，分割子级目录如列表页：index.jsx为这个页面的出口，向外抛出去列表每一项都会建一个组件如：titlebar会建一个组件这些东西会放入同一个文件夹里，因为属于同一个页面嘛config文件夹
-放app的配置 &amp;amp; 第三方类库的引用router.jsx 路由的配置、映射和跳转等store文件夹
-存放数据管理的文件夹（包括数据的获取和封装）如用户登录的信息全局类信息需要存起来，就存在store中的某个地方是web app单页应用开发新增的功能需要单独拿出来components</description>
-    </item>
-    
-    <item>
-      <title>3 React前端工程架构 - eslint &amp;amp; 其他优化</title>
-      <link>http://azen.me/code/react-ssr-optimize/</link>
-      <pubDate>Thu, 20 Sep 2018 00:00:00 +0000</pubDate>
-      
-      <guid>http://azen.me/code/react-ssr-optimize/</guid>
-      <description>&amp;nbsp;
-相关commit
-安装eslint：`npm i eslint -D`
-创建eslint配置文件/.eslintrc
-{ &#34;extends&#34;: &#34;standard&#34; }</description>
-    </item>
-    
-    <item>
-      <title>2 React前端工程架构 - 开发环境实时更新</title>
-      <link>http://azen.me/code/react-ssr-dev-hotload/</link>
-      <pubDate>Wed, 19 Sep 2018 00:00:00 +0000</pubDate>
-      
-      <guid>http://azen.me/code/react-ssr-dev-hotload/</guid>
-      <description>&amp;nbsp;
-dev server &amp;amp; hot load相关commit
-相关commit
-解决hot load缓慢的commit
-服务端实时渲染相关commit</description>
-    </item>
-    
-    <item>
-      <title>0 前端项目技术选型</title>
-      <link>http://azen.me/code/fe-arch-overview/</link>
-      <pubDate>Tue, 18 Sep 2018 00:00:00 +0000</pubDate>
-      
-      <guid>http://azen.me/code/fe-arch-overview/</guid>
-      <description>&amp;nbsp;
-0x0 单页应用 &amp;amp; 多页应用 相关技术选型不同项目需求不同：
-传统的多页网站不会用React单页应用用jQuery实现困难，需要自己处理技术细节，出错的可能性多两大类站点多页应用每个新页面都需要做页面的跳转，是通过浏览器发请求到服务端的
-日常：前端拿到设计图做好模板，后端用jsp等模板引擎填充数据，拼html代码，形成真实的html给浏览器做显示
-特点：
-每个页面跳转都经过服务端新页面出现需要刷新浏览器用户需要有一定的等待时间js定位：js主要做动画，数据处理都是在后端做好的</description>
-    </item>
-    
-    <item>
-      <title>1 React前端工程架构 - 基本配置</title>
-      <link>http://azen.me/code/react-ssr-config/</link>
-      <pubDate>Tue, 18 Sep 2018 00:00:00 +0000</pubDate>
-      
-      <guid>http://azen.me/code/react-ssr-config/</guid>
-      <description>&amp;nbsp;
-0x0 概述上一篇文章我们聊过，工程架构的目标，主要是保证「开发效率」的。包括：
-解放生产力环境搭建质量保障本篇文章，将会就React的实际配置做下做下初步说明
-内容包括：
-npm、webpack、babel编译打包基础配置SSR（服务端渲染）基础配置dev server实现代码实时编译hot module实现代码热更新服务端渲染的实时更新eslint保证代码质量0x1 编译打包基础配置本节commit
-webpackwebpack是一个模块打包器，核心是他的loader</description>
-    </item>
-    
-    <item>
-      <title>Lean Startup II 定义两个假设</title>
-      <link>http://azen.me/code/lean-startup-guess/</link>
-      <pubDate>Thu, 13 Sep 2018 00:00:00 +0000</pubDate>
-      
-      <guid>http://azen.me/code/lean-startup-guess/</guid>
-      <description>&amp;nbsp;
-时机：用户探索阶段
-定义用户痛点假设：
-观察用户痛点大小决定了商业模式的空间观察用户痛点持续性决定了商业模式的持续性痛点本身会不断演化痛点具有时效性定义解决方案假设：
-解决方案和用户痛点的「匹配度」能不能解决这个痛点解决方案和用户痛点的「吻合度」
-产品和市场之间的吻合度0x0 用户痛点是什么Guy Kawasaki：思考不如意的事情，然后从这些点切入，寻找新的机会
-SnapchatSituation痛点一：社交压力 传统社交媒体分享自己照片时的「点赞压力」「期望得到评论压力」</description>
-    </item>
-    
-    <item>
-      <title>Lean Startup III 用MVP验证两个假设</title>
-      <link>http://azen.me/code/lean-startup-verify/</link>
-      <pubDate>Thu, 13 Sep 2018 00:00:00 +0000</pubDate>
-      
-      <guid>http://azen.me/code/lean-startup-verify/</guid>
-      <description>&amp;nbsp;
-重点：
-验证解决方案和痛点的匹配度通过不断迭代，实现对真实用户的痛点、有效解决方案的不断逼近工具：Minimum Viable Product
-最小可行产品针对天使用户的「最小功能组合」关键点：只针对天使用户对产品容忍度高能看到产品的未来愿意互动，一起改进产品最小、最基本功能组合建议把想象中的产品砍成两半，再砍两半关键点：以最快的速度通过MVP获取认知，放弃一切无助于认知的功能
-速度聚焦
-举例：Zappos - 美国最大的鞋类电商网站待验证：有没有人愿意通过网购买鞋</description>
-    </item>
-    
-    <item>
-      <title>Lean Startup 概述</title>
-      <link>http://azen.me/code/lean-startup-one/</link>
-      <pubDate>Tue, 11 Sep 2018 00:00:00 +0000</pubDate>
-      
-      <guid>http://azen.me/code/lean-startup-one/</guid>
-      <description>&amp;nbsp;
-0x0 新思维运动三个代表Steve Blank
-《四步创业法》《创业者手册》Eric Rise
-Steve Blank的学生《精益创业》Reid Hoffman
-LinkedIn创始人核心 - 承认未知从「天才人物的天才设想、完美计划和完美执行」 → 「科学试错、民主创业」</description>
-    </item>
-    
-    <item>
       <title>区块链基础 &amp;amp; 公链原理</title>
-      <link>http://azen.me/code/%E5%8C%BA%E5%9D%97%E9%93%BE%E5%9F%BA%E7%A1%80-amp-%E5%85%AC%E9%93%BE%E5%8E%9F%E7%90%86/</link>
+      <link>http://azen.me/code/block-chain-i/</link>
       <pubDate>Mon, 10 Sep 2018 00:00:00 +0000</pubDate>
       
-      <guid>http://azen.me/code/%E5%8C%BA%E5%9D%97%E9%93%BE%E5%9F%BA%E7%A1%80-amp-%E5%85%AC%E9%93%BE%E5%8E%9F%E7%90%86/</guid>
+      <guid>http://azen.me/code/block-chain-i/</guid>
       <description>&amp;nbsp;
 0x0 区块链相关概念法币：日常生活中用到的纸币
 去中心化：比特币不需要中间机构做货币的发行工作 - 货币是被「发现」的，而不是「发明」的。需要注意的是，并不是所有的区块链项目都是去中心化的
@@ -267,22 +25,11 @@ LinkedIn创始人核心 - 承认未知从「天才人物的天才设想、完美
     </item>
     
     <item>
-      <title>探索互联网产品的最佳实践</title>
-      <link>http://azen.me/code/product-create-path/</link>
-      <pubDate>Sat, 08 Sep 2018 00:00:00 +0000</pubDate>
-      
-      <guid>http://azen.me/code/product-create-path/</guid>
-      <description>&amp;nbsp;
-根据《启示录》第二部分 - 流程 相关内容，重新梳理总结而成。省略了部分「大公司」相关内容 &amp;amp; 「开发」相关内容
-0x0 概述产品探索 + 产品开发 = 完整产品</description>
-    </item>
-    
-    <item>
       <title>Golang与密码学</title>
-      <link>http://azen.me/code/golang%E4%B8%8E%E5%AF%86%E7%A0%81%E5%AD%A6/</link>
+      <link>http://azen.me/code/golang-and-security/</link>
       <pubDate>Thu, 06 Sep 2018 00:00:00 +0000</pubDate>
       
-      <guid>http://azen.me/code/golang%E4%B8%8E%E5%AF%86%E7%A0%81%E5%AD%A6/</guid>
+      <guid>http://azen.me/code/golang-and-security/</guid>
       <description>&amp;nbsp;
 0x0 概述这篇文档主要聊聊三种加密方式与Golang实现
 哈希加密对称加密非对称加密0x1 哈希加密哈希算法我们知道，查找中，有「哈希查找」，是一种比「顺序查找」更快的查找方法。
@@ -290,20 +37,6 @@ LinkedIn创始人核心 - 承认未知从「天才人物的天才设想、完美
 相同key经过相同哈希算法散列之后，获得相同的散列值不同key经过相同哈西算法散列之后，获得不同的散列值特点：
 可以把任意长度的「明文」，散列成固定长度的「指纹」正向计算简单快速，逆向推算困难，基本不可能逆推出明文明文有一点点变化，密文就会改变优秀的散列算法需要尽量避免两个不同的明文，加密出来是相同的指纹发展：
  取模操作 → 异或运算→ 位移操作</description>
-    </item>
-    
-    <item>
-      <title>启示录 - 互联网团队构成</title>
-      <link>http://azen.me/code/%E5%90%AF%E7%A4%BA%E5%BD%95---%E4%BA%92%E8%81%94%E7%BD%91%E5%9B%A2%E9%98%9F%E6%9E%84%E6%88%90/</link>
-      <pubDate>Wed, 05 Sep 2018 00:00:00 +0000</pubDate>
-      
-      <guid>http://azen.me/code/%E5%90%AF%E7%A4%BA%E5%BD%95---%E4%BA%92%E8%81%94%E7%BD%91%E5%9B%A2%E9%98%9F%E6%9E%84%E6%88%90/</guid>
-      <description>&amp;nbsp;
-产品成败的关紧因素：选择人员、界定工作职责
-作者在本节中反复强调了，「不同的工作要人不同的人专职来做」
-但是作为初创团队，甚至个人开发者，人力严重不足的情况下，需要「分清项目阶段」，「不同阶段让自己带上不同的思考帽」进行不掺杂无关信息的专业性思考。
-通过这一章，我们可以知道，个人开发者，在整个项目流程中：
-分别需要扮演什么样的角色？每种角色的职责是什么？每种角色需要分配多少精力？时间占比如何？每种角色的目标产出是什么？产品达成预期的关键点：有价值 + 可用 + 可行</description>
     </item>
     
     <item>
@@ -335,10 +68,10 @@ at 和 crontabat：处理只发生一次的事件</description>
     
     <item>
       <title>【Git技巧】为Git创建一个孤立分支</title>
-      <link>http://azen.me/code/git%E6%8A%80%E5%B7%A7%E4%B8%BAgit%E5%88%9B%E5%BB%BA%E4%B8%80%E4%B8%AA%E5%AD%A4%E7%AB%8B%E5%88%86%E6%94%AF/</link>
+      <link>http://azen.me/code/git-branch/</link>
       <pubDate>Thu, 19 Apr 2018 00:00:00 +0000</pubDate>
       
-      <guid>http://azen.me/code/git%E6%8A%80%E5%B7%A7%E4%B8%BAgit%E5%88%9B%E5%BB%BA%E4%B8%80%E4%B8%AA%E5%AD%A4%E7%AB%8B%E5%88%86%E6%94%AF/</guid>
+      <guid>http://azen.me/code/git-branch/</guid>
       <description>&amp;nbsp;
 问题描述有时候我们需要在GIT里面创建一个空分支，该分支不继承任何提交，没有父节点，完全是一个干净的分支，例如我们需要在某个分支里存放项目文档。
 使用传统的git checkout命令创建的分支是有父节点的，意味着新branch包含了历史提交，所以我们无法直接使用该命令。
