@@ -77,6 +77,21 @@
     </item>
     
     <item>
+      <title>2-3 Scheduler模块</title>
+      <link>http://azen.me/code/micro/golang-server-iii/</link>
+      <pubDate>Tue, 03 Jul 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://azen.me/code/micro/golang-server-iii/</guid>
+      <description>&amp;nbsp;
+概念Scheduler:调度器
+作用：处理延时型任务（不能马上给结果的）（异步任务、周期性任务、瞬时可能并不会有结果的任务）
+原理：延时任务们分发到scheduler，scheduler根据timer的interval等属性，进行定时触发
+说明：异步任务才需要Scheduler
+为什么需要scheduler我们项目中有异步任务 - 延时删除视频
+我们在删除数据的时候，一般先在source deletesource delete 用户看不到，但是其实是存在的。会把这个任务下发下去，在scheduler中过一周或一个月，才真正删除。那么这个schedler会每隔一个月运行一次。Scheduler Server包含什么ServerScheduler是一个独立的服务接收任务用的Timer定时触发任务的Task Runner (生产者/消费者模型下)描述timer每次触发的时候，下面的任务该怎么做很多中情况，任务分为两种：读取任务执行任务代码结构/scheduler</description>
+    </item>
+    
+    <item>
       <title>2-2 Stream模块</title>
       <link>http://azen.me/code/micro/golang-server-ii/</link>
       <pubDate>Mon, 02 Jul 2018 00:00:00 +0000</pubDate>

@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="//gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.46-DEV" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>2-3 Scheduler模块 &middot; 细胞的作战实验室</title>
+
+  
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/print.css" media="print">
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/poole.css">
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/syntax.css">
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/hyde.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Abril+Fatface|PT+Sans:400,400i,700">
+
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+  
+  <link href="" rel="alternate" type="application/rss+xml" title="细胞的作战实验室" />
+
+  
+</head>
+
+  <body class=" ">
+  <div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <a href="http://azen.me/"><h1>细胞的作战实验室</h1></a>
+      <p class="lead">
+      Power by <a href="http://hugo.spf13.com">hugo</a>
+      </p>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li><a href="http://azen.me/">Home</a> </li>
+      
+    </ul>
+
+    <p>&copy; 2018. All rights reserved. </p>
+  </div>
+</div>
+
+    <div class="content container">
+    <div class="post">
+  <h1>2-3 Scheduler模块</h1>
+  <span class="post-date">Tue, Jul 3, 2018</span>
+  <p>&nbsp;</p>         <h1>概念</h1><p>Scheduler:调度器</p><p><strong>作用</strong>：处理延时型任务（不能马上给结果的）（异步任务、周期性任务、瞬时可能并不会有结果的任务）</p><p><strong>原理</strong>：延时任务们分发到scheduler，scheduler根据timer的interval等属性，进行定时触发</p><p><strong>说明</strong>：异步任务才需要Scheduler</p><h2>为什么需要scheduler</h2><p>我们项目中有异步任务 - 延时删除视频</p><ul style="list-style-type: square;"><li>我们在删除数据的时候，一般先在source delete<ul style="list-style-type: square;"><li>source delete 用户看不到，但是其实是存在的。会把这个任务下发下去，在scheduler中过一周或一个月，才真正删除。那么这个schedler会每隔一个月运行一次。</li></ul></li></ul><h2>Scheduler Server包含什么</h2><ul style="list-style-type: square;"><li>Server<ul style="list-style-type: square;"><li>Scheduler是一个独立的服务</li><li>接收任务用的</li></ul></li><li>Timer<ul style="list-style-type: square;"><li>定时触发任务的</li></ul></li><li>Task Runner (<a href="https://blog.csdn.net/snow_5288/article/details/72794306">生产者/消费者模型</a>下)<ul style="list-style-type: square;"><li>描述timer每次触发的时候，下面的任务该怎么做</li><li>很多中情况，任务分为两种：<ul style="list-style-type: square;"><li>读取任务</li><li>执行任务</li></ul></li></ul></li></ul><h2>代码结构</h2><p>/scheduler</p><p>/../taskrunner/</p><p>/../../trmain.go</p><p>/../../task.go       dispatcher和executor里面真正跑着的东西</p><p>/../../runner.go     整个dispatcher和executor的逻辑，会在这个runner里面</p><p>/../../defs.go      提前定义好的一些东西，如 task的格式、在channel里面的消息类型等</p><p>/../main.go</p><p>/../handlers.go</p><p>/../response.go</p><p>/../dbops/   所有的任务都是从db里读出来的，任务的处理情况需要回写到数据库。</p><h1>Tasker Runner架构</h1><p><img class="confluence-embedded-image confluence-external-resource" height="250" src="http://img.daker.wang/wiki/1533281114948.png" data-image-src="http://img.daker.wang/wiki/1533281114948.png"></p><p>大框架由一个Timer启动，Timer里面有一个Task Runner，Task Runner分为三部分：</p><ol><li>Dispatcher（Producer）</li><li>Executor（Consumer）</li><li>channel（用来通信的）</li></ol><p>Dispatcher把它得到的任务，通过Channel发送给Executor，Executor会去读这些内容，然后做些操作。</p><h2>Task Runner</h2><h3>trmain.go </h3><p><strong>用法</strong></p><ul style="list-style-type: square;"><li>task runner里有dispatcher和executor。我们需要<strong>将所有的任务集中起来，在tsmain里初始化并将它跑起来</strong></li><li>在外面的大main里面，将tsmain的内容初始化，并启动起来</li></ul><p><strong>说明</strong>：taskrunner这个包，是具有独立功能、可独自运行的包，而非只提供方法调用的包</p><p><img class="confluence-embedded-image confluence-external-resource" height="250" src="http://img.daker.wang/wiki/1533282040395.png" data-image-src="http://img.daker.wang/wiki/1533282040395.png"></p><h4>runner</h4><p>逻辑：</p><p>runnner有一个对象，</p><ul style="list-style-type: square;"><li>在runner里面跑一个常驻的任务，如：startDispatcher<ul style="list-style-type: square;"><li>这个任务会长时间等待runner的channel<ul style="list-style-type: square;"><li>channel分为两部分：<ul style="list-style-type: square;"><li>control channel<ul style="list-style-type: square;"><li>用来dispatcher和executer互相交换信息，提醒对方：<ul style="list-style-type: square;"><li>executer会说：我的任务已经处理完了，你来给我发新任务，或你去读新的任务</li><li>dispatcher会说：我的任务已经读完了，你可以开始处理了</li></ul></li></ul></li><li>data channel<ul style="list-style-type: square;"><li>真正的数据的channel</li></ul></li></ul></li></ul></li></ul></li></ul><p><br /></p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="cd620949-d824-45ba-aa07-bb71a5b1f1b1" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>type controlChan chan string // control channel
+type dataChan chan interface{} // 要下发的数据
+type fn func(dc dataChan) error // dispatcher和executer
+
+
+const (
+	READY_TO_DISPATCH = "d" // dispatcher收到这个消息后，会开始做事情，下发数据给datachannel里面
+	READY_TO_EXECUTE = "e" // dispatcher数据下发完之后，会把这个信息发给executor，executor会从datachannel里读下发下来的数据，做它的一些操作
+	CLOSE = "c"  // 不论executor还是dispatcher出了问题，或者，没有任务可做的时候，会发送一个close，我们会把常驻的任务取消掉，结束整个过程
+) // 都是control channel里面传递的消息，分为了上述三种
+
+
+//	Runner的定义 - 关键
+type Runner struct {
+	Controller controlChan
+	Error controlChan // 用于返回CLOSE的，这个信息需要和其他控制信息分开两个channel展示，便于维护
+	Data dataChan
+	dataSize int
+	longlived bool // 我们的Runner里面起了很多channel，当我们把常驻任务退出的时候，我们有两个选择：要么把资源回收，要么不回收，下次再使用的时候能复用。yes则不回收
+	Dispatcher fn
+	Executor fn
+}
+
+
+// size: 每次下发多少数据
+func NewRunner(size int, longlived bool, d fn, e fn) *Runner {
+	return &amp;Runner {
+		Controller: make(chan string, 1), // 我们的过程应该是非阻塞的，所以用带buffer的channel
+		Error: make(chan string, 1),
+		Data: make(chan interface{}, size),
+		longlived: longlived,
+		dataSize: size,
+		Dispatcher: d,
+		Executor: e,
+	}
+}
+
+// 常驻任务
+func (r *Runner) startDispatch() {
+
+	defer func() {
+		// 根据标识位判断是否需要释放channel资源
+		if !r.longLived {
+			close(r.Controller)
+			close(r.Data)
+			close(r.Error)
+		}()
+	}
+
+	for {
+		select {
+			case c := &lt;- r.Controller:
+				if c == READY_TO_DISPATCH {
+					err := r.Dispatcher(r.Data) // READY之后，把data channel传给dispatcher. 此时的data channel已经是空闲channel了，dispatcher会把我们的任务写到data channel里面 - 这个逻辑是我们写Dispatcher的时候实现的。
+					if err != nil { r.Error &lt;- CLOSE } else {
+						//	没报错，说明dispatcher已经正确的把任务下发了，已经写到data channel里面了。
+						r.Controller &lt;- READY_TO_EXECUTE
+					}
+				}
+				
+				if c == READY_TO_EXECUTE {
+					err := r.Executor(r.Data)
+					if err != nil {
+						r.Error &lt;- CLOSE
+					} else {
+						//	进来这里，说明r.Executor已经把发进来的Data处理完了，那么我们就发一个READY_TO_DISPATCH的信号，继续到
+						r.Controller &lt;- READY_TO_DISPATCH
+					}
+				}
+			case e := &lt;- r.Error:
+				// 一旦有Error，我们就close
+				if e == CLOSE {
+					return
+				}
+			default:
+		}
+	}
+}
+
+func (r *Runner) StartAll() {
+	r.Controller &lt;- READY_TO_DISPATCH
+	r.startDispatch()
+}</pre></td></tr></table><p>以上，消费者Executor和生产者Dispatcher，会在for循环里互相发消息，转换他们之间的角色，让他们进行异步的消息传输和任务处理，这样可以把他俩完美的解耦开，Executor和Dispatcher各自管处理各自的事情就好。</p><h2>Runner的使用和测试</h2><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="99acc2a9-9751-4fc7-9c99-22539db0c22c" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>func TestRunner(t *testing.T) {
+	d := func(dc dataChan) error {
+		for i := 0; i &lt; 30; i++ {
+			dc &lt;- i
+			log.Printf("Dispatcher sent: %v", i)
+		}
+		return nil
+	}
+
+	e := func(dc dataChan) error {
+		forloop:
+			for {
+				select {
+				case d := &lt;- dc:
+					log.Printf("Executor received: %v", d)
+				default:
+					break forloop // 这里是为了：当我们把datachannel中的所有东西都取完之后，没有新东西来的情况下，打破这个for死循环，以使dispatcher有机会执行到。
+				}
+			}
+
+		return nil
+	}
+
+	runner := NewRunner(30, false, d, e)
+	go runner.StartAll() // 如果不用goroutine起，会被里面的死循环blocking住，下面的Sleep方法失效
+
+	time.Sleep(3 * time.Second)
+} </pre></td></tr></table><h2>Task</h2><p>task部分定制化非常强</p><p>我们项目中最重要的Task：延时删除</p><p>dispatcher: 从数据库中读，需要删除的信息。读到这些信息放到datachannel，executer把这些信息删掉</p><p><br /></p><p>我们新建了一个表，用来存需要删除的video的id的</p><p><img class="confluence-embedded-image confluence-external-resource" height="250" src="http://img.daker.wang/wiki/1533288379009.png" data-image-src="http://img.daker.wang/wiki/1533288379009.png"></p><p><img class="confluence-embedded-image confluence-external-resource" height="174" src="http://img.daker.wang/wiki/1533288427121.png" data-image-src="http://img.daker.wang/wiki/1533288427121.png"></p><h3>internal.go - 操作数据库的方法们</h3><p>流程：</p><ol><li>通过api将video_id写到数据库里</li><li>dispatcher从数据库里拿到video_id，交给datachannel</li><li>executor从datachannel中读video_id，做delete操作</li></ol><p><br /></p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="92c964f9-039d-4637-abf1-5c0329d8a2a7" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>// read - 从数据库里把需要删掉的数据的id读出来
+// 为什么传count进来？因为我们要批量拿数据，以减小数据库压力，而不能逐条去拿
+func ReadVideoDeletionRecord(count int) ([]string, error) {
+	stmtOut, err := dbConn.Prepare("SELECT video_id FROM video_del_rec LIMIT ?")
+	var ids []string
+	if err != nil {
+		return ids, err
+	}	
+	
+	rows, err := stmtOut.Query(count)
+	if err != nil {
+		log.Printf("Query VideoDeletionRecord error :%v", err) // 生产环境不能这样大log，而是要做好log的分级
+		return ids, err
+	}
+
+
+	for rows.Next() {
+		var id string
+		if err := rows.Scan(&amp;id); err != nil {
+			return ids, err
+		}
+		ids = append(ids, id)
+	}
+	
+	defer stmtOut.Close()
+	return ids, nil
+}
+
+
+// 写数据库 - executor删掉视频之后，需要写数据库更改数据
+func DelViewDeletetionRecord(vid string) error {
+	stmtDel, err := dbConn.Prepare("DELETE FROM video_del_rec WHERE video_id=?")
+	if err != nil {
+		return err
+	}
+	_, err = stmtDel.Exec(vid)
+	if err != nil {
+		log.Printf("删除出错了：%v", err)
+		return err
+	}
+	defer stmtOut.Close
+	return nil
+}</pre></td></tr></table><h3>tasks.go</h3><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="f39c6065-fe46-4914-a72f-317d49f5105f" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>func VideoClearDispatcher(dc dataChan) error {
+	res, err := dbops.ReadVideoDeletionRecord(3) // 生产环境需要把3作为参数传进来
+	if err != nil {
+		log.Printf("err: %v", err)
+		return err
+	}
+
+	if len(res) == 0 {
+		return errors.New("All tasks finished")
+	}
+
+	for _, id := range res {
+		dc &lt;- id
+	}
+
+	return nil
+}
+
+func VideoClearExecutor(dc dataChan) error {
+	errMap := &amp;sync.map{} // 用一个map把所有的err都带出去	
+	forloop:
+		for {
+			select {
+				case vid := &lt;- dc:
+					go func(id interface{}) { // 我们希望删除操作并发执行。不过有缺陷：可能删除操作还没做，已经要读下一轮「待删除数据」了，导致读到的待删数据有重复。不影响我们的读写过程
+						if err := deleteVideo(id.(string)); err != nil { errMap.Store(id, err) return }
+						if err := dbops.DelVideoDeletionRecord(id.(string)); err != nil { errMap.Store(id, err) return }
+					}(vid)
+				default:
+					break forloop
+		}
+	errMap.Range(func(k, v interface{}) bool {
+		err = v.(error)
+		if err != nil { // 只要有一个error，就返回之
+			return false
+		}
+	}
+
+	return err
+}
+
+
+func deleteVideo(vid string) error {
+	err := os.Remove("./videos/" + vid)
+	//	报错且不是「不存在」
+	if err != nil &amp;&amp; !os.IsNotExist(err) {
+		log.Printf("删除操作报错")
+		return err;
+	}
+	return nil
+}</pre></td></tr></table><h1>Timer部分</h1><p>Timer的逻辑：</p><ol><li>设置Timer</li><li>start timer<ol><li>一直跑下去</li><li>trigger之后，将所有的task跑一边<ol><li>task包装在runner里，所以把runner跑一遍</li><li>需要区分runner是不是longlived的</li></ol></li></ol></li></ol><p>timer、task、runner、longlived</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="6cf808e8-11ed-4959-8bad-4b49965eed79" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>type Worker struct {
+	ticker *time.Ticker // 这个ticker会不断接受系统发来的时间，达到我们想要的时间间隔的时候自动触发我们的事情
+	runner *Runner // Runner的定义在上面
+}
+
+
+func NewWorker(interval time.Duration, r *Runner) *Worker {
+	return &amp;Worker {
+		ticker: time.NewTickers(interval * time.Second),
+		runner: r,
+	}
+}
+
+func (w *Worker) startWorker() {
+	for {
+		select {
+		case &lt;- w.ticker.C:
+			go w.runner.StartAll()
+		}
+	}
+}
+
+
+func Start() {
+	// 每次处理多少个数据（删几个文件），是否常驻，任务的Dispatcher，任务的Executor
+	r := NewRunner(3, true, VideoClearDispatcher, VideoClearExecutor)
+	w := NewWorker(3, r)
+	go w.startWorker()
+}</pre></td></tr></table><p>提示：</p><ol><li>time.Ticker{}.C<ol><li>C：就是ticker传过来的Channel，timer会把每一个ticks传到这个channel里。</li><li><pre><span style="color: rgb(128,128,128);">The channel on which the ticks are delivered.</span></pre></li></ol></li></ol><h1>RESTful API部分</h1><p>总结任务逻辑</p><ol><li>user 通过 api service 发布任务：delete video</li><li>api service 调用 scheduler，给scheduler所属的表里，写一条记录：要删除的视频</li><li>起一个timer</li><li>timer到点儿了，起一个runner，runner读表，执行，然后删除video</li></ol><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="8531d759-3298-4477-8fd7-ec0b2b320342" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>func AddVideoDeletionRecord(vid string) error {
+	stmtIns, err := dbConn.Prepare("INSERT INTO video_del_rec (video_id) VALUES(?)")
+	if err != nil {
+		return err
+	}
+
+	_,err = stmtIns.Exec(vid)
+	if err != nil {
+		log.Printf("AddVideoDeletionRecord err: %v", err)
+		return err
+	}
+
+	defer stmtIns.Close()
+	return nil
+}</pre></td></tr></table><p><br /></p><p>main.go</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="141ea343-ea7e-4a70-9825-1567bdb4879d" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>func RegisterHandlers() *httprouter.Router {
+	router := httprouter.New()
+
+	router.GET("/video-delete-record/:vid-id", vidDelRecHandler)
+	return router
+}
+
+func main() {
+	go taskrunner.Start() // 我们不知道这个Start里面是不是死锁类型的，所以需要起一个goroutine。http.ListenAndServe这个东东是死循环，所以这个子线程的函数不会还没执行就死掉。
+	r := RegisterHandlers()
+	http.ListenAndServe(":9001", r)
+}</pre></td></tr></table><p><br /></p><p>handler.go</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="eb89f6e8-55be-4aea-a3fc-509323a5e8a0" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>func vidDelRecHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params){
+    vid := p.ByName("vid-id")
+
+    if len(vid) == 0 {
+        sendResponse(w, 400, "video id should not be empty")
+        return 
+    }
+
+    err := dbops.AddVideoDeletionRecord(vid)
+    if err != nil {
+        sendResponse(w, 500, "Internal server error")
+        return
+    }
+
+    sendResponse(w, 200, "")
+    return
+}</pre></td></tr></table>
+        <p>&nbsp;</p>
+    
+</div>
+
+
+    </div>
+
+    
+  </body>
+</html>
