@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="//gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.46-DEV" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>2-1 流媒体 - API模块 &middot; 细胞的作战实验室</title>
+
+  
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/print.css" media="print">
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/poole.css">
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/syntax.css">
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/hyde.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Abril+Fatface|PT+Sans:400,400i,700">
+
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+  
+  <link href="" rel="alternate" type="application/rss+xml" title="细胞的作战实验室" />
+
+  
+</head>
+
+  <body class=" ">
+  <div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <a href="http://azen.me/"><h1>细胞的作战实验室</h1></a>
+      <p class="lead">
+      Power by <a href="http://hugo.spf13.com">hugo</a>
+      </p>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li><a href="http://azen.me/">Home</a> </li>
+      
+    </ul>
+
+    <p>&copy; 2018. All rights reserved. </p>
+  </div>
+</div>
+
+    <div class="content container">
+    <div class="post">
+  <h1>2-1 流媒体 - API模块</h1>
+  <span class="post-date">Sun, Jul 1, 2018</span>
+  <p>&nbsp;</p>         <p><img class="editor-inline-macro" src="/plugins/servlet/confluence/placeholder/macro?definition=e3RvY30&amp;locale=zh_CN&amp;version=2" data-macro-name="toc" data-macro-id="91dc6b3d-b976-4e09-961a-7701a2c323fc" data-macro-schema-version="1"></p><h1>0x0 基础概念</h1><h2>API是什么</h2><p>后端对外形成Service的接口</p><ul style="list-style-type: square;"><li>REST是一种设计风格，不是任何架构标准</li><li>RESTful API通常使用HTTP作为通信协议，JSON作数据格式</li></ul><h2>RESTful API特点</h2><ul style="list-style-type: square;"><li>统一接口</li><li>无状态<ul style="list-style-type: square;"><li>无论什么时候调用，返回的都是我想要的东西</li><li>API这个Service这个节点不具备状态</li></ul></li><li>可缓存</li><li>分层（Layerd System）<ul style="list-style-type: square;"><li>API的service可以分过好多层，每一层负责其中一部分功能</li></ul></li><li>CS模式</li></ul><h2>REST设计原则</h2><ul style="list-style-type: square;"><li>以URL（统一资源定位符）风格设计API  <span style="color: rgb(128,128,128);">资源路径类似本地文件系统风格</span></li><li>通过不同的method区分对资源的CURD<ul style="list-style-type: square;"><li>get</li><li>post</li><li>put</li><li>delete</li></ul></li><li>返回码（Status Code）需要符合HTTP资源描述的规定</li></ul><h1>0x1 API模块设计 (RESTful风格)</h1><h2>分析实体及关系</h2><p><img class="confluence-embedded-image confluence-external-resource" height="250" src="http://img.daker.wang/wiki/1533190700625.png" data-image-src="http://img.daker.wang/wiki/1533190700625.png"></p><h3>三个实体</h3><ol><li>用户</li><li>资源<ol><li>用户上传的视频</li></ol></li><li>视频下面的评论<ol><li>用户和资源发生的互动</li></ol></li></ol><h3>实体间的关系</h3><ul style="list-style-type: square;"><li>资源属于用户</li><li>评论属于资源</li></ul><p><br /></p><p>之后：把关系映射到刚才说的RESTful method里对应起来即可</p><h2>用户</h2><ul style="list-style-type: square;"><li>注册<ul style="list-style-type: square;"><li>URL: /user </li><li>Method: POST (创建用户)</li><li>SC: 201(Created)/400/500(Internal Error)</li><li>返回值: sessionID</li></ul></li><li>登录<ul style="list-style-type: square;"><li>实际上需要往内部系统上协调东西<ul style="list-style-type: square;"><li>内部校验后才能知道能不能登录</li></ul></li><li>URL: /user/:username</li><li>Method: POST<ul style="list-style-type: square;"><li>Body: 用户名、密码</li></ul></li><li>SC:200/400/500</li><li>返回值：sessionID, success</li></ul></li><li>获取用户基本信息<ul style="list-style-type: square;"><li>URL: /user/:username</li><li>Method: GET</li><li>SC:200/400/500<ul style="list-style-type: square;"><li>401<ul style="list-style-type: square;"><li>用户验证不通过返回的错误码</li><li>没验证</li></ul></li><li>403<ul style="list-style-type: square;"><li>用户验证不通过返回的错误码</li><li>没权限</li></ul></li></ul></li></ul></li><li>注销<ul style="list-style-type: square;"><li>URL: /user/:username</li><li>Method: DELETE</li><li>SC:204(无内容)/400/401/403/500</li></ul></li></ul><h2>用户资源</h2><ul style="list-style-type: square;"><li>List all videos(可能加分页)<ul style="list-style-type: square;"><li>URL: /user/:username/videos</li><li>Method: GET</li><li>SC: 200/400/500</li></ul></li><li>Get one video<ul style="list-style-type: square;"><li>URL: /user/:username/videos/:vid-id</li><li>Method: GET</li><li>SC:200/400/500</li></ul></li><li>Delete on video<ul style="list-style-type: square;"><li>URL: /user/:username/videos/:vid-id</li><li>Method:DELETE</li><li>204/400/401/403/500</li></ul></li></ul><h2>评论</h2><p>评论和Videos是强的从属关系，所以在设计的时候，它是属于Video的</p><ul style="list-style-type: square;"><li>Show comments<ul style="list-style-type: square;"><li>URL: /videos/:vid-id/comments</li></ul></li><li>Post a comment<ul style="list-style-type: square;"><li>URL: /videos/:vid-id/comments</li><li>POST</li></ul></li><li>Delete a comment<ul style="list-style-type: square;"><li>URL: /videos/:vid-id/comment/:comment-id</li><li>DELETE</li><li>需要做权限控制</li></ul></li></ul><h2>RESTful API设计小结</h2><p><img class="confluence-embedded-image confluence-external-resource" height="250" src="http://img.daker.wang/wiki/1533192988929.png" data-image-src="http://img.daker.wang/wiki/1533192988929.png"></p><p>三个实体之间，是一个美好的树形结构</p><p>使用URL设计的API，符合一种自然的描述</p><h3>如果没有按照标准化设计API</h3><ul style="list-style-type: square;"><li>任何一个地方出了任何一个小的问题，会造成非常庞大的资源浪费，去定位问题</li><li>市面上很多RESTful风格的API设计，其实不是严格的RESTful的</li></ul><h1>0x2 API分层设计</h1><h2>逻辑流程分层</h2><p>根据Request处理流程，分为四个主要层</p><blockquote><p>处理流程：request进来交给routine导航到正确的handler，校验鉴权，处理业务逻辑、返回response</p></blockquote><ol><li>handler层</li><li>validation层<ol><li>校验request是否合法</li><li>校验user是否合法</li><li>基础设施<br /><ol><li>数据结构定义</li><li>返回的错误信息</li></ol></li></ol></li><li>逻辑处理层(business logic)<ol><li>可以把business logic放在handlerl里面写</li><li>然后通过handler调db_ops</li><li><span style="color: rgb(128,128,128);">(说明)整个API的逻辑处理流程：访问数据库、拿到信息、处理信息、经过校验</span></li><li><span style="color: rgb(128,128,128);">(说明)一般API的操作，都是数据库的增删改查</span></li></ol></li><li>response层</li></ol><h2>代码层级设计</h2><p>代码层级设计需要遵循上述分层结构</p><p><img class="confluence-embedded-image confluence-external-resource" height="216" src="http://img.daker.wang/wiki/1533194319710.png" data-image-src="http://img.daker.wang/wiki/1533194319710.png"></p><h3>代码调用流程</h3><ol><li>从main进到handler</li><li>handler会调用dbops，从dbops里拿到想要的信息做进一步处理<ol><li>进一步处理过程中会用到defs中的一些东西 - 消息定义等</li></ol></li><li>组装成response，调取response.go中提供的方法返回</li></ol><h3>分层设计 vs 所有逻辑写在同一个函数中</h3><h4>写在一个函数中</h4><ol><li>没有分层，不符合REST的建议</li><li>可读性差</li><li>扩展性差<ol><li>比如：对所有请求增加一个校验步骤</li><li>如果没做分层，所有handler函数都需要逐一修改</li></ol></li></ol><h4>分层架构</h4><ol><li>编写test case非常容易</li><li>工程效率高</li></ol><h1>0x3 User API代码框架</h1><h2>公共文件</h2><h3>api/defs</h3><p>放一些配置和定义</p><ol><li>api的消息体结构(前台会发什么样的消息体进来)</li><li>返回的错误信息</li></ol><h4>apidef.go</h4><p>用于声明model</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="ae666f72-949e-498b-8a43-7aec527a463c" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>type UserCredential struct {
+    Username string `json:"user_name"`
+    Pwd string `json:"pwd"`
+}</pre></td></tr></table><h5>知识点</h5><p>Golang使用打tag的方式声明序列化/反序列化</p><p>代码中：tag名称为json，tag值为user_name</p><ul><li>序列化和反序列化的时候，会自动解析为正确的json</li></ul><h4>errs.go</h4><p>定义各种错误</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="b3b16b5d-d090-421e-95bc-d2990e9d0c90" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>type Err struct {
+    Error string `json:"error"`
+    ErrorCode string `json:"error_code"`  
+}
+
+type ErrResponse struct {
+    HttpSC int
+    Error Err
+}
+
+var (
+    ErrorRequestBodyParseFailed = ErrResponse{HttpSC: 400, Error: Err{Error: "Request body is not correct", ErrorCode: "001"}}
+    ErrorNotAuthUser = ErrResponse{HttpSC: 401, Error: Err{Error: "User authentication failed.", ErrorCode: "002"}}
+    ErrorDBError = ErrResponse{HttpSC: 500, Error: Err{Error: "DB ops failed", ErrorCode: "003"}}
+    ErrorInternalFaults = ErrResponse{HttpSC: 500, Error: Err{Error: "Internal service error", ErrorCode: "004"}}
+)</pre></td></tr></table><h5>知识点</h5><p>error_code是系统内部用来查问题的error编码，和http的status_code不是一个东西</p><h4>api/dbops</h4><p>处理和数据库交互的相关逻辑</p><ul><li>库：&quot;database/sql&quot;</li><li>声明方法<ul><li>openConn() *sql.DB{}</li><li>AddUserCredential(loginName string, pwd string) error {}</li><li>GetUserCredential(loginName string) (string, error) {}</li></ul></li></ul><h4>api/response.go</h4><p>把它抽象出来，让API的分层处理更加清晰</p><p>方法定义</p><ul style="list-style-type: square;"><li>sendErrorResponse(w http.ResonseWriter)</li><li>sendNormalResponse(w http.ResonseWriter)</li></ul><h2>入口文件</h2><h4>api/main.go</h4><p>main放一些简单的定义性的东西，逻辑处理的东西分发给别的文件</p><p>库们</p><ul><li>net/http</li><li><a href="http://github.com/julienschmidt/httprouter">github.com/julienschmidt/httprouter</a><ul><li>会自动把RESTful的API按其请求方式、参数、URL格式，自动Routine到Handler上</li></ul></li></ul><p><br /></p><h3>初始化Routine</h3><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="87c9f051-3a82-4b2f-8cd4-340c6d0c60b8" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>func RegisterHandlers() *httprouter.Router {
+    router := httprouter.New()
+    router.POST("/user", CreateUser)
+    router.POST("/user/:user_name", Login)
+    return router
+}
+
+func main() {
+    r := RegisterHandlers()
+    http.ListenAndServe(":8000", r)
+}</pre></td></tr></table><h3>Handler实现</h3><p>需要重新开一个文件handlers.go</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="04387537-d9b1-4692-a1ec-df29235b6198" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>func CreateUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+    io.WriteString(w, "Create User Handler")
+}
+
+func Login(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+    uname := p.ByName("user_name")
+    io.WriteString(w, uname)
+}</pre></td></tr></table><h2>小结Golang处理HTTP请求</h2><p><strong>http.ListenAndServer(&quot;:8000&quot;, handler)</strong></p><ul><li>http的注册函数，会阻塞在这里等待人来连接</li><li>handler我们上面用了httprouter这个库来做实现</li></ul><p><strong>一个Request进来之后</strong></p><ul><li>listen → Registerhandlers → handlers<ul><li>每一个handler都是用不同Goroutine处理的<ul><li>每个Goroutine只占4k大小</li><li>能同时创建成千上万个</li><li>不用我们手动考虑多线程的情况，http框架已经默认实现了</li></ul></li></ul></li></ul><p><br /></p><hr /><h1>0x4 数据库层设计和实现</h1><h2>数据库设计</h2><p>数据模型的设计、数据表的设计</p><p>对照API模型，需要三个表：用户、视频、评论</p><p><img class="confluence-embedded-image confluence-external-resource" width="486" src="http://img.daker.wang/wiki/1533200174928.png" data-image-src="http://img.daker.wang/wiki/1533200174928.png"></p><p>建表参考：<a href="http://www.runoob.com/mysql/mysql-create-tables.html">http://www.runoob.com/mysql/mysql-create-tables.html</a></p><h3>用户</h3><blockquote><p>mysql&gt; CREATE TABLE IF NOT EXISTS users(<br /> -&gt; id INT UNSIGNED AUTO_INCREMENT,<br /> -&gt; login_name VARCHAR(64) UNIQUE KEY,<br /> -&gt; pwd TEXT,<br /> -&gt; PRIMARY KEY ( id )<br /> -&gt; );</p></blockquote><p><br /></p><h3>资源</h3><blockquote><p>CREATE TABLE video_info( id VARCHAR(64) NOT NULL, author_id INT UNSIGNED, name TEXT, display_ctime TEXT, create_time DATETIME, PRIMARY KEY( id ) );</p></blockquote><p>id的类型为varchar，防止id溢出</p><p>author_id 和用户表的id映射</p><ul style="list-style-type: square;"><li>为什么不搞外键？<ul style="list-style-type: square;"><li>外键有「外键约束」等东西，在业务处理的时候有很多不方便</li><li>把这些逻辑写到业务代码里，就很灵活</li></ul></li></ul><p>name：资源的名字</p><p>display_ctime TEXT：显示在页面上的创建时间</p><p>create_time DATETIME：video入库的时间</p><p><br /></p><h3>评论</h3><blockquote><p>CREATE TABLE comments( id VARCHAR(64) NOT NULL, video_id VARCHAR(64), author_id INT UNSIGNED, content TEXT, time DATETIME, PRIMARY KEY( id ) );</p></blockquote><p>id类型为varchar</p><p>video_id 就是上一张表的id，应该起到「外键」的作用。</p><p>author_id 通过这个找user</p><p><br /></p><p>这三个表的设计：</p><ul style="list-style-type: square;"><li>没有任何信息冗余</li><li>三个ID在互相的表里面起到「主键」和「外键」的作用</li><li>这三个表完全符合「<a href="https://baike.baidu.com/item/%E7%AC%AC%E4%B8%89%E8%8C%83%E5%BC%8F/3193798?fr=aladdin">第三范式</a>」</li><li>好的设计理念：<ul style="list-style-type: square;"><li>不能让每一个Entity里面有冗余 - 和另一张表有重复信息</li><li>能保证每一张表的「原子性」</li></ul></li></ul><p><br /></p><h3>sessions</h3><p>什么是sessions?</p><p>在登录网站的时候，只需要登录一次就好，之后再打开，还是登录状态。</p><p>session：标识用户还在validate状态下的标识符</p><ul style="list-style-type: square;"><li>web应用会把它写在浏览器的cookie里面</li><li>会有过期时间<ul style="list-style-type: square;"><li>cookie里做检查</li><li>server端做检查</li></ul></li><li>用户登录之后，server端返回一个sessionID<ul style="list-style-type: square;"><li>用户每次再打开页面，server端会通过sessionID去查当前用户的登录状态<ul style="list-style-type: square;"><li>如果sessionID是validate，通过sessionID找到用户本身信息<ul style="list-style-type: square;"><li>可以判定这个用户是登录的合法用户，而非匿名用户</li></ul></li></ul></li></ul></li></ul><p><br /></p><p>session表 - 专门用来记录session的信息</p><blockquote><p>CREATE TABLE sessions(session_id VARCHAR(64) NOT NULL, TTL TINYTEXT, login_name VARCHAR(64), PRIMARY KEY( session_id ) );</p></blockquote><p>session_id：varchar也可以，因为登录的次数是无限的，所以要用一个范围非常大的类型表示它</p><p>TTL(time to live)：sessionID的过期时间戳，如果过期，需要返回一个错误</p><p>login_name：这里没有用户ID，因为想做的简单一点。有了login_name后，就知道用户是谁了，证明它是合法的。</p><p><br /></p><p>session的主要问题：在机制的处理上</p><ul style="list-style-type: square;"><li>如何完成session过期？</li><li>session校验？</li></ul><p><br /></p><h3>数据库设计小结</h3><p>任意两张表，不会出现除了id之外的冗余信息。</p><p>当你在表中没有重复信息出现的时候，你的表的扩展性才是最大的</p><ul style="list-style-type: square;"><li>加字段的时候，不用考虑这个字段会不会影响别的表的关联字段</li><li>缺点：<ul style="list-style-type: square;"><li>想获得比较多的信息的时候，需要做「多表关联」</li></ul></li></ul><h2>mysql操作</h2><blockquote><p><span style="color: rgb(112,112,112);">课程mysql环境: 5.7.21</span></p></blockquote><p>mysql指令大全：<a href="https://www.cnblogs.com/bluealine/p/7832219.html">→</a> </p><p>当然，为了偷懒不想记指令，可以使用Navicat的呀！</p><ul style="list-style-type: square;"><li>起起来：brew services start mysql</li><li>找到mysql的bin目录 cd <s>/usr/local/mysql/bin/</s> <span style="color: rgb(199,37,78);">/usr/local/opt/mysql/bin/</span></li><li>登录：./mysql -u root -p 输入密码</li><li>创建db：create database &lt;数据库名字&gt;</li><li>列举dbs：show databases</li><li>切到db里：use video_server</li><li>创建表：<span style="color: rgb(75,75,75);">create table &lt;表名&gt; ( &lt;字段名1&gt; &lt;类型1&gt; [,..&lt;字段名n&gt; &lt;类型n&gt;]);</span></li><li>看表们：show tables:</li><li>看表：describe xxx:</li><li>修改密码：ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '新密码';</li><li>刷新权限：FLUSH PRIVILEGES</li></ul><p><img class="confluence-embedded-image confluence-external-resource" height="173" src="http://img.daker.wang/wiki/1533200576322.png" data-image-src="http://img.daker.wang/wiki/1533200576322.png"></p><p><img class="confluence-embedded-image confluence-external-resource" height="250" src="http://img.daker.wang/wiki/1533200614333.png" data-image-src="http://img.daker.wang/wiki/1533200614333.png"></p><p><img class="confluence-embedded-image confluence-external-resource" height="231" src="http://img.daker.wang/wiki/1533200653416.png" data-image-src="http://img.daker.wang/wiki/1533200653416.png"></p><h2>Golang操纵数据库</h2><blockquote><p>mysql的Driver：github.com/go-sql-driver/mysql</p><p>使用示例：<a href="https://github.com/go-sql-driver/mysql/wiki/Examples">https://github.com/go-sql-driver/mysql/wiki/Examples</a></p><p>Golang-SQL文档：<a href="https://github.com/golang/go/wiki/SQLInterface">https://github.com/golang/go/wiki/SQLInterface</a></p></blockquote><ul style="list-style-type: square;"><li>db.Ping()： 检查DSN是否正确的</li><li>DSN： datasource name, 表明了连接数据库的时候，用什么样的数据库、那个user、哪个psw连接那个库</li><li>Ping()方法：会提前检查连接可不可用，而非等到Query的时候再检查。</li></ul><h3>Database Usage</h3><h4>打开数据库</h4><p>sql.Open(driver, dataSourName)</p><blockquote><pre><span style="color: rgb(129,96,147);">db</span><span style="color: rgb(204,120,50);">, </span><span style="color: rgb(129,96,147);">err </span>= <span style="color: rgb(144,119,198);">sql</span>.<span style="color: rgb(255,227,123);">Open</span>(<span style="color: rgb(48,190,71);">&quot;mysql&quot;</span><span style="color: rgb(204,120,50);">, </span><span style="color: rgb(48,190,71);">&quot;root:密码@tcp(localhost:3306)/库名?charset=utf8&quot;</span>)</pre></blockquote><p>db.Ping()：检测连接是否正常</p><h4>操纵数据库</h4><p>不需要返回值：db.Exec(SQL语句, 参数)</p><p>需要返回值：db.Query(SQL语句, 参数)</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="5aad16b1-578a-4e76-8b58-0b28db3aa016" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>rows, err := db.Query("SELECT name FROM users WHERE age = $1", age)
+if err != nil {
+	log.Fatal(err)
+}
+defer rows.Close()
+for rows.Next() {
+	var name string
+	if err := rows.Scan(&amp;name); err != nil {
+		log.Fatal(err)
+	}
+	fmt.Printf("%s is %d\n", name, age)
+}
+if err := rows.Err(); err != nil {
+	log.Fatal(err)
+}</pre></td></tr></table><p>只返回一个Row：db.QueryRow</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="13efdbbb-602e-40a9-98ab-fbb0ecc5b664" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>var age int64
+row := db.QueryRow("SELECT age FROM users WHERE name = $1", name)
+err := row.Scan(&amp;age)</pre></td></tr></table><p>声明(statements)一个SQL：db.Prepare （推荐，这样的查询方式会有预编译机制，更安全）</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="bd55d1c1-875b-43da-80ee-b3ef78b817d2" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>age := 27
+stmt, err := db.Prepare("SELECT name FROM users WHERE age = $1")
+defer stmt.Close() // 需要关闭
+if err != nil {
+	log.Fatal(err)
+}
+rows, err := stmt.Query(age) // stmt.Exec // stmt.QueryRow
+// process rows</pre></td></tr></table><h3>代码</h3><h4>连数据库</h4><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="fc86bb39-3969-409c-85b9-e50a9d2cdc2e" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>func openConn() *sql.DB {
+    dbConn, err = sql.Open("mysql", "root:123!@#@tcp(localhost:3306)/video_server?charset=utf8")
+    if err != nil {
+        panic(err.Error()) // 只有在确实无法正常完成业务逻辑的时候，才panic
+    }
+    return dbConn
+}</pre></td></tr></table><blockquote><p>说明：</p><p>OpenDSN的这个地方，实际上需要抽出来，作为配置文件。</p><p>生产环境都会这样做的，把数据库的配置、Cache连接的配置都抽出来，作为配置文件。</p><p>部署的时候，有类似<a href="https://baike.baidu.com/item/CMDB/5403317">CMDB</a>的配置数据库，把配置下发过去。代码会根据配置，连它应该连的数据库，这样配置和业务可以解耦。</p><p>我们为了简便起见，抽为配置的这一步省略掉了。</p></blockquote><p>操作数据库的常规思路：</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="4ec963f5-1907-4280-bfb0-021730b4049f" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>func AddUserCredential(loginName string, pwd string) error {
+    db := openConn()
+}</pre></td></tr></table><p>这样写有问题：</p><ol><li>Golang的sql Interface是为长期存在的连接而创建的，每次openConn会造成connection的浪费</li><li>如果每个查询请求都open一次，查询完成之后需要加一个db.Close<ol><li>当并发量非常大的时候，会出现「半连接」和「半关闭」的状态</li><li>Server端会出现很多个Close Wait</li></ol></li><li>不能每次都open一个Connection，而是「应该复用起来」</li></ol><h4>复用Connection</h4><p>添加 api/dbops/conn.go</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="b55202c1-2714-4c0f-b3dd-db0bee913738" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>package dbops
+
+import (
+    "database/sql"
+    _ "github.com/go-sql-driver/mysql"
+)
+
+
+var (
+    dbConn *sql.DB
+    err error
+)
+
+
+func init() {
+        dbConn, err = sql.Open("mysql", "root:123!@#@tcp(localhost:3306)/video_server?charset=utf8")
+    if err != nil {
+        panic(err.Error()) // 只有在确实无法正常完成业务逻辑的时候，才panic
+    }
+}
+
+</pre></td></tr></table><p>init方法：包一旦被加载，Init方法会第一个就执行。</p><p>执行之后，开启一个连接，赋给包内的全局变量dbConn</p><h2>User API逻辑处理</h2><h3>增加用户</h3><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="fe1153e0-3818-44d5-9df5-ef50789a2961" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>func AddUserCredential(loginName string, pwd string) error {
+    // 先写一个SQL
+	SQLQuery := `INSERT INTO users (login_name, pwd) VALUES (?, ?)`
+	stmtIns, err := dbConn.Prepare(SQLQuery) // *2
+	if err != nil {
+		retuen err
+	}
+	
+	_, err := stmtIns.Exec(loginName, pwd)
+	if err != nil {
+		return err
+	}
+	defer stmtIns.Close()
+	return nil
+}</pre></td></tr></table><p>提示：</p><ol><li>不要用拼接的方式（如「+」）连接query的各个部分，非常不安全，容易被撞库攻击。</li><li>Prepare：所有Driver都有的好用的功能「预编译」，预编译之后不会出现安全上的数据库攻击</li></ol><h3>获取用户密码</h3><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="1ed00a0c-58b7-4f39-8c21-47ab0f0ed035" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>func GetUserCredential(loginName string) (string, error) {
+	pwdQuery := `SELECT pwd FROM users WHERE login_name = ?`
+	stmtOut, err := dbConn.Prepare(pwdQuery)
+	defer stmtOut.Close() // *3
+	if err != nil {
+		log.Printf("%s", err)
+		return "", err
+	}
+	
+	// 先声明需要放的东西
+	var pwd string
+	err = stmtOut.QueryRow(loginName).Scan(&amp;pwd) // *1、2
+	if err != nil &amp;&amp; err != sql.ErrNoRows { // *4
+		retuen "", err
+	}
+
+	retuen pwd, nil
+}</pre></td></tr></table><p>提示：</p><ol><li>QueryRow: 只Queyr一个数据</li><li>Scan: 写入</li><li>stmtOut.Close()方法实际上可以放在defer里面<ol><li>但是defer会在栈退出的时候才会调用，对性能有些许损耗</li><li>这里由于我们的函数有多个退出的口子，不可能每次退出都写一次Close，所以即使有一些性能损耗，我们也要用defer统一处理之</li></ol></li><li>如果第一个QueryRow取不到东西（返回空值）的时候，一样会返回一个Object叫Raw；Object下面的scan会把这个Object的Error带出来，就是ErrNoRaws</li></ol><h3>删除用户</h3><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="6b5e06b9-9b3a-4647-aa97-24f94ff4942c" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>func DeleteUser(loginName string, pwd string) error {
+	deleteQuery := `DELETE FROM users WHERE login_name = ? AND pwd = ?`
+	stmtDel, err := dbConn.Prepare(deleteQuery)
+	if err != nil {
+		log.Printf("Delete User error: %s", err)
+		return err
+	}
+
+	_, err = stmtDel.Exec(loginName, pwd)
+	if err != nil {
+		return err
+	}
+	stmtDel.Close()
+
+	return nil
+}</pre></td></tr></table><h3>测试</h3><p>基本的逻辑弄完了，下面，写几个UT测试业务函数</p><p>api/dbops/api_test.go</p><p>业务处理都在api里面，为了更清楚的区分其他逻辑和api，所以test统一写在api里面</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="a16522cc-ed3c-4d08-b251-d84c467a188a" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>package dbops
+
+import (
+	"testing"
+)
+
+func clearTables() {
+	dbConn.Exec(`truncate users`)
+	dbConn.Exec(`truncate video_info`)
+	dbConn.Exec(`truncate comments`)
+	dbConn.Exec(`truncate sessions`)
+}
+
+func TestMain(m *testing.M) {
+	clearTables()
+	m.Run()
+	clearTables()
+}
+
+func TestUserWorkFlow(t *testing.T) { // *1
+	t.Run("Add", testAddUser)
+	t.Run("Get", testGetUser)
+	t.Run("Del", testDeleteUser)
+	t.Run("Reget", testRegetUser)
+}
+
+func testAddUser(t *testing.T) {
+	err := AddUserCredential("azen", "123")
+	if err != nil {
+		t.Errorf("Error of AddUser: %v", err)
+	}
+}
+
+func testGetUser(t *testing.T) {
+	pwd, err := GetUserCredential("azen")
+	if pwd != "123" || err != nil {
+		t.Errorf("Get User Error)
+	}
+}
+
+func testDeleteUser(t *testing.T) {
+	err := DeleteUser("azen", "123")
+	if err != nil {
+		t.Errorf("Delete User Error : %v", err)
+	}
+}
+
+func testRegetUser(t *testing.T) { // Delete完之后check是否正确
+	pwd, err := GetUserCredential("azen")
+	if err != nil {
+		t.Errorf("Get User Error)
+	}
+	if pwd != "" {
+		t.Errorf("Delete User Error")
+	}
+}</pre></td></tr></table><p>写UT的最佳实践</p><ol><li>init一下（由于我们的包已经有init方法了，所以不需要在test文件中做Init）</li><li>truncate tables：保证每次跑测试表都是空的，初始状态</li><li>run test</li><li>clear data(truncate tables)</li></ol><p>提示：</p><ol><li>因为我们的测试顺序是固定的，为了保证顺序，必须用subTest</li><li>这样写的好处：<ol><li>代码规整</li><li>可读性非常好</li></ol></li><li>mock data本来是应该写在Fixture里面的（表格驱动测试吗...）</li></ol><p>每次修改完代码，在提交之前先跑Test</p><h2>Video API逻辑处理</h2><h3>定义VideoModel</h3><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="086decb7-68b8-46f6-a793-71afb0b51a1d" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>type VideoInfo struct {
+	Id string
+	AuthorId int // 上传者ID
+	Name string
+	DisplayCtime
+}</pre></td></tr></table><h3>添加Video</h3><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="1b849780-1061-42bc-a889-57827e7ed643" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>func AddNewVideo(aid int, name string) (*defs.VideoInfo, error) {
+	// create uuid
+	vid, err := utils.NewUUID()
+	if err != nil {
+		return nil, err
+	}
+
+	// creatime: 进到这个函数里的时间 - 以这个作为display ctime
+	// 把creatime写到db里面，还有一个写库的时间戳，用来以后做排序之类的事情
+	t := time.Now()
+	ctime := t.Format("Jan 02 2006, 15:04:05") // *2
+
+	stmtIns, err := dbConn.Prepare(`INSERT INTO video_info (id, author_id, name, display_ctime) VALUES(?, ?, ?, ?)`)
+	defer stmtIns.Close()
+	if err != nil {
+		return nil, err
+	}
+
+	_, err = stmtIns.Exec(vid, aid, name, ctime)
+	if err != nil {
+		return nil, err
+	}
+
+	res := &amp;defs.VideoInfo{Id: vid, AuthorId: aid, Name: name, DisplayCtime: ctime}
+
+	return res, nil
+}</pre></td></tr></table><p>提示：</p><ol><li>有现成的算法可以生成uuid</li><li>f.Format函数，通过示例描述时间格式<ol><li>时间原点：这串字符必须使用这个，不然就没办法正确格式化，但是可以添加自己的各种符号</li><li>没人知道这个时间原点是什么鬼...可能是Golang的彩蛋</li></ol></li></ol><p>附件：</p><p>生成<a href="https://baike.baidu.com/item/UUID/5921266">uuid</a></p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="059dd93d-6b27-4ca3-ac32-2df723d3048f" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>package utils
+
+import (
+    "crypto/rand"
+    "io"
+    "fmt"
+)
+
+func NewUUID() (string, error) {
+    uuid := make([]byte, 16)
+    n, err := io.ReadFull(rand.Reader, uuid)
+    if n != len(uuid) || err != nil {
+        return "", err
+    }
+    // variant bits; see section 4.1.1
+    uuid[8] = uuid[8]&amp;^0xc0 | 0x80
+    // version 4 (pseudo-random); see section 4.1.3
+    uuid[6] = uuid[6]&amp;^0xf0 | 0x40
+    return fmt.Sprintf("%x-%x-%x-%x-%x", uuid[0:4], uuid[4:6], uuid[6:8], uuid[8:10], uuid[10:]), nil
+}</pre></td></tr></table><p>提示：</p><p>创建video、comment的时候都需要用到相关方法，所以抽成一个包</p><h3>Video的其他操作</h3><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="b23bd454-fd82-4d1a-af8e-2e573648908e" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>func GetVideoInfo(vid string) (*defs.VideoInfo, error) {
+    stmtOut, err := dbConn.Prepare("SELECT author_id, name, display_ctime FROM video_info WHERE id=?")
+
+    var aid int
+    var dct string
+    var name string
+
+    err = stmtOut.QueryRow(vid).Scan(&amp;aid, &amp;name, &amp;dct)
+    if err != nil &amp;&amp; err != sql.ErrNoRows{
+        return nil, err
+    }
+
+    if err == sql.ErrNoRows {
+        return nil, nil
+    }
+
+    defer stmtOut.Close()
+
+    res := &amp;defs.VideoInfo{Id: vid, AuthorId: aid, Name: name, DisplayCtime: dct} // 不能把struct直接传进去吗...封个方法吧
+
+    return res, nil
+}
+
+func DeleteVideoInfo(vid string) error {
+    stmtDel, err := dbConn.Prepare("DELETE FROM video_info WHERE id=?")
+    defer stmtDel.Close()
+    if err != nil {
+        return err
+    }
+
+    _, err = stmtDel.Exec(vid)
+    if err != nil {
+        return err
+    }
+
+    return nil
+}</pre></td></tr></table><h3>Video的相关测试</h3><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="5d3ceee7-795d-4e37-95c4-7a2c551ba3c5" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>var tempvid string // 这个参数是在AddNewVideo函数的返回值里的，但是测试中没办法拿到返回值，所以用一个全局变量引着它
+
+func TestVideoWorkFlow(t *testing.T) {
+    clearTables()
+    t.Run("PrepareUser", testAddUser) // 需要把用户准备好才能测Video
+    t.Run("AddVideo", testAddVideoInfo)
+    t.Run("GetVideo", testGetVideoInfo)
+    t.Run("DelVideo", testDeleteVideoInfo)
+    t.Run("RegetVideo", testRegetVideoInfo)
+}
+
+func testAddVideoInfo(t *testing.T) {
+    vi, err := AddNewVideo(1, "my-video")
+    if err != nil {
+        t.Errorf("Error of AddVideoInfo: %v", err)
+    }
+    tempvid = vi.Id // 赋全局变量，解决无法传参的问题
+}
+
+func testGetVideoInfo(t *testing.T) {
+    _, err := GetVideoInfo(tempvid)
+    if err != nil {
+        t.Errorf("Error of GetVideoInfo: %v", err)
+    }
+}
+
+func testDeleteVideoInfo(t *testing.T) {
+    err := DeleteVideoInfo(tempvid)
+    if err != nil {
+        t.Errorf("Error of DeleteVideoInfo: %v", err)
+    }
+}
+
+func testRegetVideoInfo(t *testing.T) {
+    vi, err := GetVideoInfo(tempvid)
+    if err != nil || vi != nil{
+        t.Errorf("Error of RegetVideoInfo: %v", err)
+    }
+}</pre></td></tr></table><h2>Comments API逻辑处理</h2><h3>添加评论</h3><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="0eb67b21-30c2-4da9-8ee6-3e9e168d6f08" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>func AddNewComments(vid string, aid int, content string) error {
+	id, err := utils.NewUUID()
+	if err != nil {
+		return err
+	}
+
+	stmtIns, err := dbConn.Prepare(`INSERT INTO comments (id, video_id, author_id, content) values (?, ?, ?, ?)`)
+	if err != nil {
+		return err
+	}
+
+	_, err := stmtIns.Exec(id, vid, aid, content)
+	if err != nil {
+		return err
+	}
+
+	defer stmtIns.Close()
+	return nil
+}</pre></td></tr></table><h3>展示评论</h3><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="a2249fe6-2cbf-4e1f-b56f-e47b6c9289ef" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>type Comment struct {
+    Id string
+    VideoId string
+    Author string
+    Content string
+}</pre></td></tr></table><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="76218eee-8e8b-49b4-a401-c6060d17e3a6" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>func ListComments(vid string, from, to int) ([]*defs.Comment, error) {
+
+	query := `SELECT comments.id, users.Login_name, comments.content 
+			  FROM comments INNER JOIN users ON comments.author_id = users.id 
+			  WHERE comments.video_id = ? AND comments.time > FROM_UNIXTIME(?) AND comments.time &lt;= FROM_UNIXTIME(?)`
+
+	stmtOut, err := dbConn.Prepare(query)
+	defer stmtOut.Close()
+
+	rows, err := stmtOut.Query(vid, from, to)
+
+	if err != nil {
+		return res, err
+	}
+
+	for rows.Next() {
+		var id, name, content string
+		if err := rows.Scan(&amp;id, &amp;name, &amp;content); err != nil {
+			return res, err
+		}
+		c := &amp;defs.Comment{Id: id, VideoId: vid, Author: name, Content: content}
+		res = append(res, c)
+	}
+
+
+	return res, nil
+}</pre></td></tr></table><h3>评论测试</h3><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="be40128c-b89f-4c26-b3dd-21b74d8471e6" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>func TestComments(t *testing.T) {
+    clearTables()
+    t.Run("AddUser", testAddUser)
+    t.Run("AddCommnets", testAddComments)
+    t.Run("ListComments", testListComments)
+}
+
+func testAddComments(t *testing.T) {
+    vid := "12345"
+    aid := 1
+    content := "I like this video"
+
+    err := AddNewComments(vid, aid, content)
+
+    if err != nil {
+        t.Errorf("Error of AddComments: %v", err)
+    }
+}
+
+func testListComments(t *testing.T) {
+    vid := "12345"
+    from := 1514764800
+    to, _ := strconv.Atoi(strconv.FormatInt(time.Now().UnixNano()/1000000000, 10))
+
+    res, err := ListComments(vid, from, to)
+    if err != nil {
+        t.Errorf("Error of ListComments: %v", err)
+    }
+
+    for i, ele := range res {
+        fmt.Printf("comment: %d, %v \n", i, ele)
+    }
+}</pre></td></tr></table><h2>Session API逻辑处理</h2><h3>概念</h3><p>Session不是业务entity，而是系统的entity</p><p>在使用RESTful API的时候，状态是不会保持的。为了记录用户在服务端的状态，需要有个东西保存它。</p><h4>为什么用session</h4><p>如果不存状态，用户之前操作的东西就会丢掉。如果每次刷网页都要用户登录一遍，是不可用的。</p><h4>session vs cookie</h4><p>session是一种在服务端为用户保存状态的机制</p><p>cookie是在客户端保存用户状态的机制</p><p>使用session的时候需要sessionID，当客户端为了方便访问session，会把sessionID放到cookie里。</p><p>我们今天的课程，session不会存复杂的东西，只负责用户的登录状态</p><ul style="list-style-type: square;"><li>如果session中没有sessionID，说明用户没登录</li><li>如果有sessionID，说明登录了</li></ul><h3>流程图</h3><p><img class="confluence-embedded-image confluence-external-resource" height="250" src="http://img.daker.wang/wiki/1533259604773.png" data-image-src="http://img.daker.wang/wiki/1533259604773.png"></p><p>当系统初始化的时候，Cache会load所有sessionID</p><p>当更新用户session的时候，需要往Cache和DB里面写两次</p><p>写两次原因：</p><ul style="list-style-type: square;"><li>DB在网页访问量、并发量大的时候，压力很大</li><li>DB的操作对IO消耗非常大，要尽量减少DB操作</li><li>Cache机制能保证：在多读少写的情况下以最快的速度返回想要的结果</li></ul><h3>代码实现</h3><p>session是系统逻辑，需要单独拎出来 api/session</p><p>session的操作：</p><ol><li>服务起来的时候load所有session</li><li>新用户登录的时候，需要分配一个sessionID，需要一个产生sessionID的方法</li><li>校验的时候session过期，需要返回一个是否过期的状态</li></ol><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="fde595f8-3bd5-46bd-90a1-8e703a46c355" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>package session
+
+import (
+	"time"	// *1
+	"sync"	// *2
+	"xxxxxx/dbops" // 自己写的数据库操作文件
+	"xxxxxx/utils"	//	生成uuid用的
+)
+
+// type SimpleSession struct {
+//  	Username string	// login name
+//  	TTL int64 // session过期时间戳，检查用户是否过期
+// }
+// 放到dbops的def里
+
+var sessionMap *sync.Map // *3
+
+func init() {
+	sessionMap = &amp;sync.Map{}
+}
+
+//	从数据库拿出来所有的session，放入Cache中
+func loadSessionsFromDB() {
+	r := dbops.RetrieveAllSessions()
+	if err != nil {
+		return
+	}
+	
+	r.Range(func(k, v interface{} bool) {
+		ss := v.(*defs.SimpleSession)
+		sessionMap.Store(k, ss)
+		return true
+	})
+}
+
+func GenerateNewSessionId(username string) (sessionID string) {
+	id, _ := utils.NewUUID()
+	ct := time.Now().UnixNano()/1000000 // 毫秒表示
+	ttl := ct + 30 * 60 * 1000 // serverside session valid time : 30 min
+
+	ss := &amp;defs.SimpleSession{Username: un, TTL: ttl}
+	sessionMap.Store(id, ss)
+
+	dbops.InsertSession(id, ttl, un)
+
+	return id
+}
+
+func IsSessionExpried(sid string) (un string, bool) {
+	ss, ok := sessionMap.Load(sid)
+	if ok {
+		ct := time.Now().UnixNano() / 100000 // 毫秒级表示
+		if ss.(*defs.SimpleSession).TTL &lt; ct {
+			// 删除session
+			deleteExpiredSession(sid)
+			return "", true
+		}
+		
+		return ss.(*defs.SimpleSession).Username, false
+	}
+
+	return "", true
+}
+
+
+func deleteExpireSession(sid string) {
+	sessionMap.Delete(sid)
+	dbops.DeleteSession(sid)
+}</pre></td></tr></table><p>提示：</p><ol><li>session是否过期 - 需要time</li><li>需要一个存session的地方 - sync</li><li>Cache：为什么不用一个web的Redis这种类型的Cache？<ol><li>当一个系统中增加一个模块的时候，系统的复杂度必然增加。</li><li>当系统复杂度超出了业务增量、能带给你的好处之后，会增加你的不必要负担。综合考虑，没必要</li><li>使用Go的map做内部缓存，在每个节点上都会缓存全量数据<ol><li>有关用户的数据量非常有限，不会特别多，使用内建Cache - Sync.map就完全足够了</li></ol></li><li>sync.Map vs 内建map<ol><li>sync.Map是Golang 1.9之后加入的，是一个线程安全的map<br /><ol><li>自己实现了一套线程安全的map</li><li>在「读」上面，优化的非常极致</li><li>「写」上有一些问题，内部每次写都要加一个全局锁</li></ol></li><li>内建map：不能支持并发的读写<ol><li>两个以上的协程读写的话，会panic</li></ol></li></ol></li></ol></li></ol><p>dbops中session交互的操作，放在/api/dbops/internal.go</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="bff3653a-26a9-4c7f-b98c-e0a1ced1aec6" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>package dbops
+
+func InsertSession(sid string, ttl int64, uname string) error {
+	ttlstr := strconv.FormatInt(ttl, 10)
+	stmtIns, err := dbConn.Prepare("INSERT INTO session (session_id, TTL, login_name) VALUES (?, ?, ?)")
+	defer stmtIns.Close()
+	if err != nil {
+		return err
+	}
+		
+	_, err := stmtIns.Exec(sid, ttlstr, login_name)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func RetrieveSession(sid string) (*defs.SimpleSession, error) {
+	ss := &amp;defs.SimpleSession({}
+	stmt, err := dbConn.Prepare(`SELECT TTL, login_name FROM sessions WHERE session_id=?`)
+	defer stmt.Close()
+
+	if err != nil {
+		return nil, err
+	}
+
+	var ttl string
+	var unane string
+	stmt.QueryRow(sid).Scan(&amp;ttl, &amp;uname)
+	if err != nil &amp;&amp; err != sql.ErrNoRows {
+		return nil, err
+	}
+	
+	if res, ttlint := strconv.ParseInt(ttl, 10, 64); err == nil {
+		ss.TTL = res
+		ss.Username = uname
+	} else {
+		return nil, err
+	}
+	return ss, nil
+}
+
+func RetrieveAllSessions() (*sync.Map, err) {
+
+}
+
+func DeleteSession(sid string) error {
+
+}</pre></td></tr></table><h1>API前端部分</h1><p>API前端部分包括：</p><ul style="list-style-type: square;"><li>API入口 - main函数</li><li>注册Router之前需要做一些通用性的东西 - 术语：http middleware<ul style="list-style-type: square;"><li>校验</li><li>鉴权</li><li>流控</li><li>其他处理</li></ul></li><li>一些定义<ul style="list-style-type: square;"><li>消息体message</li><li>error</li></ul></li><li>继续写handler</li><li>response</li></ul><blockquote><p>HTTP中间件</p><p style="margin-left: 0.0em;">HTTP 中间件提供了一个方便的机制来过滤进入应用程序的 HTTP 请求，例如，Auth 中间件验证用户的身份，如果用户未通过身份验证，中间件将会把用户导向登录页面，反之，当用户通过了身份验证，中间件将会通过此请求并接着往下执行。</p><p>当然，除了身份验证之外，中间件也可以被用来运行各式各样的任务，如：CORS 中间件负责替所有即将离开程序的响应加入适当的标头；而日志中间件则可以记录所有传入应用程序的请求。</p><p><img class="confluence-embedded-image confluence-external-resource" height="250" src="http://img.daker.wang/wiki/1533263288720.png" data-image-src="http://img.daker.wang/wiki/1533263288720.png"></p></blockquote><p>实现MiddleWare</p><p>原理：duck type - 组合</p><p>httprouter.Router，实际实现的是httpHandler中的ServeHTTP函数。我们先劫持这个函数，然后自己实现一下httpHandler，实现的时候先写自己的逻辑，再调用一下它的默认实现就好</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="d656aa0f-721b-4774-87f7-d00c9ca704f7" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>type middleWareHandler struct {
+	r *httprouter.Router
+}
+
+func NewMiddleWareHandler(r *httprouter.Router) http.Handler {
+	m := middleWareHandler{}
+	m.r = r
+	return m
+}
+
+// 实现协议方法
+func (m middleWareHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	//	劫持它本身的这个函数，自己实现一些通用的功能
+	validateUserSession(r)  //	添加自定义鉴权
+	m.r.ServeHTTP(w,r)
+}
+
+func RegisterHandlers() *httprouter.Router {
+	router := httprouter.New()
+	router.POST("/user", CreateUser)
+	router.POST("/user/:user_name", Login)
+	return router
+}
+
+
+func main() {
+	r := RegisterHandlers()
+	//	http.ListenAndServe(":8000", r) // 旧写法
+
+	mh := NewMiddleWareHandler()
+	http.ListenAndServe(":8000", mh)  // 实现MiddleWare的写法
+}</pre></td></tr></table><p>MiddleWare功能 - 鉴权</p><p>添加api/auth.go文件</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="91980ac1-d9cc-4d3d-9491-f8eff983a035" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>package main
+
+import (
+	"net/http"
+	"xxx/api/session"
+)
+
+var HEADER_FIELD_SESSION = "X-Session-Id"
+var HEADER_FIELD_UNAME = "X-User-Name" // *1
+
+
+//	检查用户是否合法
+func validateUserSession(r *http.Request) bool {
+	sid := r.Header.Get(HEADER_FIELD_SESSION)
+	if len(sid) == 0 {
+		return false
+	}
+
+	uname, ok := session.IsSessionExpired(sid)
+	if ok {
+		return false
+	}
+
+	r.Header.Add(HEADER_FIELD_UNAME, uname) // 如果鉴权成功，则把username加入到Header中，方便请求的后续处理
+
+	return true
+}
+
+func ValidateUser(w http.ResponseWriter, r *http.Response) bool {
+	uname := r.Header.Get(HEADER_FIELD_UNAME)
+	if len(uname) == 0 {
+		sendErrorResponse()
+		return false
+	}
+	return true
+}</pre></td></tr></table><p>提示：</p><ol><li>X开头的字段，都是HTTP协议中的自定义Header<ol><li>我们将这两种Header加入到HTTP的原生headers中，构成鉴权过程</li></ol></li></ol><p><br /></p><p>添加类型定义</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="fe7e4798-1ded-46e2-98af-e9014b820c03" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>type SignedUp struct {
+	Success bool `json:"success"`
+	SessionId string `json:"session_id"`
+}</pre></td></tr></table><p><br /></p><p>继续完成Handler部分</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="632b98df-e66b-4135-9956-4e1a8856a5ef" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>func CreateUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+    res, _ := ioutil.ReadAll(r.Body) // 从request里面拿出Body - POST方法嘛，必有body
+	ubody := &amp;defs.UserCredential{}
+
+	if err := json.Unmarshal(res, ubody); err != nil {  // *1
+		sendErrorResponse(w, defs.ErrorRequestBodyParseFailed)
+		return
+	}
+
+	if err := dbops.AddUserCredential(ubody.Username, ubody.Pwd); err != nil {
+		sendErrorResponse(w, defs.ErrorDBError)
+	}
+
+	//	写入正确，创建session
+	id := session.GenerateNewSessionId(udody.Username)
+	su := &amp;defs.SignUp{Success: true, SessionId: id}
+
+	if resp, err := json.Marshal(su); err != nil {
+		sendErrorResponse(w, defs.ErrorInternalFaluts)
+	} else {
+		sendNormalResponse(w, string(resp), 201)
+	}
+}
+
+func Login(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+    uname := p.ByName("user_name")
+    io.WriteString(w, uname)
+}</pre></td></tr></table><p><br /></p><p>实现sendErrorResponse</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="76e44967-36b4-4cfd-9cfb-e154aca1e977" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>func sendErrorResponse(w http.ResponseWriter, errResp defs.ErrResponse) {
+	w.WriteHeader(errResp.HttpSC)
+
+	resStr, _ := json.Marshal(&amp;errResp.Error)
+	io.WriteString(w, string(resStr))
+}
+
+func sendNormalResponse(w http.ResonseWriter, resp string, sc int) {
+	w.WriterHeader(sc)
+	io.WriteString(w, resp)
+}</pre></td></tr></table><p>提示：</p><ol><li>json.Unmarshal(xxx, yyy) - 把xxxjson序列化为yyy结构体</li></ol><p><br /></p><p>以上，一套API已经完成了。可以编译一下，测下能不能跑通。</p><p>其他API和这个相同，自己实现之即可</p><h1>TODOs</h1><ol><li>数据库DSN作为配置文件下发</li></ol>
+        <p>&nbsp;</p>
+    
+</div>
+
+
+    </div>
+
+    
+  </body>
+</html>

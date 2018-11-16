@@ -319,11 +319,24 @@ at 和 crontabat：处理只发生一次的事件</description>
     </item>
     
     <item>
+      <title>2-2 Stream模块</title>
+      <link>http://azen.me/code/micro/golang-server-ii/</link>
+      <pubDate>Mon, 02 Jul 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://azen.me/code/micro/golang-server-ii/</guid>
+      <description>&amp;nbsp;
+Stream Server两个关键知识点
+Upload filesToken bucket - 限流特点静态视频，非RTMP
+RTMP：用在直播上的，Client端不断有Input，别的Client端不断有Output。复杂度比较高
+Streaming部分：</description>
+    </item>
+    
+    <item>
       <title>2-1 流媒体 - API模块</title>
-      <link>http://azen.me/code/micro/2-1-%E6%B5%81%E5%AA%92%E4%BD%93---api%E6%A8%A1%E5%9D%97/</link>
+      <link>http://azen.me/code/micro/golang-server-i/</link>
       <pubDate>Sun, 01 Jul 2018 00:00:00 +0000</pubDate>
       
-      <guid>http://azen.me/code/micro/2-1-%E6%B5%81%E5%AA%92%E4%BD%93---api%E6%A8%A1%E5%9D%97/</guid>
+      <guid>http://azen.me/code/micro/golang-server-i/</guid>
       <description>&amp;nbsp;
 0x0 基础概念API是什么后端对外形成Service的接口
 REST是一种设计风格，不是任何架构标准RESTful API通常使用HTTP作为通信协议，JSON作数据格式RESTful API特点统一接口无状态无论什么时候调用，返回的都是我想要的东西API这个Service这个节点不具备状态可缓存分层（Layerd System）API的service可以分过好多层，每一层负责其中一部分功能CS模式REST设计原则以URL（统一资源定位符）风格设计API 资源路径类似本地文件系统风格通过不同的method区分对资源的CURDgetpostputdelete返回码（Status Code）需要符合HTTP资源描述的规定0x1 API模块设计 (RESTful风格)分析实体及关系三个实体用户资源用户上传的视频视频下面的评论用户和资源发生的互动实体间的关系资源属于用户评论属于资源</description>

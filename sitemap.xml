@@ -118,7 +118,12 @@
   </url>
   
   <url>
-    <loc>http://azen.me/code/micro/2-1-%E6%B5%81%E5%AA%92%E4%BD%93---api%E6%A8%A1%E5%9D%97/</loc>
+    <loc>http://azen.me/code/micro/golang-server-ii/</loc>
+    <lastmod>2018-07-02T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://azen.me/code/micro/golang-server-i/</loc>
     <lastmod>2018-07-01T00:00:00+00:00</lastmod>
   </url>
   

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="//gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.46-DEV" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>2-2 Stream模块 &middot; 细胞的作战实验室</title>
+
+  
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/print.css" media="print">
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/poole.css">
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/syntax.css">
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/hyde.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Abril+Fatface|PT+Sans:400,400i,700">
+
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+  
+  <link href="" rel="alternate" type="application/rss+xml" title="细胞的作战实验室" />
+
+  
+</head>
+
+  <body class=" ">
+  <div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <a href="http://azen.me/"><h1>细胞的作战实验室</h1></a>
+      <p class="lead">
+      Power by <a href="http://hugo.spf13.com">hugo</a>
+      </p>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li><a href="http://azen.me/">Home</a> </li>
+      
+    </ul>
+
+    <p>&copy; 2018. All rights reserved. </p>
+  </div>
+</div>
+
+    <div class="content container">
+    <div class="post">
+  <h1>2-2 Stream模块</h1>
+  <span class="post-date">Mon, Jul 2, 2018</span>
+  <p>&nbsp;</p>         <h1>Stream Server</h1><p>两个关键知识点</p><ul><li>Upload files</li><li>Token bucket - 限流</li></ul><h2>特点</h2><p>静态视频，非<a href="https://baike.baidu.com/item/rtmp/6113614?fr=aladdin">RTMP</a></p><p>RTMP：用在直播上的，Client端不断有Input，别的Client端不断有Output。复杂度比较高</p><p>Streaming部分：</p><ul style="list-style-type: square;"><li>独立的服务，可独立部署</li><li>统一的api格式</li></ul><p><img class="confluence-embedded-image confluence-external-resource" height="250" src="http://img.daker.wang/wiki/1533272613997.png" data-image-src="http://img.daker.wang/wiki/1533272613997.png"></p><h2>代码</h2><h3>关键点：</h3><ol><li>长连：发一个Request过来，不断向Client输出数据流，按照整个视频的进程走时间</li><li>流控：多路长连接同时保持的时候，不断发起连接不断打开视频，总有一天服务器会Crash掉。所以我们需要一个「流控机制」<ol><li>我们的「流控」只控制Connection的部分</li></ol></li></ol><h3>结构说明</h3><p>文件结构：</p><blockquote><p>特点：没有需要和db交互的东东</p></blockquote><p>/streamserver</p><p>/../main.go</p><p>/../handlers.go</p><p>/../defs.go</p><p>/../limiter.go</p><p><br /></p><p>结构简单，功能单一，所以不用像api一样那么多层。</p><h3>limiter.go</h3><h4>流控方案</h4><p><strong>流控</strong>：在网站的Server online的时候，一定有攻击者发起请求。当请求达到一定数量的时候，会导致你所在的Server的连接数不够。如果不仅连接数消耗完、并且带宽占完之后，你的Server就处于不可用的状态。</p><p><strong>更可怕的情况</strong>：当你的RAM也消耗完，你的系统就会Crash</p><p>为了保护系统，需要做流控</p><h4>bucket token算法</h4><p>bucket：类似一个箱子，箱子里有好多token 1...n</p><p>bucket放在Server里：</p><ul style="list-style-type: square;"><li>当一个Request来的时候，就给他发一个Token</li><li>当Request拿到Response返回之后，我们把Token还回来，Bucket里面的数量会还原一个</li><li>当Bucket里的数量是个定值的时候，如20，同时进来的Request就最多只有20个。起到了流控的作用</li></ul><p>说明：</p><ul style="list-style-type: square;"><li>只有拿到token的Request才是合法、会被处理的Request</li></ul><p>需要注意：防止bucket的协程安全问题</p><ul><li>如果加锁，会影响性能 &amp; 违背Golang设计初衷</li><li>我们使用channel同步协程之间的信息</li></ul><h4>实现</h4><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="32eeda58-43e4-4f69-b3af-d715e066b071" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>type ConnLimiter struct {
+	concurrentConn int
+	bucket chan int
+}
+
+func NewConnLimiter(cc int) *ConnLimiter {
+	return &amp;ConnLimiter{
+		concurrentConn: cc,
+		bucket: make(chan int, cc), // buffer channel *1
+	}
+}
+
+// 获取Token, 返回获取结果
+func (cl *ConnLimiter) GetConn() bool {
+	if len(cl.bucket) >= cl.concurrentConn {
+		log.Printf("达到上限了")
+		return false
+	}
+
+	cl.bucket &lt;- 1
+	return true
+}
+
+
+func (cl *ConnLimiter) ReleaseConn() {
+    c := &lt;-cl.bucket
+	log.Printf("来了一个新Token")
+}</pre></td></tr></table><p>提示</p><ol><li>有了buffer，可以保证在一定的缓冲区间内，做消息同步的事情</li><li>简单的流控代码实现，却可以起到非常大的作用</li></ol><h3>response.go</h3><p>我们提供的这两个服务（上传文件、流媒体播放）主要是传流数据的，所以只有在出错的时候才会用到response</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="b62a9939-0ee0-4e73-9585-2b45c588fd38" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>func sendErrorResponse(w http.ResponseWriter, sc int, errMsg string) {
+	w.WriterHeader(sc)
+	io.WriterString(w, errMsg)
+}</pre></td></tr></table><h3>main</h3><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="7f59f91a-8bbc-4e47-97fe-51b8a3883661" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>type middleWareHandler struct {
+	r *httprouter.Router
+	l *ConnLimiter
+}
+
+
+func NewMiddleWareHandler(r *httprouter.Router cc int) http.Handler {
+	m := middleWareHandler{}
+	m.r = r
+	m.l = NewConnLimiter(cc) // cc: 流控值
+	return m
+}
+
+
+func (m middleWareHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	if !m.l.GetConn() {
+		sendErrorResponse(w, http.StatusTooManyRequest, "Too many request")
+		return
+	}
+	
+	m.r.ServerHTTTP(w, r)
+	//	把Token还回去
+	m.l.ReleaseConn() // TODO: 测试下这句，会不会被上一句Block住. 如果不会，实际上是起不到限流作用的...
+}
+
+
+func RegisterHandlers() *httprouter.Router {
+	router := httprouter.New()
+
+	router.GET("/videos/:vid-id", streamHandler)
+	router.POST("/upload/:vid-id", uploadHandler)
+	return router
+}
+
+
+func main() {
+	r := RegisterHandlers()
+	mh := NewMiddleWareHandler(r, 2)
+	http.ListenAndServer(":9000", mh) // 监听所有networking interface的9000端口
+}</pre></td></tr></table><p>提示：</p><ul style="list-style-type: square;"><li>加入流控方案</li></ul><h3>handlers.go - streamHandler</h3><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="3b82eb59-088b-478c-83e0-2734c5da202f" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>func streamHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	vid := p.ByName("vid-id") // 获取video id
+	videolink := VIDEO_DIR + vid // 映射到我们的文件夹里 VIDEO_DIR -> "./videos/"
+	
+	// 打开video
+	video, err := os.Open(videolink) // *4
+	defer video.Close()
+
+	if err != nil {
+		sendErrorResponse(w, http.StatusInternalServerError, "Internal Error")
+		return
+	}
+	
+	w.Header().Set("Content-Type", "video/mp4") // *2
+	http.ServeContent(w, r, "", time.Now(), video) // *3
+}</pre></td></tr></table><p>提示：</p><ol><li>Streaming实现方案：<ol><li>方案一：<ol><li>自己将Video的内容格式化成二进制的data stream</li><li>用stream的方式传到Client端</li><li>好处：<ol><li>传二进制数据流的速度、带宽均可控</li></ol></li><li>坏处：<ol><li>实现复杂</li></ol></li></ol></li><li>方案二：<ol><li>我们的方案</li><li>通常规模不大的视频点播，都是这样用的</li></ol></li></ol></li><li>设置Content-Type的必要性<ol><li>我们存的文件可能是没有扩展名的，而实际的二进制码流，是mp4格式的</li><li>这样设置，浏览器会自动将其作为Video MP4来解析</li></ol></li></ol><h4>*3 http.ServeContent（实现流媒体的核心方法） vs io.Copy vs io.Write</h4><ul style="list-style-type: square;"><li><pre class="funcdecl">func ServeContent(w <a href="https://studygolang.com/static/pkgdoc/pkg/net_http.htm#ResponseWriter">ResponseWriter</a>, req *<a href="https://studygolang.com/static/pkgdoc/pkg/net_http.htm#Request">Request</a>, name <a href="http://godoc.org/builtin#string">string</a>, modtime <a href="http://godoc.org/time">time</a>.<a href="http://godoc.org/time#Time">Time</a>, content <a href="http://godoc.org/io">io</a>.<a href="http://godoc.org/io#ReadSeeker">ReadSeeker</a>)</pre></li><li>参数：<ol><li>参数一：Response</li><li>参数二：Request</li><li>参数三：名字</li><li>参数四：时间参数，调用了一个IOReadxxx的方法，能保证视频播放的顺利和通畅</li><li>参数五：Open的视频文件</li></ol></li><li>函数说明：<ol><li><span style="color: rgb(0,0,0);">该函数使用提供的content参数 - 一个「<span style="color: rgb(0,0,0);">ReadeSeeker</span>」提供的内容来回复请求</span><ol><li><span style="color: rgb(0,0,0);">ReadeSeeker - 一个interface，Reader &amp; Seeker</span></li><li><span style="color: rgb(0,0,0);"><a href="https://studygolang.com/static/pkgdoc/pkg/io.htm#Seeker">Seeker</a></span><ol><li><p align="left">Seeker接口用于包装基本的移位方法</p></li><li><p align="left">Seek方法设定下一次读写的位置</p></li></ol></li></ol></li><li><span style="color: rgb(0,0,0);">该函数相对于io.Copy的优点是<strong>可以处理范围类请求</strong>,设定MIME类型,并且处理了If-Modified-Since请求.</span></li><li><span style="color: rgb(0,0,0);">如果参数Response的header中，未设定Content-type类型：</span><ol><li><span style="color: rgb(0,0,0);">该函数首先通过文件扩展名来判断类型</span></li><li><span style="color: rgb(0,0,0);">如果失效的话,读取content的第一块数据并将他传递给DetectContentType进行类型判断,<span>之后会设置Content-Type头</span></span></li></ol></li><li><span style="color: rgb(0,0,0);"><span>name不会用于别的地方，甚至于它可以是空字符串，也永远不会发送到response里</span><br /></span></li><li><span style="color: rgb(0,0,0);">如果modtime不是<span>Time零值，</span><span>函数会在Response的Header里设置Last-Modified头</span></span><ol><li><span style="color: rgb(0,0,0);">如果请求包括一个If-Modified-Since header,该函数利用modtime来决定是否发送该content.</span></li></ol></li><li><span style="color: rgb(0,0,0);">参数Content的seek方法必须有效 - 该函数利用Seek功能来决定content的大小</span></li></ol></li></ul><h4><span style="color: rgb(0,0,0);">*4 os.Open vs ioutil.ReadAll()</span></h4><p><br /></p><pre class="funcdecl">func Open(name <a href="https://studygolang.com/static/pkgdoc/pkg/builtin.htm#string">string</a>) (file *<a href="https://studygolang.com/static/pkgdoc/pkg/os.htm#File">File</a>, err <a href="https://studygolang.com/static/pkgdoc/pkg/builtin.htm#error">error</a>)</pre><p><span style="color: rgb(0,0,0);">os.Open打开一个文件用于读取。如果操作成功，返回的文件对象的方法可用于读取数据；对应的文件描述符具有O_RDONLY模式。如果出错，错误底层类型是*PathError。</span></p><p><br /></p><p><br /></p><pre class="funcdecl">func ReadAll(r <a href="https://studygolang.com/static/pkgdoc/pkg/io.htm">io</a>.<a href="https://studygolang.com/static/pkgdoc/pkg/io.htm#Reader">Reader</a>) ([]<a href="https://studygolang.com/static/pkgdoc/pkg/builtin.htm#byte">byte</a>, <a href="https://studygolang.com/static/pkgdoc/pkg/builtin.htm#error">error</a>)</pre><p><span style="color: rgb(0,0,0);"><span>ReadAll从r读取数据直到EOF或遇到error，返回读取的数据和遇到的错误。成功的调用返回的err为nil而非EOF。因为本函数定义为读取r直到EOF，它不会将读取返回的EOF视为应报告的错误。</span><br /></span></p><h3>handlers.go - uploadHandler</h3><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="ee540ebc-c9b2-4b99-ad96-0d87f0a67dc0" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>//	将Client本地的文件，以流的形式，传到服务端
+func uploadHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	//	静态检查
+	r.Body = http.MaxBytesReader(w, r.Body, MAX_UPLOAD_SIZE) // *1    1024 * 1024 * 50 = 50MB
+	if err := r.ParseMultipartForm(MAX_UPLOAD_SIZE); err != nil { // *2
+		sendErrorResponse(w, http.StatusBadRequest, "File is too big")
+		return
+	}
+
+	//	读表单
+	file, _, err := r.FormFile("file") // *3 *4
+	if err != nil {
+		sendErrorResponse(w, http.StatusInternalServerError, "读文件过程中出问题")
+		return
+	}
+
+	data, err := ioutil.ReadAll(file) // 读出来
+	if err != nil {
+		log.Printf("Read file error: %v", err)
+		sendErrorResponse(w, http.StatusInternalServerError, "读出错了")
+	}
+	filename := p.ByName("vid-id")
+	err = ioutil.WriteFile(VIDEO_DIR + fn, data, 0666) // path, data, permission 尽量不要用777，权限太大了
+	if err != nil {
+		log.Printf("Write file error: %v", err)
+		sendErrorResponse(w, http.StatusInternalServerError, "")
+		return
+	}
+
+	w.WriterHeader(http.StatusCreated)
+	io.WriteString(w, "Upload Successfully")
+}</pre></td></tr></table><p>提示：</p><ol><li>MaxBytesReader<ol><li>用来限定最大Bytes，IOReader最大能读到缓冲区的大小是多少</li><li>参数：<ol><li>参数三：bytes</li></ol></li><li><p align="left">文档</p><ol><li><p align="left">MaxBytesReader类似io.LimitReader，但它是用来限制接收到的请求的Body的大小的。</p></li><li><p align="left">不同于io.LimitReader，本函数返回一个ReadCloser，返回值的Read方法在读取的数据超过大小限制时会返回非EOF错误，其Close方法会关闭下层的io.ReadCloser接口r。</p></li><li><p align="left">MaxBytesReader预防客户端因为意外或者蓄意发送的“大”请求，以避免尺寸过大的请求浪费服务端资源。</p></li></ol></li></ol></li><li>ParseMultipartForm<ol><li>HTML的tag里面，有一个表单形式，叫multipart form</li><li>Request里面，有一个专门的方法，去Parse 这个 multipart form的</li><li>如果超过了参数值，一定会返回一个错误，这是需要返回bad request</li><li>文档<ol><li><span>ParseMultipartForm将请求的主体作为multipart/form-data解析</span></li><li><span>请求的整个主体都会被解析：</span><ol><li><span>得到的文件记录最多maxMemery字节保存在内存</span></li><li><span>其余部分保存在硬盘的temp文件里。</span></li></ol></li><li><span>如果必要，ParseMultipartForm会自行调用ParseForm</span></li><li><span>重复调用本方法是无意义的</span></li></ol></li></ol></li><li>FormFile<ol><li>&lt;form name=&quot;file&quot;&gt;<ol><li>form这个tag里面，有个属性叫name</li><li>form file就是name所对应的值，就是它的key值</li><li>写前端页面的时候，一定要记得把这个name设置为file，否则会读不出来</li></ol></li></ol></li><li>_代表的：一个handler<ol><li>里面是整个form的Content的handler</li><li>我们可以拿到头部，做一些文件类型验证之类的</li><li>前端也可以做验证，需要把accept=&quot;video/*&quot;会自动检测</li></ol></li></ol><h3><span style="color: rgb(0,0,0);">文件上传解析</span></h3><h4><span style="color: rgb(0,0,0);"><span>拿文件</span></span></h4><h5><span style="color: rgb(0,0,0);"><span>r.FormFIle</span></span></h5><p><span style="color: rgb(0,0,0);"><span>以key为键，查询<strong>r.MultipartForm字段</strong>，得到结果中的第一个文件和它的信息。</span></span></p><p><span style="color: rgb(0,0,0);"><span>如果必要，本函数会隐式调用ParseMultipartForm和ParseForm。</span></span></p><p><span style="color: rgb(0,0,0);"><span>查询失败会返回ErrMissingFile错误。</span></span></p><h5><span style="color: rgb(0,0,0);"><span>r.MultiparForm</span></span></h5><p><br /></p><p><span style="color: rgb(0,0,0);"><span class="com">MultipartForm是解析好的多部件表单，包括上传的文件。</span></span></p><p><span style="color: rgb(0,0,0);"> <span class="com">本字段只有在调用ParseMultipartForm后才有效。</span> </span></p><p><span style="color: rgb(0,0,0);"><span class="com">在客户端，会忽略请求中的本字段而使用Body替代。</span></span></p><h3>测试</h3><p>upload.html</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="e3aec311-5067-4eb4-82c0-0ffd6f622173" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>&lt;!DOCTYPE html>
+&lt;html lang="en">
+&lt;head>
+    &lt;meta charset="UTF-8">
+    &lt;title>Test Upload File&lt;/title>
+&lt;/head>
+&lt;body>
+    &lt;form enctype="multipart/form-data" action="http://localhost:9001/upload/testid" method="post">
+        &lt;input type="file" name="file" />
+        &lt;button type="submit" value="Upload File"/>
+    &lt;/form>
+&lt;/body>
+&lt;/html></pre></td></tr></table><p>温馨提示：</p><p>1.需要提前创建好videos/目录，否则路径不存在无法写文件</p><p>2.IDEA的run按钮，生成的可执行文件，放置在了项目的根目录里</p><p><span style="color: rgb(0,0,0);"><span><br /></span></span></p><h4><span style="color: rgb(0,0,0);"><br /></span></h4>
+        <p>&nbsp;</p>
+    
+</div>
+
+
+    </div>
+
+    
+  </body>
+</html>
