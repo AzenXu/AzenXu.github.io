@@ -77,6 +77,21 @@
     </item>
     
     <item>
+      <title>2-4 前端服务</title>
+      <link>http://azen.me/code/micro/golang-server-iv/</link>
+      <pubDate>Wed, 04 Jul 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://azen.me/code/micro/golang-server-iv/</guid>
+      <description>&amp;nbsp;
+概述前端服务（大前端）：
+前台的HTML+CSS+JS后端的Go的WebServer小的网站：
+直接一个webServer把结果返回给前端完事儿弊端：
+没法解耦效率低能承载的业务量有限扩容非常复杂没办法进行分布式拆分和服务化解耦
+前端服务 (不是前台)：
+→ 前台（Front in 的 UI）</description>
+    </item>
+    
+    <item>
       <title>2-3 Scheduler模块</title>
       <link>http://azen.me/code/micro/golang-server-iii/</link>
       <pubDate>Tue, 03 Jul 2018 00:00:00 +0000</pubDate>

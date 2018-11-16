@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="//gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.46-DEV" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>2-4 前端服务 &middot; 细胞的作战实验室</title>
+
+  
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/print.css" media="print">
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/poole.css">
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/syntax.css">
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/hyde.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Abril+Fatface|PT+Sans:400,400i,700">
+
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+  
+  <link href="" rel="alternate" type="application/rss+xml" title="细胞的作战实验室" />
+
+  
+</head>
+
+  <body class=" ">
+  <div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <a href="http://azen.me/"><h1>细胞的作战实验室</h1></a>
+      <p class="lead">
+      Power by <a href="http://hugo.spf13.com">hugo</a>
+      </p>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li><a href="http://azen.me/">Home</a> </li>
+      
+    </ul>
+
+    <p>&copy; 2018. All rights reserved. </p>
+  </div>
+</div>
+
+    <div class="content container">
+    <div class="post">
+  <h1>2-4 前端服务</h1>
+  <span class="post-date">Wed, Jul 4, 2018</span>
+  <p>&nbsp;</p>         <h1>概述</h1><p>前端服务（大前端）：</p><ul style="list-style-type: square;"><li>前台的HTML+CSS+JS</li><li>后端的Go的WebServer</li></ul><p>小的网站：</p><ul style="list-style-type: square;"><li>直接一个webServer把结果返回给前端完事儿</li></ul><p>弊端：</p><ul style="list-style-type: square;"><li>没法解耦</li><li>效率低</li><li>能承载的业务量有限</li><li>扩容非常复杂</li><li>没办法进行分布式拆分和服务化解耦</li></ul><p><br /></p><p>前端服务 (不是前台)：</p><p>→ 前台（Front in 的 UI）</p><p>→ WebServer（简单的处理，如：</p><ul style="list-style-type: square;"><li>归一化</li><li>数据过滤</li><li>普通处理</li><li>做成真正能够让后台的服务认识的Request）</li></ul><p>→ 后端的服务（做真正的业务逻辑处理）</p><h2>重要的知识点</h2><h3>Go的模板引擎</h3><p>模板引擎：将HTML解析和元素预置替换，生成最终页面的工具</p><p>类似PHP中带tag的部分</p><p>比较古老的做法</p><p>现代的做法：在HTML里嵌入它的元素，让模板引擎把元素和简单的语言进行替换，最后展现在外面给用户看的前台的部分</p><h4>Go的模板(相同的interface)：</h4><ul style="list-style-type: square;"><li>text/template</li><li>html/template</li></ul><p>Go的模板采用动态生成的模式</p><h4>典型的模板引擎的文件夹结构</h4><p><img class="confluence-embedded-image confluence-external-resource" height="250" src="http://img.daker.wang/wiki/1533346890948.png" data-image-src="http://img.daker.wang/wiki/1533346890948.png"></p><p>home.html就是将要被渲染的模板</p><p>web文件夹下，处理web Request的时候，会读home.html</p><p><img class="confluence-embedded-image confluence-external-resource" height="250" src="http://img.daker.wang/wiki/1533346996609.png" data-image-src="http://img.daker.wang/wiki/1533346996609.png"></p><p><br /></p><h1>构建大前端</h1><h2>大前端两大任务</h2><h3>1 转发请求（解决跨域问题）</h3><h4>跨域资源共享问题</h4><p><strong>跨域资源</strong>：cross origin resource sharing - 当我们从浏览器端发起一个请求，而这个请求的域名实际上和浏览器所处的请求不同的时候，就是跨域资源访问</p><p><strong>问题描述</strong>：前台用一些流行的库调用ajax去后端获取请求。使用前端请求api的时候，不能在js里面请求「无关域名」的内容，否则会产生跨域，被浏览器拦截下来。</p><p><strong>问题举例</strong>：本来的web端render的配置，域名比如为127.0.0.1:8000，但是实际的api服务是127.0.0.1:9000</p><p><strong>问题原因</strong>：「跨域」是危险操作，可能为用户带来严重损失。「浏览器」为了避免用户损失，而做的相应限制（客户端就没这种鸟问题）</p><p><strong>为何必解</strong>：当每个服务都服务化之后，跨域访问必不可少（我们的两个端口，被当做两个独立domain来对待）不得不发起跨域请求。此时需要proxy</p><p><strong>解决方案</strong>：可以做一些处理，比如：</p><ul style="list-style-type: square;"><li>header里添加一些东西（不能真正解决问题，依然有危险）</li><li>服务端做<strong>请求转发</strong>（遵守跨域规则）</li></ul><h4>两种转发模式</h4><h5>proxy模式</h5><p>把域名做转换，其他请求参数透传</p><h5>api模式</h5><p>约定好web端请求参数的格式，按照格式做请求转换 &amp; 转发 可以参考<a href="http://47.93.232.68:8090/pages/viewpage.action?pageId=67289#id-%E4%B8%80%E6%AC%A1Mapi%E8%AF%B7%E6%B1%82%E7%9A%84%E5%85%B7%E4%BD%93%E8%BF%87%E7%A8%8B-%E7%AC%AC%E4%B8%80%E6%88%98%EF%BC%9A%E5%9F%9F%E5%90%8D%E5%90%88%E5%B9%B6">我团iOS直连实践</a></p><p>举例：</p><ol><li>有一个api：<a href="http://xxx:8000/api">http://xxx:8000/api</a>这个api会把body中的格式按照约定规范起来，如<ol><li>{url:&quot;&quot;, method: &quot;&quot;, message: &quot;&quot;}</li></ol></li><li>WebServer会把这些东西取出来，做转化，然后通过http的client发给后端，后端处理之后把结果返还给api，api把结果返还给客户端</li></ol><h3>2 渲染模板</h3><h2>代码架构 &amp; 实现</h2><h3>web server部分</h3><p>/web</p><p>/../main.go</p><p>/../defs.go</p><p>/../handlers.go</p><p>/../ client.go (不同的，起到代理转发的作用。用户进到前端的时候，会做一些操作，前端会做一些<strong>代理</strong>的方式，把用户的request转成真正的api)</p><h3>web UI部分</h3><p>/template (普通的前端)</p><p>/../img</p><p>/../scripts</p><p>/../../home.js</p><p>/../home.html - 登录界面</p><p>/../userhome.html - 登录之后的界面</p><p><br /></p><h3>WEB服务器渲染页面</h3><blockquote><p>关键点：</p><p>POST在提交表单时的用法</p><p>处理api转发类请求</p><p>挂载静态资源</p></blockquote><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="9d5a985c-aba4-4270-956d-cf50b41ad91c" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>package main
+import (
+	"net/http"
+	"html/template"
+	"xxx/httprouter" // 为啥用它？因为虽然是渲染页面，但本质上还是一个request到后台，后台接受之后处理再返回给前台。
+					 // 只不过，在web UI部分,我们大部分返回的都是整个的html页面，而非json的消息或文件流。所以整个的原理是一样的。
+)
+
+func RegisterHandler() *httprouter.Router {
+	router := httprouter.New()
+
+
+	router.GET("/", homeHandler) // 主页
+	router.POST("/", homeHandler) // POST是提交表单过程中跳转的下一个页面
+	
+	router.GET("/userhome", userHomeHandler) // 用户页
+	router.POST("/", userHomeHandler)
+
+
+	router.POST("/api", apiHandler) // api转发类请求
+	
+	//	file server: 放静态文件的server
+	//	golang提供原生方法将url绑到文件夹作为file server。可以直接通过url引它
+	//	如下，我们的template文件夹，会挂到/statics/这个url下
+	router.ServeFiles("/statics/*filepath", http.Dir("./template")) 
+
+	return router	
+}
+
+func main() {
+	r := RegisterHandler()
+	http.ListenAndServe(":8080", r)
+}</pre></td></tr></table><h4>homeHandler</h4><p><a href="https://github.com/GeekHeros/go-streaming/blob/master/templates/home.html">html</a> 模板解析</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="b9d491b9-7a40-493a-8ba6-d57758a4d6bc" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>&lt;a href="#news">{{.Name}}&lt;/a> // .Name就是模板里需要替换掉的东西</pre></td></tr></table><p>handler里面，会把楼上的东东替换为我们想要的东西</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="6a6e3c0f-bfdd-4050-9804-f990dcb726a7" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>package main
+
+//	替换到模板上的传入结构体
+type HomePage struct {
+	Name string // 需要和模板中一一对应
+}
+
+func homeHandler(w http.ResponseWriter, r*http.Request, ps httprouter.Router) {
+	p := &amp;HomePage{Name: "azen"}
+	t, e := template.ParseFile("./template/home.html") // 工程中的相对/绝对路径问题
+	if e != nil {
+		log.Printf("Parsing 模板出错:%s", e)
+		return
+	}
+
+	t.Execute(w, p)
+	return
+}</pre></td></tr></table><h5>工程中的相对/绝对路径问题</h5><p>文件的相对路径或绝对路径，是以编译成的二进制可执行文件为主体视角，进行描述的。</p><p>我们编译成的二进制文件，会放到/bin文件夹下，所以我们的template文件也需要放到那个文件夹下。否则无法成功读取。</p><h5>template.ParseFile()</h5><p>把html文件，parse成模板引擎能理解的模板文件，而非初始的html文件</p><h5>t.Execute(w, p)</h5><ol><li>把模板和需要渲染到模板中的变量一起执行</li><li>把执行结果放到response writer中</li><li>通过response writer返回给前端，在客户端能展现出来</li></ol><h3>实现自动化部署脚本</h3><p>build.sh</p><p><strong>作用：</strong></p><ul style="list-style-type: square;"><li>用go编译web server</li><li>挪到web UI的文件夹下</li><li>把resource文件全部挪过去（包括template文件）</li></ul><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="c5790587-cf32-4a02-a732-fe20cdd190bc" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>#! /bin/bash
+
+#Build web UI
+cd $GOPATH/src/xxxxxx/video_server/web
+go install
+cp $GOPATH/bin/web $GOPATH/bin/video_server_web_ui/web
+cp -R $GOPATH/src/xxxxx/video_server/templates $GOPATH/bin/video_server_web_ui</pre></td></tr></table><p><strong>提示：</strong>需要提前把文件夹创建好，否则cp指令会报错</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="9e027493-d4ff-43a3-ba2c-233544f7c662" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>#起服务
+cd $GOPATH/bin/video_server_web_ui
+./web</pre></td></tr></table><p>以上，直接访问:8080端口，就可以看到模板了。</p><p><strong>好处：</strong>修改了web的静态资源之后，不需要重启服务，只需要执行脚本重新部署下就好。</p><h4>homehandler之身份验证</h4><p>进到这个页面的时候，有两个情况</p><p>visitor模式 - 访客</p><ul style="list-style-type: square;"><li>展示注册页面</li></ul><p>user模式 - 已登录</p><ul style="list-style-type: square;"><li>重定向到user-home页面</li></ul><h5>使用session/cookie判断用户是登录用户</h5><p><strong>思路</strong>：每次进到这个页面，读一下cookie，有木有sessionID和userName</p><ul style="list-style-type: square;"><li>有：302跳转</li><li>无：停留在注册页面</li></ul><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="7d889559-f392-4216-9fe5-27ac75dbc748" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>func homeHandler(w http.ResponseWriter, r *http.Request, ...) {
+...
+	cname, err1 := r.Cookie("username")
+	sid, err1 := r.Cookie("session")
+
+	if err1 != nil || err2 != nil {
+		// 返回登录/注册页面
+	}
+
+	if len(cname.Value) != 0 &amp;&amp; len(sid.Value) != 0 { // 非生产环境的，减少了判断。生产：判断存在、判断用户匹配
+		http.Redirect(w, r, "/userhome", http.StatusFound) // 302
+		// 楼上的url，是相对url，不带host的
+	}
+...
+}</pre></td></tr></table><h4>userHomeHandler</h4><p>和之前的比较像，但是session校验流程和之前的相反。</p><p>userHomePage，大部分情况下是通过表单提交过来的 - 因为是homePage的下一个页面，一般是点击「登录」，发个POST请求过来的</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="22f51fb8-dfad-4d42-8a0f-802fed386da4" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>func UserPage struct {
+	Name string
+}
+
+func userHomeHandler(w http.ResponseWriter, r*http.Request, ps httprouter.Router) {
+	//	判断cookie里有木有session和username
+	//	和上面一样就不写了
+	//	如果xxx重定向到"/"
+	
+	fname := r.FormValue("username") // 这里直接读表单里的username，此处不判断用户是否合法
+									 // 检查是否合法会放到客户端提交表单的时候，通过调api来判断是否合法，提交过来的都是合法的
+									 // 原因：减少web server的逻辑处理能力，在处理能力上做到解耦，利于服务化解耦的理念和工程实践
+									 //	写「前后端分离」的时候，尽量把和「业务」相关的内容放到后端 - api service
+									 //「业务相关」不大的逻辑判断和填充，放到大前端的web service里面
+	
+	var p *UserPage
+	if len(cname.Value) != 0 {
+		p = &amp;UserPage{Name: cname.Value} // 已登录，就直接拿cookie里的cname
+	} else if len(fname) != 0 {
+		p = &amp;UserPage{Name: fname} // 没登录，从表单提交的里面读
+	}
+
+	t, e := template.ParseFiles("./templates/userhome.html")
+	if e != nil {
+		log.Printf("Parsing userhome.html error: &amp;s", e)
+		return
+	}
+
+	e.Excute(w, p)
+}</pre></td></tr></table><p>提示：</p><p>知识点在于：从表单里读数据、web重定向</p><p>表单提交、用户验证部分内容，后面详说</p><p>以上：模板引擎使用知识点完成。</p><h3>代理与转发模块</h3><h4>api转发模块</h4><p><strong>前置条件</strong>：构造api转发的统一规范</p><p>所有三种API（POST、GET、DELETE）：归并为一种，进行统一处理</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="48626bd7-90f1-469b-b699-8782f79d504e" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>type ApiBody struct {
+	Url string `json:"url"` // 必有
+	Method string `json: "method"`  // 必有
+	ReqBody string `json: "req_body"`  // POST请求必有
+}
+
+...</pre></td></tr></table><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="976992d6-1d5e-40fd-84f5-c306622f9121" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>func apiHandler(w http.ResponseWriter, r*http.Request, ps httprouter.Router) {
+	if r.Method != http.MethodPost {  // 一定要是POST请求才符合我们的规范，否则抛错
+		re, _ := json.Marshal(ErrorRequestNotRecognized) // 返回一个异常
+		io.WriteString(w, string(re))
+		return
+	}
+
+	res, _ := ioutil.ReadAll(r.Body)
+	apibody := &amp;ApiBody{}
+	if err := json.Unmarshal(res, apibody); err != nil {
+		re, _ := json.Marshal(ErrorRequestBodyParseFailed) // 返回一个异常
+		io.WriteString(w, string(re))
+		return
+	}
+
+	//	真正处理Request
+	request(apibody, w, r)
+	derfer r.Body.Close() // 为了安全而Close - Request在退完之前可能会留在栈里
+}</pre></td></tr></table><h5>client.go - 用来代理client发送真正的request</h5><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="b48788b2-628d-41c9-9b3d-3850def76461" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>var httpClient *http.httpClient
+
+func init() {
+	httpClient = &amp;http.Client{}
+}
+
+func request(b *ApiBody, w http.ResponseWriter, r*http.Request) {
+	var resp *http.Response
+	var err error
+
+	// 分别处理GET、POST、DELETE
+	switch b.Method {
+	case http.MethodGet:
+		req, _ := http.NewRequest("GET", b.Url, nil) // method, url, body-get为nil
+		req.Header = r.Header
+		resp, err = httpClient.Do(req)
+		if err != nil {
+			log.Printf(err)
+			return
+		}
+		normalResponse(w, resp)
+
+	case http.MethodPost:
+		req, _ := http.NewRequest("POST", b.Url, bytes.NewBuffer([]byte(b.ReqBody))) // method, url, body-get为nil
+		req.Header = r.Header
+		resp, err = httpClient.Do(req)
+		if err != nil {
+			log.Printf(err)
+			return
+		}
+
+		normalResponse(w, resp)
+
+	case http.MethodDelete:
+		req, _ := http.NewRequest("Delete", b.Url, nil) // method, url, body-get为nil
+		req.Header = r.Header
+		resp, err = httpClient.Do(req)
+		if err != nil {
+			log.Printf(err)
+			return
+		}
+
+		normalResponse(w, resp)
+
+	default:
+		w.WriteHeader(http.StatusBadRequest)
+		io.WriteString(w, "Bad api request")
+	}
+}
+
+
+func normalResponse(w http.ResponseWriter, r*http.Response) { // r用来写入真的response
+	res, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		re, _ := json.Marshal(ErrorInternalFaluts)
+		w.WriteHeader(500)
+		io.WriteString(w, string(re))
+		return
+	}
+
+
+	w.WriterHeader(r.StatusCode)
+	io.WriteString(w, string(res))
+}</pre></td></tr></table><p>以上，api转发结束</p><h4>Proxy代理</h4><p><strong>api转发问题</strong>：处理不了一些原生的http请求（如upload传文件，如果透传的话，文件放不到body里面）</p><p><strong>直接调用问题</strong>：跨域资源共享</p><p><strong>proxy作用</strong>：直接把8080调用的api，转成9000调用的api</p><p>如：<a href="http://xxxxxx:8080/upload/:vid-id">http://xxxxxx:8080/upload/:vid-id</a> web的server端会调用xxx:9000/upload/:vid-id</p><p>在功能上完成了跨域访问</p><p><br /></p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="8ab4ff5a-950c-4b21-9456-26c85d9473f5" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>// web-server端
+router.POST("upload/:vid-id", proxyHandler)</pre></td></tr></table><h5>proxyHandler</h5><p>几个重要的东东：</p><ul style="list-style-type: square;"><li>net/url</li><li>net/http/httputil（提供了很有用的http的api，但又不是http的标准api）</li></ul><p><br /></p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="41acdb71-c475-4646-9531-60d5a5a9be14" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>func proxyHandler(w http.ResponseWriter, r*http.Request, ps httprouter.Router) {
+	// url parse出来
+	u, _ := url.Parse("http://127.0.0.1:9000/") // 这个生产环境应该写到可下发的配置里面，而不是hard code.
+	proxy := httputil.NewSingleHostReverseProxy(u)
+	proxy.ServeHTTP(w, r)
+}</pre></td></tr></table><h6>NewSingleHostReverseProxy() <a href="http://docs.studygolang.com/pkg/net/http/httputil/#NewSingleHostReverseProxy">文档</a></h6><ol><li>高效的做域名替换，后面的路径不会改变</li><li>没有修改头里面的内容</li><li>我们在这里做了一个转发，自己写代理的时候，也可以有这个函数做代理，不会对原生的request做侵入式的改变。</li></ol><p><br /></p><p>如上，web server端逻辑结束。</p><p><br /></p><p>项目中剩下的内容讲解：前端逻辑和后端逻辑串联</p>
+        <p>&nbsp;</p>
+    
+</div>
+
+
+    </div>
+
+    
+  </body>
+</html>
