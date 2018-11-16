@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>细胞的作战实验室</title>
+    <title>FE on 细胞的作战实验室</title>
     <link>http://azen.me/code/fe/</link>
-    <description>Recent content on 细胞的作战实验室</description>
+    <description>Recent content in FE on 细胞的作战实验室</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Wed, 17 Oct 2018 00:00:00 +0000</lastBuildDate>

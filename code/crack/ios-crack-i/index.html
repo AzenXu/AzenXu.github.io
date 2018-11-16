@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="//gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.46-DEV" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>1逆向 - 环境准备 &middot; 细胞的作战实验室</title>
+
+  
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/print.css" media="print">
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/poole.css">
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/syntax.css">
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/hyde.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Abril+Fatface|PT+Sans:400,400i,700">
+
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+  
+  <link href="" rel="alternate" type="application/rss+xml" title="细胞的作战实验室" />
+
+  
+</head>
+
+  <body class=" ">
+  <div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <a href="http://azen.me/"><h1>细胞的作战实验室</h1></a>
+      <p class="lead">
+      Power by <a href="http://hugo.spf13.com">hugo</a>
+      </p>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li><a href="http://azen.me/">Home</a> </li>
+      <li><a href="/code/fe/"> FE </a></li><li><a href="/code/crack/"> iOS逆向 </a></li><li><a href="/code/micro/"> 微服务 </a></li>
+    </ul>
+
+    <p>&copy; 2018. All rights reserved. </p>
+  </div>
+</div>
+
+    <div class="content container">
+    <div class="post">
+  <h1>1逆向 - 环境准备</h1>
+  <span class="post-date">Tue, May 1, 2018</span>
+  <p>&nbsp;</p>         <h1>Cydia</h1><p>越狱之后的苹果商店</p><p>作者：Jay Freeman - 免费版周杰伦...(阿婆主ID: saurik)</p><p><img class="confluence-embedded-image confluence-external-resource" height="250" src="http://img.daker.wang/wiki/1542377445266.png" data-image-src="http://img.daker.wang/wiki/1542377445266.png"></p><p>上一张照片膜拜下...越狱开发的领袖人物</p><p>Cydia上软件的作者是他的，都可以放心食用~</p><h2>Cydia安装东西</h2><p>一般是用来安装插件和主题的，安装的软件格式是<strong>deb格式</strong></p><p>deb包是用apt进行管理的</p><p>安装东西方法：</p><ol><li>添加软件源</li><li>进入软件源，找到对应的软件开始安装</li></ol><h2>SpringBoard</h2><p>就是iOS操作系统的桌面</p><p><img class="confluence-embedded-image confluence-external-resource" height="68" src="http://img.daker.wang/wiki/1542377521682.png" data-image-src="http://img.daker.wang/wiki/1542377521682.png"></p><h2>常用工具安装</h2><h3>Apple File Conduit &quot;2&quot;</h3><p>保证可以访问iOS设备的文件系统</p><h3>AppSync Unified</h3><p>绕过系统验证，随便安装破解的ipa包</p><h3>iFile</h3><p>在iPhone上访问文件系统</p><h2>Cydia安装失败</h2><p>使用离线安装</p><ol><li>下载deb格式安装包</li><li>把相关的deb包拖到 iPhone中，路径：/var/root/Media/Cydia/AutoInstall</li><li>重启手机</li></ol><h1>判断当前设备是否越狱</h1><p>思路：判断当前设备有木有安装Cydia</p><p>Cydia路径： <img class="confluence-embedded-image confluence-external-resource" height="40" src="http://img.daker.wang/wiki/1542377551586.png" data-image-src="http://img.daker.wang/wiki/1542377551586.png"></p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="c059a533-7c3c-4da8-8f07-009d71e32d90" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>BOOL isJailBreak = [[NSFileManager defaultMananger] fileExistsAtPath@"/Applications/Cydia.app"];</pre></td></tr></table><h1>逆向环境搭建</h1><h2>效率工具安装</h2><h3>Alfred</h3><p>基本用法: find 文件名 （功能与spolight相似）</p><p>WorkFlow文档：<a href="https://www.alfredapp.com/help/workflows/">https://www.alfredapp.com/help/workflows/</a></p><h3>XtraFinder</h3><h3>iTerm2</h3><h3>Go2Shell</h3><h2>SSH连接iPhone</h2><p>目的: 通过ssh连接到iPhone</p><h3>基本概念</h3><h4>SSH</h4><p>安全外壳协议 - 仅仅是一个协议，木有实现</p><p><img class="confluence-embedded-image confluence-external-resource" height="250" src="http://img.daker.wang/wiki/1542377586399.png" data-image-src="http://img.daker.wang/wiki/1542377586399.png"></p><p>作用：防止网络嗅探，防止DNS欺骗</p><ul style="list-style-type: square;"><li>Client: mac</li><li>Server: iPhone</li></ul><p>说明：使用TCP协议通讯，需要确保iPhone和Mac在同一个局域网下... 其实有方案可以远程登录，需要用到域名解析<a href="http://kittenyang.com/homeassistant_practice_01/">参考</a></p><h5>SSH配置文件</h5><p>路径: etc/ssh</p><p>客户端配置文件: ssh_config</p><p>服务端配置文件: sshd_config</p><h5>SSH通讯过程</h5><ol><li>建立安全连接(验证连接是安全的)<ol><li>验证服务器是想要连接的(防止通过伪造ip地址的方式冒充服务器进行攻击) - 服务器告诉客户端他是谁<ol><li>服务端提供自己的身份证明<ol><li>服务端(iPhone)公钥和私钥<ol><li>公钥: /etc/ssh/ssh_host_rsa_key.pub</li><li>私钥: /etc/ssh/ssh_host_rsa_key</li></ol></li><li>服务器发送公钥给客户端</li><li>客户端(初次登录)拿到公钥，存到~/.ssh/know_hosts中<ol><li><img class="confluence-embedded-image confluence-external-resource" height="58" src="http://img.daker.wang/wiki/1542377622639.png" data-image-src="http://img.daker.wang/wiki/1542377622639.png"></li><li>这串东东是客户端根据服务端传过来的公钥计算出来的</li><li>如果这串东东和服务端的公钥匹配，yes即可<ol><li>服务端的公钥信息: 可以从服务端的/etc/ssh/ssh_host_rsa_key.pub中看到</li><li><img class="confluence-embedded-image confluence-external-resource" height="34" src="http://img.daker.wang/wiki/1542377668123.png" data-image-src="http://img.daker.wang/wiki/1542377668123.png"></li></ol></li><li>yes之后，公钥就存储到client中，know_hosts会更新<br /><ol><li><img class="confluence-embedded-image confluence-external-resource" height="26" src="http://img.daker.wang/wiki/1542377704990.png" data-image-src="http://img.daker.wang/wiki/1542377704990.png"></li><li>这串和服务端中看到的一致，说明公钥是正确的，服务端是我们的服务端</li></ol></li></ol></li><li>客户端第二次连接<ol><li>如果公钥不一样<ol><li><img class="confluence-embedded-image confluence-external-resource" height="149" src="http://img.daker.wang/wiki/1542377736469.png" data-image-src="http://img.daker.wang/wiki/1542377736469.png"></li><li>提醒可能遭遇了中间人攻击</li><li>其他情况: 如果本地有两台服务器，IP一样，但是公钥不一样...<ol><li>方案一: 删掉know_hosts中之前的记录</li><li>方案二: ssh-keygen -R IP地址</li></ol></li></ol></li><li>如果公钥一致，就会直接连接</li></ol></li></ol></li></ol></li></ol></li><li>客户端认证<ol><li>两种常用的客户端认证方式<ol><li>基于密码的客户端认证<ol><li><img class="confluence-embedded-image confluence-external-resource" height="100" src="http://img.daker.wang/wiki/1542377767514.png" data-image-src="http://img.daker.wang/wiki/1542377767514.png"></li><li>认证成功则登录成功</li><li>弊端:<ol><li>麻烦</li><li>不太安全</li></ol></li></ol></li><li>基于密钥的客户端认证(默认的认证方式)<ol><li>特点：<ol><li>安全</li><li>方便</li></ol></li><li>环境搭建<ol><li>客户端把公钥存到服务端<ol><li><img class="confluence-embedded-image confluence-external-resource" height="100" src="http://img.daker.wang/wiki/1542377796847.png" data-image-src="http://img.daker.wang/wiki/1542377796847.png"></li></ol></li><li>登录认证<ol><li>通过公私钥对信息进行加解密，以进行身份认证</li></ol></li></ol></li><li>实现<ol><li>客户端生成密钥对<ol><li>命令：ssh-keygen</li><li>结果：生成了id_rsa私钥和id_rsa.pub公钥</li></ol></li><li>将公钥追加到授权文件的尾部<ol><li>命令：ssh-copy-id root@服务端IP地址</li></ol></li><li>服务端文件权限配置<ol><li>命令：<ol><li>chmod 755 ~/.ssh</li><li>chome 644 ~/.ssh/authorized_keys</li></ol></li></ol></li></ol></li></ol></li></ol></li></ol></li><li>数据传输<ol><li>文件拷贝: scp 本地路径 服务端IP:路径</li></ol></li></ol><h5>22端口</h5><p>  21：FTP</p><p>  80：HTTP</p><p>  22：SSH/TCP</p><p>mac通过ssh连接，默认连接到了iPhone的22端口</p><h5>USB-SSH连接</h5><p>SSH默认通过TCP连接两端的22端口</p><p>可以通过mac的usbmuxd这个服务程序，将mac的数据通过USB传输到iPhone</p><ul style="list-style-type: square;"><li>路径/System/Library/PrivateFrameworks/MobileDevice.framework/Resources</li><li><img class="confluence-embedded-image confluence-external-resource" height="250" src="http://img.daker.wang/wiki/1542377862795.png" data-image-src="http://img.daker.wang/wiki/1542377862795.png"></li><li>此服务开机自启动</li></ul><p>方案</p><p><img class="confluence-embedded-image confluence-external-resource" height="144" src="http://img.daker.wang/wiki/1542377891428.png" data-image-src="http://img.daker.wang/wiki/1542377891428.png"></p><ol><li>让SSH端口连接到本机的某个端口(如: 38438端口)</li><li>438端口通过usbmuxd映射到iPhone22端口</li></ol><p>实现</p><ol><li>端口映射：python tcprelay.py -t 22:38438  (脚本文件见下方压缩包) <ol><li>脚本参数用法 手机端口号:要连接到的mac端口号</li><li>上面一句的意思：把mac的38438和iPhone的22端口连接起来，之后所有发给mac 38438的数据，都会通过usbmuxd转发给手机线上连接的另一台设备的22端口</li><li>注: 需要使用Python2.7运行</li></ol></li><li>ssh到本地38438：ssh root@localhost -p 38438</li><li>直接在.ssh/config中写好配置，使用 ssh 别名  连接到手机</li></ol><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="a66900a8-3b0c-4612-8045-bb65fc279ef9" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>Host yoe # 对，这个就是我的iPhone的别名...
+  HostName localhost
+  IdentityFile ~/.ssh/yoe_id_rsa
+  Port 38438
+  User root</pre></td></tr></table><p><a style="letter-spacing: 0.0px;" href="http://res.daker.wang/usbmuxd.zip">usbmuxd.zip</a></p><p> <a href="http://res.daker.wang/Keyword%20-%20SSH.alfredworkflow">Keyword - SSH.alfredworkflow</a></p><h4>OpenSSH</h4><p>SSH的开源实现</p><h4>SSL</h4><p>Secure Sockets Layer - 为网络数据在传输层进行加密，是一种安全协议</p><h4>OpenSSL</h4><p>SSL的开源实现</p><p>OpenSSH的数据加密就是使用OpenSSL完成的</p><h4>SSH和SSL的关系</h4><p><img class="confluence-embedded-image confluence-external-resource" height="166" src="http://img.daker.wang/wiki/1542377929341.png" data-image-src="http://img.daker.wang/wiki/1542377929341.png"></p><h3>连接方法</h3><ol><li>iPhone安装OpenSSH</li><li>ssh root@iPhoneIP地址</li><li>默认密码：alpine</li></ol><h3>iOS账号系统</h3><h4><strong>root</strong></h4><ul style="list-style-type: square;"><li>最高权限账户 - root#</li><li>$HOME(用户文件夹)地址 /var/root</li></ul><h4><strong>mobil</strong></h4><ul style="list-style-type: square;"><li>普通权限账户 - mobil$</li><li>不能操作系统级别文件(无法在根路径下创建文件)</li><li>$HOME /var/mobile</li></ul><p><strong>注意</strong>：修改账户密码</p><h3>其他注意</h3><p>iOS下，terminal默认不支持中文输入</p><p>方案: <span class="s2">新建一个</span><span class="s3">~/.inputrc</span><span class="s2">文件，文件内容是</span></p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="2b654411-b17f-4908-88c3-9b9408078b44" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre># 不将中文字符转化为转义序列
+set convert-meta off 
+# 允许向终端输出中文
+set output-meta on
+# 允许向终端输入中文
+set meta-flag on 
+set input-meta on
+
+
+</pre></td></tr></table><p><span class="s2"><br /></span></p><p class="li1"><br /></p>
+        <p>&nbsp;</p>
+    
+</div>
+
+
+    </div>
+
+    
+  </body>
+</html>
