@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="//gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.46-DEV" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>2逆向 - Cycript &middot; 细胞的作战实验室</title>
+
+  
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/print.css" media="print">
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/poole.css">
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/syntax.css">
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/hyde.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Abril+Fatface|PT+Sans:400,400i,700">
+
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+  
+  <link href="" rel="alternate" type="application/rss+xml" title="细胞的作战实验室" />
+
+  
+</head>
+
+  <body class=" ">
+  <div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <a href="http://azen.me/"><h1>细胞的作战实验室</h1></a>
+      <p class="lead">
+      Power by <a href="http://hugo.spf13.com">hugo</a>
+      </p>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li><a href="http://azen.me/">Home</a> </li>
+      <li><a href="/code/fe/"> FE </a></li><li><a href="/code/crack/"> iOS逆向 </a></li><li><a href="/code/micro/"> 微服务 </a></li>
+    </ul>
+
+    <p>&copy; 2018. All rights reserved. </p>
+  </div>
+</div>
+
+    <div class="content container">
+    <div class="post">
+  <h1>2逆向 - Cycript</h1>
+  <span class="post-date">Wed, May 2, 2018</span>
+  <p>&nbsp;</p>         <blockquote><p>想知道当前运行的App的布局、实例方法、都是啥</p><p>想动态给当前App增加一些羞羞的东东？</p><p>...</p><p>嗯呐，就是这一节，你来对了！</p></blockquote><p><img class="editor-inline-macro" src="/plugins/servlet/confluence/placeholder/macro?definition=e3RvYzptYXhMZXZlbD0zfQ&amp;locale=zh_CN&amp;version=2" data-macro-name="toc" data-macro-id="ab9da972-0e07-41e4-b054-db263f9abdff" data-macro-parameters="maxLevel=3" data-macro-schema-version="1"></p><h1>概述</h1><p>文档：<a href="http://www.cycript.org">Cycript</a></p><p>是Objective-C++、ES6、Java等语法的混合物</p><p>用途：探索、修改、调试正在运行的mac/iOS App</p><p>安装：Cydia安装</p><p>退出：ctl + D</p><table class="wysiwyg-macro" data-macro-name="info" data-macro-id="706deba5-b434-4bcf-aea5-39d366351bd8" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2luZm99&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="RICH_TEXT"><tr><td class="wysiwyg-macro-body"><p>一般会通过Cycript测试函数，确定函数的作用之后，再编写Tweak修改程序</p></td></tr></table><p><br /></p><h2>基本用法</h2><h3>调试进程</h3><p>cycript -p <strong>进程ID(或名称)</strong></p><table class="wysiwyg-macro" data-macro-name="info" data-macro-id="c244e96c-4969-484a-a3a9-f8233a90264e" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2luZm99&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="RICH_TEXT"><tr><td class="wysiwyg-macro-body"><pre>获取进程ID和进程名称方法
+ps指令(process status)  需Cydia安装adv-cmds</pre><pre>用法
+ps -A 列出所有进程
+ps -A|grep 关键词</pre><img class="confluence-embedded-image confluence-external-resource" height="102" src="http://img.daker.wang/wiki/1542448677860.png" data-image-src="http://img.daker.wang/wiki/1542448677860.png"></td></tr></table><p>示例：cycript -p momo_ios</p><p>此时已经在监听这个app了</p><h4>常用语法</h4><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="1b8c7dd2-6a32-408e-b9d9-f243967876a8" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>[UIApplication shareApplication] // 获取application对象内存地址  等价 UIApp
+
+var app = UIApp.keyWindow // 获取keyWindow并赋值给变量app
+
+UIApp.keyWindow.rootViewController // 获取rootViewController
+
+var redView = [[UIView alloc] initWithFrame:CGRectMake(0,0,100,100)]; // 暂时报错，之后解决
+
+// 获取对象 - 通过内存地址来访问
+#内存地址.rootViewController
+
+// ObjectiveC.classes - 当前App加载的要用到的所有类
+
+
+// 查看对象的所有成员变量(示例：查看UIApp的)
+*UIApp
+
+//  递归打印view的所有子控件(同LLDB)
+// po self.view
+// po [self.view recursiveDescription] // 递归打印所有子View
+// [UIApp.keyWindow recursiveDescription].toString // 转为String格式
+终极格式：UIApp.keyWindow.recursiveDescription().toString()
+
+// choose(UIViewController)  - 挑选内存中的所有控制器对象</pre></td></tr></table><h1>封装cy文件</h1><h2>用法举例 - MJTool</h2><p><a href="https://github.com/CoderMJLee/mjcript">gayhub地址</a></p><p><a class="confluence-link" href="/download/attachments/66919/mjcript.cy?version=1&amp;modificationDate=1524368174365&amp;api=v2" data-linked-resource-container-id="66919" data-linked-resource-container-version="13" data-linked-resource-content-type="application/octet-stream" data-linked-resource-id="66932" data-linked-resource-version="1" data-linked-resource-type="attachment" data-linked-resource-default-alias="mjcript.cy" data-base-url="http://wiki.daker.wang">mjcript.cy</a></p><p>放置脚本到/usr/lib/cycript0.9/MJTool.cy</p><p>导入库：@import MJTool</p><p>问题：希望找到当前登录界面</p><p>一般方法需要一层一层拿</p><p><img class="confluence-embedded-image confluence-external-resource" height="250" src="http://img.daker.wang/wiki/1542448903365.png" data-image-src="http://img.daker.wang/wiki/1542448903365.png"></p><p>封装方法：MJTopVc() - 直接拿到最前面的VC</p><p>想知道点击登录的时候调用了那个方法</p><p>打印所有的对象方法名  MJInstanceMethodNames(控制器)</p><p>拿到方法名之后，可以直接调用这个控制器的方法</p><p>想在登录之前做些事情，可以Hook出这个函数，注入一些方法</p><h3>希望找出文本框是谁，做些处理</h3><p>先在文本框中输入一些东东</p><p>MJSubviews(目标View) - 拿到所有子View，通过输入的东东定位到是哪一个</p><ul><li>找到「登录」按钮并删掉<ul><li>方法：通过「登录」两个字，找到这个控件（需要转码再找）</li><li>调用这个东东的 removeFromSuperview</li><li>这里只是把控件从内存中干掉了</li></ul></li></ul><h3>用法演示</h3><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="46669c71-326c-4703-a4ca-7b2373ab8b39" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>Yoe:~ root# cycript -p QuickMud-mobile
+cy# @import mjcript
+{}
+cy# MJAppId
+@"com.mkjump.mud"
+cy# MJDocPath
+@"/var/mobile/Containers/Data/Application/E5CA2CEA-CF2F-4D39-8684-6762EA60D1F6/Documents"
+cy# MJCachesPath
+@"/var/mobile/Containers/Data/Application/E5CA2CEA-CF2F-4D39-8684-6762EA60D1F6/Library/Caches"
+cy# MJAppPath
+@"/var/containers/Bundle/Application/BE34C307-5FBE-4707-A502-7AEDEA4F74BD/QuickMud-mobile.app"
+cy# MJKeyWin
+function (){return UIApp.keyWindow}
+cy# MJKeyWin()
+#"&lt;UIWindow: 0x146db14d0; frame = (0 0; 320 568); gestureRecognizers = &lt;NSArray: 0x146ec7810>; layer = &lt;UIWindowLayer: 0x146db1410>>"
+cy# MJRootVc()
+#"&lt;RootViewController: 0x146ed47a0>"
+cy# MJFrontVc()
+#"&lt;RootViewController: 0x146ed47a0>"
+cy# var mapView = [[MKMapView alloc] init]
+#"&lt;MKMapView: 0x148ea1c80; frame = (0 0; 0 0); clipsToBounds = YES; layer = &lt;CALayer: 0x14b223910>>"
+cy# mapView.frame = MJRectMake(50,50,100,100)
+{0:{0:50,1:50},1:{0:100,1:100}}
+cy# [#0x146ed47a0.view addSubview:mapView]
+cy# MJLoadFramework('MapKit')   # 如果当前App木有导入某动态库，可以通过这个东东加载进来
+#"NSBundle &lt;/System/Library/Frameworks/MapKit.framework> (loaded)"
+
+
+// 找所有的子VC们
+#"&lt;RootViewController: 0x146ed47a0>"
+cy# MJChildVcs(#0x146ed47a0)
+"&lt;RootViewController 0x146ed47a0>, state: appeared, view: &lt;CCEAGLView 0x146ed1300>"
+cy# MJChildVcs(MJRootVc())
+"&lt;RootViewController 0x146ed47a0>, state: appeared, view: &lt;CCEAGLView 0x146ed1300>"</pre></td></tr></table><p><br /></p><h2>封装举例</h2><h3>基本写法</h3><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="8a492890-bbbd-4d9e-abf6-2fd1284bbab2" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>// test.cy
+
+(function(exports) {
+  // 函数内部定义的函数是私有的，需要导出
+  // function sum(a, b) {
+  //   return a + b;
+  // }
+  // function minus(a, b) {
+  //   return a - b;
+  // }
+
+  // 利用exports导出方法
+  // 之后，可以使用 文件名.方法名() 使用这个脚本的方法
+  exports.sum = function sum(a, b) {
+      return a + b;
+  };
+
+  exports.minus = function minus(a, b) {
+      return a - b;
+  };
+
+
+  //  这样写，是定义了一个全局的函数。
+  //  调用的时候不用exports.docPath(), 直接docPath()即可
+  docPath = functino() {
+	return NSSearchPathForDirectoriesInDomains(NSMocumentDirectory, NSUserDomainMask, YES)[0];
+  }
+})(exports);</pre></td></tr></table><h4>基本用法</h4><p>把写好的脚本文件拷贝到iOS中路径： <img class="confluence-embedded-image confluence-external-resource" width="186" src="http://img.daker.wang/wiki/1542448936886.png" data-image-src="http://img.daker.wang/wiki/1542448936886.png"></p><p>cy环境下，@import test.cy</p><h4>封装总结</h4><ol><li>.cy是Cycript的脚本文件</li><li>exports用于向外提供一个接口</li></ol><h4>脚本放置封装路径</h4><p>作者的脚本放置路径： <img class="confluence-embedded-image confluence-external-resource" width="186" src="http://img.daker.wang/wiki/1542448968187.png" data-image-src="http://img.daker.wang/wiki/1542448968187.png"></p><p>原因：用域名来起文件夹，保证文件是唯一的</p><p>引用方式: @import com.azen.test 每一个.之间都是一个文件夹 如果放在了cycript0.9中，直接import就好</p><h1>使用技巧</h1><table class="wrapped confluenceTable"><colgroup><col /><col /><col /><col /><col /></colgroup><tbody><tr><th class="numberingColumn confluenceTh"><br /></th><th class="confluenceTh">场景</th><th class="confluenceTh">API</th><th colspan="1" class="confluenceTh">示例</th><th class="confluenceTh">备注</th></tr><tr><td class="numberingColumn confluenceTd">1</td><td class="confluenceTd">知道对象在内存中，但不知道地址</td><td class="confluenceTd"><span>choose指令</span></td><td colspan="1" class="confluenceTd">choose(SBScreenShotter)</td><td class="confluenceTd">并非每次都一定能找到</td></tr></tbody></table>
+        <p>&nbsp;</p>
+    
+</div>
+
+
+    </div>
+
+    
+  </body>
+</html>

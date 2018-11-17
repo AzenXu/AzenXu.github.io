@@ -6,10 +6,27 @@
     <description>Recent content in iOS逆向 on 细胞的作战实验室</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 01 May 2018 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 02 May 2018 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="http://azen.me/code/crack/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>2逆向 - Cycript</title>
+      <link>http://azen.me/code/crack/ios-crack-ii/</link>
+      <pubDate>Wed, 02 May 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://azen.me/code/crack/ios-crack-ii/</guid>
+      <description>&amp;nbsp;
+想知道当前运行的App的布局、实例方法、都是啥
+想动态给当前App增加一些羞羞的东东？
+...
+嗯呐，就是这一节，你来对了！
+概述文档：Cycript
+是Objective-C++、ES6、Java等语法的混合物
+用途：探索、修改、调试正在运行的mac/iOS App
+安装：Cydia安装</description>
+    </item>
     
     <item>
       <title>1逆向 - 环境准备</title>
