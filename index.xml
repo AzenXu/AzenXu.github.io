@@ -431,6 +431,19 @@ REST是一种设计风格，不是任何架构标准RESTful API通常使用HTTP�
     </item>
     
     <item>
+      <title>3Teak - 原理</title>
+      <link>http://azen.me/code/crack/ios-crack-viii/</link>
+      <pubDate>Tue, 08 May 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://azen.me/code/crack/ios-crack-viii/</guid>
+      <description>&amp;nbsp;
+基本流程编写代码make编译 theos中出现了一个动态库，说明make操作，把编写的代码生成了一个动态库。
+make package把动态库打包成了一个deb文件
+make package：这个指令，是包含了make中的「编译」功能的，所以以后不用make，直接make package就好
+make install远程登录手机(根据环境变量)传递deb包数据Cydia安装deb包Cydia把里面的动态库拿出来plist文件：里面存了靶App的Bundle ID 放到这里这个东东提供了安装机制影响靶App点击靶App的时候，Cydia Substrate会看文件夹下的plist文件写的bundle ID，一旦发现bundle ID匹配，就会把动态库载入内存，对靶App的内存代码(二进制代码)进行修改。</description>
+    </item>
+    
+    <item>
       <title>2Tweak - 很小的小练习</title>
       <link>http://azen.me/code/crack/ios-crack-vii/</link>
       <pubDate>Mon, 07 May 2018 00:00:00 +0000</pubDate>
