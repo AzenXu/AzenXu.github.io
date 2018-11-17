@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="//gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.46-DEV" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>4逆向 - Mach-O &middot; 细胞的作战实验室</title>
+
+  
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/print.css" media="print">
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/poole.css">
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/syntax.css">
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/hyde.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Abril+Fatface|PT+Sans:400,400i,700">
+
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+  
+  <link href="" rel="alternate" type="application/rss+xml" title="细胞的作战实验室" />
+
+  
+</head>
+
+  <body class=" ">
+  <div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <a href="http://azen.me/"><h1>细胞的作战实验室</h1></a>
+      <p class="lead">
+      Power by <a href="http://hugo.spf13.com">hugo</a>
+      </p>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li><a href="http://azen.me/">Home</a> </li>
+      <li><a href="/code/fe/"> FE </a></li><li><a href="/code/crack/"> iOS逆向 </a></li><li><a href="/code/micro/"> 微服务 </a></li>
+    </ul>
+
+    <p>&copy; 2018. All rights reserved. </p>
+  </div>
+</div>
+
+    <div class="content container">
+    <div class="post">
+  <h1>4逆向 - Mach-O</h1>
+  <span class="post-date">Fri, May 4, 2018</span>
+  <p>&nbsp;</p>         <h1>App从开发到安装到手机的过程</h1><p>开发完毕 → 编译、链接、签名 → .app包</p><blockquote><p>app包的内容</p><p>图片、bundle、nib、Mach-O文件(写的代码编译成了这个文件，就是iOS的可执行文件)</p></blockquote><p>→ 压缩(改后缀，变成ipa文件)</p><p>上传 &amp; 安装阶段</p><p>→ 上传到App Store → 用户安装</p><p>→ 直接通过PP助手之类的安装</p><h1>逆向App的思路</h1><p>点击按钮做了什么事情？</p><ol><li>做界面分析<ol><li>Reveal - UI层面</li><li>Cycripe - 控制器层面</li></ol></li><li>代码分析<br /><ol><li>对Mach-O做静态分析(类似于打开Xcode，一行行看代码)<br /><ol><li>class-dump</li><li>MachOView</li></ol></li><li>动态调试<ol><li>对运行中的App进行代码调试<ol><li>LLDB</li><li>debugserver</li></ol></li></ol></li></ol></li><li>代码编写 &amp; 注入<ol><li>编写注入</li><li>重新签名</li></ol></li></ol><h1>class-dump</h1><p>作用：把Mach-O文件的class信息dump出来，生成对应的.h头文件</p><p>使用：</p><ul style="list-style-type: square;"><li>class-dump复制到mac的/usr/local/bin目录，才能在terminal中使用<ul style="list-style-type: square;"><li>原因：指令在环境变量里配置，bin目录是变量中默认的配置路径</li><li>指令：class-dump -H mach-o文件路径 -o 目标文件夹路径</li><li>结果：所有头文件都导出来了</li></ul></li></ul><h1>代码的编译过程</h1><blockquote><p>代码如何变成Mach-O的呢？</p></blockquote><p>1.代码编译成汇编</p><p>2.汇编编译成机器语言</p><p>3.class-dump分析机器语言，使用符号表生成头文件</p><p><br /></p><h2>如何看.m文件中的代码呢？</h2><p>1.机器语言 → 汇编语言(没问题，同一种架构平台下，汇编指令和机器码一一对应) - 反编译</p><p>2.汇编 → OC语言(不可以完全反推敲回去，汇编指令和OC代码之间为一对多)</p><ul style="list-style-type: square;"><li>汇编中的注释为 → ;</li><li>可以还原个大概：工具 - Hopper Disassmbler</li></ul><h3>Hopper Disassmbler</h3><h4>简介</h4><p>作用：把Mach-O转换为OC或Swift伪代码</p><p><img class="confluence-embedded-image confluence-external-resource" height="55" src="http://img.daker.wang/wiki/1542449204114.png" data-image-src="http://img.daker.wang/wiki/1542449204114.png"></p><p>第三个按钮可以看个大概的代码实现</p><p>第二个按钮可以看到方法之间的代码跳转</p><h4>使用举栗</h4><p>分析下UIKit的.m文件是如何实现的</p><p>UIKit的.m文件 → 已经编译成了一个Mach-O文件，在手机端放着</p><p>路径：</p><h5>动态库共享缓存</h5><p>释义：UIKit.framworks这些动态库，都打包放在缓存中</p><p>路径：/System/Library/Caches/com.apple.dyld/dyld_shared_cache_armX</p><blockquote><p>X: 代表Arm处理器的指令集架构</p><p>iPhone CPU 使用了ARM处理器</p><ol><li>处理器不一样，指令集不一样。<ol><li>armv6</li><li>armv7</li><li>armv7s</li><li>arm64</li></ol></li><li>指令集向下兼容</li></ol></blockquote><p>好处：节省内存</p><p>方案一：多个Mach-O方案</p><p><img class="confluence-embedded-image confluence-external-resource" height="211" src="http://img.daker.wang/wiki/1542449225429.png" data-image-src="http://img.daker.wang/wiki/1542449225429.png"></p><p>每一个Mach-O都有自己独立的描述信息，但是这两个文件的描述信息有很多是一样的</p><p>方案二：共享缓存，用一个文件承载多个动态库，可以起到压缩的作用</p><p><img class="confluence-embedded-image confluence-external-resource" height="208" src="http://img.daker.wang/wiki/1542449246985.png" data-image-src="http://img.daker.wang/wiki/1542449246985.png"></p><h5>加载动态库方案 - dyld程序</h5><p>当想要加载某个动态库的时候，会转发给dyld，dyld会去共享缓存中拿需要的动态库</p><p>dyld这个东东已开源</p><h5>抽取动态库共享缓存中的某个库</h5><p>方案：dsc_extractor - dsc抽取器</p><h5>UIKit Mach-O分析</h5><p>分析下UIViewController的init方法</p><p><img class="confluence-embedded-image confluence-external-resource" height="173" src="http://img.daker.wang/wiki/1542449268630.png" data-image-src="http://img.daker.wang/wiki/1542449268630.png"></p><h1>Mach-O</h1><p>Mach Object的缩写，是Mac/iOS上存储程序、库的标准格式</p><p>属于Mach-O格式的文件类型</p><p>可以在xnu中查</p><h2>xnu - 内核</h2><p>从内核角度看源码，可以看到底层数据结构</p><p>关联概念 - FreeBSD Unix Linux XNU Darwin MacOSX</p><h2>Mach-O常用类型</h2><p>下面的文件都是Mach-O格式，只是文件类型不一样</p><p>可执行文件只是Mach-O的一种。</p><h3>MH_OBJECT类型</h3><h4>目标文件 - .o文件</h4><p>编译完成的目标文件</p><p><img class="confluence-embedded-image confluence-external-resource" height="180" src="http://img.daker.wang/wiki/1542449289177.png" data-image-src="http://img.daker.wang/wiki/1542449289177.png"></p><p>编译 → 生成.o文件 → 链接 → 可执行文件</p><h4>静态库文件 - .a </h4><p>静态库文件.a就是多个.o文件合并在一起</p><h4>证明方法</h4><p>file test.o</p><p><img class="confluence-embedded-image confluence-external-resource" height="30" src="http://img.daker.wang/wiki/1542449308003.png" data-image-src="http://img.daker.wang/wiki/1542449308003.png"></p><h3>MH_EXECUTE类型 - 可执行文件</h3><p><img class="confluence-embedded-image confluence-external-resource" height="49" src="http://img.daker.wang/wiki/1542449330013.png" data-image-src="http://img.daker.wang/wiki/1542449330013.png"></p><p><img class="confluence-embedded-image confluence-external-resource" height="213" src="http://img.daker.wang/wiki/1542449350040.png" data-image-src="http://img.daker.wang/wiki/1542449350040.png"></p><p>你看，生成的Test.app这个东东，，Linking中说明了，他是一个Executable类型的Mach-O文件</p><h3>MH_DYLIB类型 - 动态库文件</h3><p>.dylib</p><p>.frameword/xx</p><h3>MH_DYLINKER类型 - 动态链接编辑器</h3><p>/usr/lib/dyld - 上面说的从动态库共享缓存中抽取动态库的文件</p><h3>MH_DSYM - 存储着二进制文件的符号信息的文件</h3><p>作用：帮助分析Crash信息</p><h3>Xcode可生成的Mach-O文件</h3><p><img class="confluence-embedded-image confluence-external-resource" height="93" src="http://img.daker.wang/wiki/1542449367037.png" data-image-src="http://img.daker.wang/wiki/1542449367037.png"></p><ul style="list-style-type: square;"><li>Excutable</li><li>Dynamic Libary</li><li>Bundle</li><li>Static Library</li><li>Relocatable Object File - 一些目标文件</li></ul><h2>Universal Binary(通用二进制文件)</h2><p>定义：同时适用多种架构的二进制文件</p><p>我们开发的app，需要同时支持arm64和arm32，说明是一个通用二进制文件</p><p><img class="confluence-embedded-image confluence-external-resource" height="109" src="http://img.daker.wang/wiki/1542449388141.png" data-image-src="http://img.daker.wang/wiki/1542449388141.png"></p><p>使用Xcode控制生成的通用二进制文件</p><p><img class="confluence-embedded-image confluence-external-resource" height="250" src="http://img.daker.wang/wiki/1542449407598.png" data-image-src="http://img.daker.wang/wiki/1542449407598.png"></p><p>可以通过设置Architectures中的内容和Valid Architectures两个选项求交集，即为最终可支持的架构类型。</p><h3>特点</h3><ul style="list-style-type: square;"><li>因为要支持多架构的代码，通用二进制文件会比单独支持一个的大一些</li><li>由于两种架构有一些共同资源，所以并不会达到单一版本的两倍那么大</li><li>由于执行过程中，只调用一部分代码，运行起来不需要额外的内存</li><li>因为文件比原来的大，也被成为「胖纸二进制文件」Fat Binary</li></ul><h3>把通用二进制文件拆开 - 瘦身</h3><blockquote><p>如果我也能这么方便的瘦身多好...</p></blockquote><p>指令：lipo 文件 -thin 要抽出的架构名称 -output 目标路径</p><h1>Mach-O的基本结构</h1><p><a href="https://developer.apple.com/library/content/documentation/DeveloperTools/Conceptual/MachOTopics/0-Introduction/introduction.html">官方文档</a></p><h2>结构描述 - 三段组成</h2><p><img class="confluence-embedded-image confluence-external-resource" height="250" src="http://img.daker.wang/wiki/1542449431036.png" data-image-src="http://img.daker.wang/wiki/1542449431036.png"></p><h3>Header</h3><p>放文件类型、目标架构类型</p><h3>Load commands</h3><p>描述文件在<strong>虚拟内存</strong>中有哪些<strong>逻辑结构和布局</strong></p><p>内存是分段管理</p><ul style="list-style-type: square;"><li>数据段</li><li>代码段</li><li>栈段</li></ul><p>...</p><p>一个Mach-O载入内存的时候，是由许多段组成的。Load Command就是用来描述将来有哪些段，每个段有多大，段的顺序是怎样的</p><p>类似是一个指针，指向了真实Data所在的地方</p><h3>Data</h3><p>放真实数据</p><h2>查看Mach-O</h2><p>otool: 查看Mach-O特定部分和段的内容</p><p>otool：苹果自带的</p><h3>GUI工具: MachOView</h3><h2>dyld和Mach-O</h2><p>Mach-O如何载入内存呢？是通过dyld - </p><p>dyld可以加载的Mach-O类型：</p><ul style="list-style-type: square;"><li>可执行文件</li><li>DYLIB</li><li>BUNDLE</li></ul><p>dyld在加载的时候，一旦发现Mach-O的类型是这三种类型，则会加载。</p><p>dyld是一种Mach-O，他的作用是加载其他三种类型的Mach-O</p><p><br /></p><p><span style="color: rgb(255,0,0);"><strong>装载之后才如何一步步执行到main函数的呢？且听下回分解</strong></span></p><p><br /></p>
+        <p>&nbsp;</p>
+    
+</div>
+
+
+    </div>
+
+    
+  </body>
+</html>

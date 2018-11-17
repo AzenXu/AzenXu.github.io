@@ -6,10 +6,23 @@
     <description>Recent content in iOS逆向 on 细胞的作战实验室</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 03 May 2018 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Fri, 04 May 2018 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="http://azen.me/code/crack/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>4逆向 - Mach-O</title>
+      <link>http://azen.me/code/crack/ios-crack-iv/</link>
+      <pubDate>Fri, 04 May 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://azen.me/code/crack/ios-crack-iv/</guid>
+      <description>&amp;nbsp;
+App从开发到安装到手机的过程开发完毕 → 编译、链接、签名 → .app包
+app包的内容
+图片、bundle、nib、Mach-O文件(写的代码编译成了这个文件，就是iOS的可执行文件)
+→ 压缩(改后缀，变成ipa文件)</description>
+    </item>
     
     <item>
       <title>3逆向 - Reveal</title>
