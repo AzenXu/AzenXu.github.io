@@ -431,6 +431,20 @@ REST是一种设计风格，不是任何架构标准RESTful API通常使用HTTP�
     </item>
     
     <item>
+      <title>5Tweak - 可用的辅助小语法(Logos语法)</title>
+      <link>http://azen.me/code/crack/ios-crack-x/</link>
+      <pubDate>Thu, 10 May 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://azen.me/code/crack/ios-crack-x/</guid>
+      <description>&amp;nbsp;
+Weak里%有关的语法
+%ctor &amp;amp; %dtorctor：加载动态库的时候调用，做初始化操作
+dtor：收尾的操作
+%new在方法前加 %new，说明是一个新定义的方法
+如果这样写了make package的时候还是找不到，可以用@interface .</description>
+    </item>
+    
+    <item>
       <title>4Tweak - 多文件开发</title>
       <link>http://azen.me/code/crack/ios-crack-ix/</link>
       <pubDate>Wed, 09 May 2018 00:00:00 +0000</pubDate>
