@@ -6,10 +6,27 @@
     <description>Recent content in iOS逆向 on 细胞的作战实验室</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 10 May 2018 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Fri, 11 May 2018 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="http://azen.me/code/crack/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>6Tweak - 批量hook函数添加log - logify.pl</title>
+      <link>http://azen.me/code/crack/ios-crack-xi/</link>
+      <pubDate>Fri, 11 May 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://azen.me/code/crack/ios-crack-xi/</guid>
+      <description>&amp;nbsp;
+希望追踪用户点击某个按钮之后的调用逻辑
+如：微信点击红包之后，进行抢红包，想知道点击之后和哪个方法有关？
+小例子希望找到微信点击红包之后，进行了哪些操作
+猜测应该是调用了当前VC的某个方法，实现了抢红包操作的
+首先找到所在VCClass-dump出来头文件找到我们找的头文件BaseMsgControllerViewController
+但是方法很多，我们怎么知道需要调用的是哪个方法呢？
+找到我们需要的相关方法方案一：Hook所有方法把它所有的方法都hook一遍，打印一下，就可以追踪每一个方法了。观察分析控制台的log，就知道了。
+问题：麻烦！:如果需要打印参数更麻烦: 如果函数有返回值，还希望打印下返回值...</description>
+    </item>
     
     <item>
       <title>5Tweak - 可用的辅助小语法(Logos语法)</title>

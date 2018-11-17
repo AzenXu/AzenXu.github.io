@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="//gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.46-DEV" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>6Tweak - 批量hook函数添加log - logify.pl &middot; 细胞的作战实验室</title>
+
+  
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/print.css" media="print">
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/poole.css">
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/syntax.css">
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/hyde.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Abril+Fatface|PT+Sans:400,400i,700">
+
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+  
+  <link href="" rel="alternate" type="application/rss+xml" title="细胞的作战实验室" />
+
+  
+</head>
+
+  <body class=" ">
+  <div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <a href="http://azen.me/"><h1>细胞的作战实验室</h1></a>
+      <p class="lead">
+      Power by <a href="http://hugo.spf13.com">hugo</a>
+      </p>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li><a href="http://azen.me/">Home</a> </li>
+      <li><a href="/code/fe/"> FE </a></li><li><a href="/code/crack/"> iOS逆向 </a></li><li><a href="/code/micro/"> 微服务 </a></li>
+    </ul>
+
+    <p>&copy; 2018. All rights reserved. </p>
+  </div>
+</div>
+
+    <div class="content container">
+    <div class="post">
+  <h1>6Tweak - 批量hook函数添加log - logify.pl</h1>
+  <span class="post-date">Fri, May 11, 2018</span>
+  <p>&nbsp;</p>         <p>希望追踪用户点击某个按钮之后的调用逻辑</p><p>如：微信点击红包之后，进行抢红包，想知道点击之后和哪个方法有关？</p><h1>小例子</h1><p>希望找到微信点击红包之后，进行了哪些操作</p><p>猜测应该是调用了当前VC的某个方法，实现了抢红包操作的</p><h2>首先找到所在VC</h2><p><img class="confluence-embedded-image confluence-external-resource" height="250" src="http://img.daker.wang/wiki/1542453262993.png" data-image-src="http://img.daker.wang/wiki/1542453262993.png"></p><h2>Class-dump出来头文件</h2><p>找到我们找的头文件BaseMsgControllerViewController</p><p><img class="confluence-embedded-image confluence-external-resource" height="250" src="http://img.daker.wang/wiki/1542453296177.png" data-image-src="http://img.daker.wang/wiki/1542453296177.png"></p><p><strong>但是方法很多，我们怎么知道需要调用的是哪个方法呢？</strong></p><h2>找到我们需要的相关方法</h2><h3>方案一：Hook所有方法</h3><p><img class="confluence-embedded-image confluence-external-resource" height="250" src="http://img.daker.wang/wiki/1542453316984.png" data-image-src="http://img.daker.wang/wiki/1542453316984.png"></p><p>把它所有的方法都hook一遍，打印一下，就可以追踪每一个方法了。观察分析控制台的log，就知道了。</p><p>问题：麻烦！:如果需要打印参数更麻烦: 如果函数有返回值，还希望打印下返回值...</p><p>好处：可以覆盖所有方法</p><h3>方案二：%log</h3><p><img class="confluence-embedded-image confluence-external-resource" height="111" src="http://img.daker.wang/wiki/1542453336900.png" data-image-src="http://img.daker.wang/wiki/1542453336900.png"></p><p>问题：只能一个一个函数hook</p><h3>方案三：logify.pl - 将一个头文件快速转换成已经包含打印信息的xm文件</h3><p>用法</p><table class="wysiwyg-macro" data-macro-name="info" data-macro-id="6ea64536-57eb-491c-838d-04f1f6c43c96" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2luZm99&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="RICH_TEXT"><tr><td class="wysiwyg-macro-body"><p>logify.pl 头文件 &gt; BaseVC.xm</p></td></tr></table><p><br /><img class="confluence-embedded-image confluence-external-resource" height="250" src="http://img.daker.wang/wiki/1542453369985.png" data-image-src="http://img.daker.wang/wiki/1542453369985.png"></p><p>所有方法都自动hook并log了</p><p>配置下Makefile文件，把生成的logify文件编译一下</p><p><img class="confluence-embedded-image confluence-external-resource" height="192" src="http://img.daker.wang/wiki/1542453387898.png" data-image-src="http://img.daker.wang/wiki/1542453387898.png"></p><p>编译报错，因为头文件例的不少类没包含进来，它不认识</p><p>解决：</p><p>声明一下就好了</p><p><img class="confluence-embedded-image confluence-external-resource" height="122" src="http://img.daker.wang/wiki/1542453407431.png" data-image-src="http://img.daker.wang/wiki/1542453407431.png"></p><p>之后还会报一些错，它报不认识的能删的都删了，协议什么的不需要的也都干掉，就好。</p><h2>通过log寻找对应方法</h2><p><img class="confluence-embedded-image confluence-external-resource" height="250" src="http://img.daker.wang/wiki/1542453439546.png" data-image-src="http://img.daker.wang/wiki/1542453439546.png"></p><p>在手机上进行操作，打印出来不少东东..可以通过BaseMsgContentViewController这个控制器作为关键字搜索关键方法调用信息</p><p>按着方法去看..</p><p><br /></p>
+        <p>&nbsp;</p>
+    
+</div>
+
+
+    </div>
+
+    
+  </body>
+</html>
