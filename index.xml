@@ -431,6 +431,17 @@ REST是一种设计风格，不是任何架构标准RESTful API通常使用HTTP�
     </item>
     
     <item>
+      <title>1TweakStartUp - 喜马拉雅FM去广告</title>
+      <link>http://azen.me/code/crack/ios-crack-vi/</link>
+      <pubDate>Sun, 06 May 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://azen.me/code/crack/ios-crack-vi/</guid>
+      <description>&amp;nbsp;
+思路Reveal查看广告控件处理方案一：用cycript把这个控件干掉问题：不彻底，只是在内存中干掉了方案二：把这个View的init方法的实现hook掉，直接return nil;通过class-dump找到这个View的头文件hook的简单实现Theos工具作用：实现比较简单的hook操作
+使用原理编写的hook代码 → deb插件 → 安装到手机上 → 修改宿主函数</description>
+    </item>
+    
+    <item>
       <title>5逆向 - 脱壳(Qiao)</title>
       <link>http://azen.me/code/crack/ios-crack-v/</link>
       <pubDate>Sat, 05 May 2018 00:00:00 +0000</pubDate>

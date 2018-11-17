@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="//gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.46-DEV" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>1TweakStartUp - 喜马拉雅FM去广告 &middot; 细胞的作战实验室</title>
+
+  
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/print.css" media="print">
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/poole.css">
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/syntax.css">
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/hyde.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Abril+Fatface|PT+Sans:400,400i,700">
+
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+  
+  <link href="" rel="alternate" type="application/rss+xml" title="细胞的作战实验室" />
+
+  
+</head>
+
+  <body class=" ">
+  <div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <a href="http://azen.me/"><h1>细胞的作战实验室</h1></a>
+      <p class="lead">
+      Power by <a href="http://hugo.spf13.com">hugo</a>
+      </p>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li><a href="http://azen.me/">Home</a> </li>
+      <li><a href="/code/fe/"> FE </a></li><li><a href="/code/crack/"> iOS逆向 </a></li><li><a href="/code/micro/"> 微服务 </a></li>
+    </ul>
+
+    <p>&copy; 2018. All rights reserved. </p>
+  </div>
+</div>
+
+    <div class="content container">
+    <div class="post">
+  <h1>1TweakStartUp - 喜马拉雅FM去广告</h1>
+  <span class="post-date">Sun, May 6, 2018</span>
+  <p>&nbsp;</p>         <h1>思路</h1><ol><li>Reveal查看广告控件<ol><li><img class="confluence-embedded-image confluence-external-resource" height="250" src="http://img.daker.wang/wiki/1542450081991.png" data-image-src="http://img.daker.wang/wiki/1542450081991.png"></li></ol></li><li>处理<ol><li>方案一：用cycript把这个控件干掉<ol><li>问题：不彻底，只是在内存中干掉了</li></ol></li><li>方案二：把这个View的init方法的实现hook掉，直接return nil;<ol><li>通过class-dump找到这个View的头文件<ol><li><img class="confluence-embedded-image confluence-external-resource" height="250" src="http://img.daker.wang/wiki/1542450129671.png" data-image-src="http://img.daker.wang/wiki/1542450129671.png"></li></ol></li></ol></li></ol></li></ol><h1>hook的简单实现</h1><h2>Theos工具</h2><p>作用：实现比较简单的hook操作</p><h3>使用原理</h3><p>编写的hook代码 → deb插件 → 安装到手机上 → 修改宿主函数</p><h3>安装方法</h3><h4>安装签名工具ldid</h4><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="bdf351c2-b5cd-460d-913b-5eb9a3629483" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>$ brew install ldid</pre></td></tr></table><h4>添加theos路径到环境变量</h4><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="b54b677d-40c1-41e6-9451-e84e0fef9f3a" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>export THEOS=~/theos
+export PATH=$THEOS/bin:$PATH # 把命令路径扔给PATH环境变量 #不能PATH=$THEOS/bin这样写，会把之前的PATH都覆盖掉了 :为分隔符 $PATH 引用以前的环境变量</pre></td></tr></table><h4>下载theos</h4><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="7964562c-9c58-4c68-9943-c8b132dbbbea" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>git clone --recursive https://github.com/theos/theos.git $THEOS  // 递归clone依赖的库
+</pre></td></tr></table><h3>基本使用</h3><h4>前置 - 环境变量配置</h4><p><img class="confluence-embedded-image confluence-external-resource" width="486" src="http://img.daker.wang/wiki/1542450158798.png" data-image-src="http://img.daker.wang/wiki/1542450158798.png"></p><p>需要使用nic.pl这个文件创建一个项目 - 记得确认PATH环境变量已经配好了</p><h4>使用</h4><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="f235b176-08ef-4977-9cd2-2a9f964563c8" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>➜  Desktop nic.pl
+NIC 2.0 - New Instance Creator
+------------------------------
+  [1.] iphone/activator_event
+  [2.] iphone/application_modern
+  [3.] iphone/cydget
+  [4.] iphone/flipswitch_switch
+  [5.] iphone/framework
+  [6.] iphone/ios7_notification_center_widget
+  [7.] iphone/library
+  [8.] iphone/notification_center_widget
+  [9.] iphone/preference_bundle_modern
+  [10.] iphone/tool
+  [11.] iphone/tweak
+  [12.] iphone/xpc_service
+Choose a Template (required): 11
+Project Name (required): Momotweak
+Package Name [com.yourcompany.momotweak]: com.azen.momotweak
+Author/Maintainer Name [Azen Xu]:
+[iphone/tweak] MobileSubstrate Bundle filter [com.apple.springboard]: com.maimemo.ios.momo // 此处需要填写目标Hook app的bundle id
+[iphone/tweak] List of applications to terminate upon installation (space-separated, '-' for none) [SpringBoard]:
+Instantiating iphone/tweak in momotweak/...
+Done.</pre></td></tr></table><h4>修改文件</h4><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="48076571-4321-4074-87e0-6482cb2219cc" data-macro-parameters="language=bash" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGU6bGFuZ3VhZ2U9YmFzaH0&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre># makefile文件，需要指定下关联手机的端口号 和 IP号
+
+
+export THEOS_DEVICE_IP=127.0.0.1 # 配置连接手机的端口
+export THEOS_DEVICE_PORT=38438 # 配置连接手机的端口
+
+include $(THEOS)/makefiles/common.mk
+
+TWEAK_NAME = Momotweak
+Momotweak_FILES = Tweak.xm
+
+include $(THEOS_MAKE_PATH)/tweak.mk
+
+after-install::
+	install.exec "killall -9 SpringBoard" # 安装之后，重启SpringBoard</pre></td></tr></table><p><img class="confluence-embedded-image confluence-external-resource" height="192" src="http://img.daker.wang/wiki/1542450183099.png" data-image-src="http://img.daker.wang/wiki/1542450183099.png"></p><p>hook目标方法</p><h4>编译tweak文件</h4><p>make</p><h4>打包成deb</h4><p>make package</p><h4>安装</h4><p>make install # 会自动将deb通过makefile中指定的环境变量IP:PORT安装到手机上</p><h1>报错与解决</h1><table class="wrapped confluenceTable"><colgroup><col /><col /></colgroup><tbody><tr><td class="confluenceTd">Can't locate IO/Compress/<a href="http://lzma.pm/">Lzma.pm</a></td><td class="confluenceTd"><a href="https://www.jianshu.com/p/866c7418d506">https://www.jianshu.com/p/866c7418d506</a></td></tr></tbody></table>
+        <p>&nbsp;</p>
+    
+</div>
+
+
+    </div>
+
+    
+  </body>
+</html>
