@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="//gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.46-DEV" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>7逆向 - 动态调试 &middot; 细胞的作战实验室</title>
+
+  
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/print.css" media="print">
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/poole.css">
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/syntax.css">
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/hyde.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Abril+Fatface|PT+Sans:400,400i,700">
+
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+  
+  <link href="" rel="alternate" type="application/rss+xml" title="细胞的作战实验室" />
+
+  
+</head>
+
+  <body class=" ">
+  <div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <a href="http://azen.me/"><h1>细胞的作战实验室</h1></a>
+      <p class="lead">
+      Power by <a href="http://hugo.spf13.com">hugo</a>
+      </p>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li><a href="http://azen.me/">Home</a> </li>
+      <li><a href="/code/fe/"> FE </a></li><li><a href="/code/crack/"> iOS逆向 </a></li><li><a href="/code/micro/"> 微服务 </a></li>
+    </ul>
+
+    <p>&copy; 2018. All rights reserved. </p>
+  </div>
+</div>
+
+    <div class="content container">
+    <div class="post">
+  <h1>7逆向 - 动态调试</h1>
+  <span class="post-date">Sat, May 12, 2018</span>
+  <p>&nbsp;</p>         <h1>概念</h1><p>→ 把程序运行起来，通过打断点、打印等方式，查看参数、返回值、函数的调用流程</p><p>→ 可以进入函数，一步一步的看看函数的调用是什么样的</p><p>→ 逆向的过程中也经常要这么干..</p><p>→ 比如，我们已经知道抢红包的方法是哪个方法了，那最好可以在那个方法里打一个断点，调试下参数、函数之间的调用关系等</p><h1>调试原理</h1><p>Xcode的调试器：LLDB</p><p><strong>全称：low level debuger</strong></p><p>为什么Xcode可以调试手机上run的程序呢？</p><p><img class="confluence-embedded-image confluence-external-resource" width="586" src="http://img.daker.wang/wiki/1542453847821.png" data-image-src="http://img.daker.wang/wiki/1542453847821.png"></p><p>原因：手机上有一个debugserver</p><p>LLDB传送指令给debugserver</p><p>如：po self  → 这些指令是运行在手机上的</p><p>debugserver接收到指令，传给App，App将结果回传给debugserver</p><p>LLDB如何传输指令给debugserver呢？通过手机线呀...</p><h1>相关概念</h1><h2>编译器</h2><p>GCC (GNU这个组织开发的)</p><p>LLVM (基于GCC升级的)</p><p><img class="confluence-embedded-image confluence-external-resource" width="486" src="http://img.daker.wang/wiki/1542453878176.png" data-image-src="http://img.daker.wang/wiki/1542453878176.png"></p><p>目前(5.0以后)，苹果用的LLVM9.0编译器，是自己的。</p><p>很久很久以前，用的是GCC(4.1左右)</p><h2>动态调试器</h2><p>GDB (GNU这个组织开发的)</p><p>LLDB (基于GDB升级的)</p><h1>找找Debugserver</h1><p>一开始在Xcode中，手机第一次连接Xcode，会被自动安装这个文件</p><h2>Xcode LLDB的局限性</h2><p>只能调试直接通过Xcode Run起来的App</p><h1>动态调试任意App</h1><p><img class="confluence-embedded-image confluence-external-resource" width="586" src="http://img.daker.wang/wiki/1542453904704.png" data-image-src="http://img.daker.wang/wiki/1542453904704.png"></p><p>原理：在终端启动LLDB，建立终端和debugserver的连接</p><h2>步骤</h2><h3>debugserver连接App</h3><p>&gt; Xcode默认已经做好这两步连接了</p><p>&gt; 之前Xcode安装的DebugServer，权限不足，不能调试非Xcode安装的App</p><p>&gt; 需要重新签debugserver的权限</p><p>Debugserver在手机上的路径：Device/Developer/usr/bin</p><h4>做法</h4><h5>debugserve添加权限安装到手机上</h5><ol><li>debugserver拿到mac上</li><li><span class="inline-comment-marker" data-ref="a718d413-07a6-4911-b883-68de11b7fd65">ldid</span> -e debugserver debugderver.entitlements 导出权限文件，查看他的权限<ol><li>默认权限</li><li><img class="confluence-embedded-image confluence-external-resource" width="386" src="http://img.daker.wang/wiki/1542453923809.png" data-image-src="http://img.daker.wang/wiki/1542453923809.png"></li></ol></li><li>需要签的权限 get-task-allow task_for_pid-allow</li><li>重新签名 ldid -Sdebugserver.entitlements debugserver</li><li>把debugserver重新安装回手机<ol><li>问题：developer/usr/bin这个目录无法放入，没权限</li><li>解决：放入usr/bin目录中</li><li>好处：之后可以直接通过debugserver命令启动它</li></ol></li><li>给debugserver附加权限chmod 777 debugserver</li></ol><h5>让debugserve附加到某个App进程</h5><ol><li>debugserver *(代表主机地址): 端口号(手机的端口号) -a 进程名称或ID<ol><li>写端口号的原因：需要和LLDB进行交互的</li><li>debugserver *:25777 -a WeChat</li></ol></li></ol><h3>LLDB连接Debugserver</h3><ol><li>启动lldb：lldb</li><li>process connect connect://IP地址:端口(25777)<ol><li>我们之前使用了usbmuxd进行端口转发，以通过usb连接手机，此处依然可以。</li><li>tcprelay.pt -t 手机端口号:电脑的端口号<ol><li>此处监听成功<ol><li><img class="confluence-embedded-image confluence-external-resource" width="486" src="http://img.daker.wang/wiki/1542453949613.png" data-image-src="http://img.daker.wang/wiki/1542453949613.png"></li></ol></li><li>一旦连接成功，相当于下断点了，手机端无反应 - 其实更准确的说，一旦手机端启动debugserver，就开始无反应了。</li></ol></li></ol></li></ol><h3>LLDB调试指令</h3><table class="wrapped confluenceTable"><colgroup><col style="width: 81.0px;" /><col style="width: 341.0px;" /><col style="width: 117.0px;" /><col style="width: 49.0px;" /></colgroup><tbody><tr><th class="confluenceTh">指令</th><th class="confluenceTh">作用</th><th colspan="1" class="confluenceTh">示例</th><th colspan="1" class="confluenceTh">备注</th></tr><tr><td class="confluenceTd">c</td><td class="confluenceTd">跳过断点(resume)</td><td colspan="1" class="confluenceTd">c</td><td colspan="1" class="confluenceTd"><br /></td></tr><tr><td colspan="1" class="confluenceTd">n</td><td colspan="1" class="confluenceTd">step over</td><td colspan="1" class="confluenceTd"><br /></td><td colspan="1" class="confluenceTd"><br /></td></tr><tr><td colspan="1" class="confluenceTd">s</td><td colspan="1" class="confluenceTd">step into</td><td colspan="1" class="confluenceTd"><br /></td><td colspan="1" class="confluenceTd"><br /></td></tr><tr><td colspan="1" class="confluenceTd">finish</td><td colspan="1" class="confluenceTd">step out</td><td colspan="1" class="confluenceTd"><br /></td><td colspan="1" class="confluenceTd"><br /></td></tr><tr><td colspan="1" class="confluenceTd">help</td><td colspan="1" class="confluenceTd">查看指令用法</td><td colspan="1" class="confluenceTd">help breakpoint</td><td colspan="1" class="confluenceTd"><br /></td></tr><tr><td colspan="1" class="confluenceTd">breakpoint set</td><td colspan="1" class="confluenceTd">下断点</td><td colspan="1" class="confluenceTd"><p><br /></p></td><td colspan="1" class="confluenceTd"><br /></td></tr><tr><td colspan="1" class="confluenceTd"><span>breakpoint set -a 函数地址</span></td><td colspan="1" class="confluenceTd"><br /></td><td colspan="1" class="confluenceTd"><br /></td><td colspan="1" class="confluenceTd"><br /></td></tr><tr><td colspan="1" class="confluenceTd"><span>breakpoint set -n 函数名</span></td><td colspan="1" class="confluenceTd"><br /></td><td colspan="1" class="confluenceTd"><pre><span style="color: rgb(51,51,51);">breakpoint set -n &quot;-[ViewController touchesBegan:withEvent:]&quot; </span></pre></td><td colspan="1" class="confluenceTd"><br /></td></tr><tr><td colspan="1" class="confluenceTd"><p><span style="color: rgb(51,51,51);">breakpoint list</span></p></td><td colspan="1" class="confluenceTd">列出所有断点</td><td colspan="1" class="confluenceTd"><br /></td><td colspan="1" class="confluenceTd"><br /></td></tr><tr><td colspan="1" class="confluenceTd"><p><span style="color: rgb(51,51,51);">breakpoint disable/enable/delete </span><span style="color: rgb(51,51,51);"> </span><span style="color: rgb(51,51,51);">断点编号</span></p></td><td colspan="1" class="confluenceTd">禁用/启用/删除断点</td><td colspan="1" class="confluenceTd"><br /></td><td colspan="1" class="confluenceTd"><br /></td></tr><tr><td colspan="1" class="confluenceTd">image list</td><td colspan="1" class="confluenceTd"><p>列举当前进程中的所有模块（链接的库吧应该是...）</p></td><td colspan="1" class="confluenceTd">image list -o -f</td><td colspan="1" class="confluenceTd"><br /></td></tr></tbody></table>
+        <p>&nbsp;</p>
+    
+</div>
+
+
+    </div>
+
+    
+  </body>
+</html>

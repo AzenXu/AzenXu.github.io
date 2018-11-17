@@ -6,10 +6,24 @@
     <description>Recent content in iOS逆向 on 细胞的作战实验室</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 11 May 2018 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 12 May 2018 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="http://azen.me/code/crack/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>7逆向 - 动态调试</title>
+      <link>http://azen.me/code/crack/ios-crack-xii/</link>
+      <pubDate>Sat, 12 May 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://azen.me/code/crack/ios-crack-xii/</guid>
+      <description>&amp;nbsp;
+概念→ 把程序运行起来，通过打断点、打印等方式，查看参数、返回值、函数的调用流程
+→ 可以进入函数，一步一步的看看函数的调用是什么样的
+→ 逆向的过程中也经常要这么干..
+→ 比如，我们已经知道抢红包的方法是哪个方法了，那最好可以在那个方法里打一个断点，调试下参数、函数之间的调用关系等
+调试原理Xcode的调试器：LLDB</description>
+    </item>
     
     <item>
       <title>6Tweak - 批量hook函数添加log - logify.pl</title>
