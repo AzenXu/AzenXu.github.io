@@ -6,10 +6,21 @@
     <description>Recent content in iOS逆向 on 细胞的作战实验室</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 04 May 2018 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 05 May 2018 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="http://azen.me/code/crack/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>5逆向 - 脱壳(Qiao)</title>
+      <link>http://azen.me/code/crack/ios-crack-v/</link>
+      <pubDate>Sat, 05 May 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://azen.me/code/crack/ios-crack-v/</guid>
+      <description>&amp;nbsp;
+e问题：要分析一个安装到手机上的应用，需要找到手机上的ipa包
+找到iPhone上的安装包ps -A 枚举所有手机上的进程此处就是安装包的位置把安装包拿到macclass-dump、Hopper的时候，无法对改ipa包进行解析说明ipa被加密了加壳开发完一个app之后，打包成了ipa文件 → 上传到App Store(app store对ipa进行加壳操作 - 加密)</description>
+    </item>
     
     <item>
       <title>4逆向 - Mach-O</title>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="//gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.46-DEV" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>5逆向 - 脱壳(Qiao) &middot; 细胞的作战实验室</title>
+
+  
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/print.css" media="print">
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/poole.css">
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/syntax.css">
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/hyde.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Abril+Fatface|PT+Sans:400,400i,700">
+
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+  
+  <link href="" rel="alternate" type="application/rss+xml" title="细胞的作战实验室" />
+
+  
+</head>
+
+  <body class=" ">
+  <div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <a href="http://azen.me/"><h1>细胞的作战实验室</h1></a>
+      <p class="lead">
+      Power by <a href="http://hugo.spf13.com">hugo</a>
+      </p>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li><a href="http://azen.me/">Home</a> </li>
+      <li><a href="/code/fe/"> FE </a></li><li><a href="/code/crack/"> iOS逆向 </a></li><li><a href="/code/micro/"> 微服务 </a></li>
+    </ul>
+
+    <p>&copy; 2018. All rights reserved. </p>
+  </div>
+</div>
+
+    <div class="content container">
+    <div class="post">
+  <h1>5逆向 - 脱壳(Qiao)</h1>
+  <span class="post-date">Sat, May 5, 2018</span>
+  <p>&nbsp;</p>         <p>e问题：要分析一个安装到手机上的应用，需要找到手机上的ipa包</p><ol><li>找到iPhone上的安装包<ol><li>ps -A 枚举所有手机上的进程</li><li><img class="confluence-embedded-image confluence-external-resource" height="59" src="http://img.daker.wang/wiki/1542449596577.png" data-image-src="http://img.daker.wang/wiki/1542449596577.png"></li><li>此处就是安装包的位置</li></ol></li><li>把安装包拿到mac</li><li>class-dump、Hopper的时候，无法对改ipa包进行解析<ol><li><img class="confluence-embedded-image confluence-external-resource" height="250" src="http://img.daker.wang/wiki/1542449622971.png" data-image-src="http://img.daker.wang/wiki/1542449622971.png"></li><li>说明ipa被加密了</li></ol></li></ol><h1>加壳</h1><p>开发完一个app之后，打包成了ipa文件 → 上传到App Store(app store对ipa进行加壳操作 - 加密)</p><p>只要应用是从app store下载的，那应用一定是被加壳的</p><p><strong>定义</strong>：利用特殊的算法，对可执行文件的编码进行改变，这样拿到的可执行文件就不是之前的可执行文件了。</p><h3>有壳/无壳的处理区别</h3><p><strong>无壳</strong>：没被加壳的可执行文件 → (ldyd)直接装载到内存中</p><p><img class="confluence-embedded-image confluence-external-resource" height="132" src="http://img.daker.wang/wiki/1542449645733.png" data-image-src="http://img.daker.wang/wiki/1542449645733.png"></p><p><strong>有壳：</strong>加壳的可执行文件(不可直接执行,ldyd不认识它,无法直接装在到内存中)</p><p><img class="confluence-embedded-image confluence-external-resource" width="486" src="http://img.daker.wang/wiki/1542449675369.png" data-image-src="http://img.daker.wang/wiki/1542449675369.png"></p><p>加壳之后的文件，装载到内存中后，壳程序会执行解密操作。解密之后壳程序失去作用。</p><h1>脱壳</h1><p>两种方法：硬脱壳、动态脱壳</p><p><strong>硬脱壳：</strong>执行一个解密算法，直接脱壳到可执行文件</p><p><strong>动态脱壳</strong>：首先执行这个程序，让壳程序把可执行文件解密掉，然后从内存中dump出可执行文件</p><p><span style="color: rgb(255,0,0);"><strong>iOS的脱壳方案：硬脱壳</strong></span></p><h2>测验文件是否有壳</h2><p>方案一：Mach-O View</p><p>壳程序依然是个Mach-O文件，可以通过Mach-O View查看是否加密</p><p><img class="confluence-embedded-image confluence-external-resource" height="250" src="http://img.daker.wang/wiki/1542449702462.png" data-image-src="http://img.daker.wang/wiki/1542449702462.png"></p><p>ENCRYPTION_INFO中的Crypt ID 为非0，说明被加过密的。</p><p>方案二：otool -l app名称 | grep cryptid</p><h2>常用脱壳工具</h2><h3>Clutch</h3><p><a href="https://github.com/KJCracks/Clutch/releases">https://github.com/KJCracks/Clutch/releases</a></p><p><a class="confluence-link" href="/download/attachments/66960/Clutch?version=1&amp;modificationDate=1524406590304&amp;api=v2" data-linked-resource-container-id="66960" data-linked-resource-container-version="4" data-linked-resource-content-type="application/octet-stream" data-linked-resource-id="66968" data-linked-resource-version="1" data-linked-resource-type="attachment" data-linked-resource-default-alias="Clutch" data-base-url="http://wiki.daker.wang">Clutch</a></p><p>需要拿到手机上去</p><p>用法：Clutch -i  列出所有可脱壳操作</p><p><img class="confluence-embedded-image confluence-external-resource" width="486" src="http://img.daker.wang/wiki/1542449788919.png" data-image-src="http://img.daker.wang/wiki/1542449788919.png"></p><p>用法：Clutch -d ID</p><p><img class="confluence-embedded-image confluence-external-resource" width="486" src="http://img.daker.wang/wiki/1542449815508.png" data-image-src="http://img.daker.wang/wiki/1542449815508.png"></p><p>路径：/private/var 和 /var相同</p><p>结果：</p><p><img class="confluence-embedded-image confluence-external-resource" width="286" src="http://img.daker.wang/wiki/1542449838273.png" data-image-src="http://img.daker.wang/wiki/1542449838273.png"></p><h3>dumpdecrypted</h3><p>微信这个app，用Clutch无法脱壳成功，可以用这个东东</p><p>用法：</p><p>1.把dumpdecryped.dylib动态库放到手机中Terminal可以访问到的地方</p><p><img class="confluence-embedded-image confluence-external-resource" height="250" src="http://img.daker.wang/wiki/1542449865405.png" data-image-src="http://img.daker.wang/wiki/1542449865405.png"></p><p>2. <img class="confluence-embedded-image confluence-external-resource" height="33" src="http://img.daker.wang/wiki/1542449898934.png" data-image-src="http://img.daker.wang/wiki/1542449898934.png">+.app所在文件夹路径</p><p><br /></p>
+        <p>&nbsp;</p>
+    
+</div>
+
+
+    </div>
+
+    
+  </body>
+</html>
