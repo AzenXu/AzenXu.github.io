@@ -6,10 +6,25 @@
     <description>Recent content on 细胞的作战实验室</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 23 Feb 2019 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 05 Mar 2019 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="http://azen.me/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>React &amp; Redux基础知识补遗</title>
+      <link>http://azen.me/code/fe/react-redux-additional/</link>
+      <pubDate>Tue, 05 Mar 2019 00:00:00 +0000</pubDate>
+      
+      <guid>http://azen.me/code/fe/react-redux-additional/</guid>
+      <description>&amp;nbsp;
+0x0 React基础知识部分React的定位：视图层框架当紫色的组件，希望和右边灰色的组件通信的时候，如果只有React框架：
+需要把数据传到根节点，然后再分发（单向数据流）会造成大量冗余代码React把自己定位为「视图层框架」：
+只负责组件的渲染数据的传递、通信之类的东东，通过其他「数据层框架」来实现State、Props、render之间的关系当组件的state或props发生改变的时候，render函数就会重新执行父组件调render，子组件也会执行render优化：子组件实现shouldComponentUpdate(nextProps, nextState)方法，通过return true/false控制是否render生命周期方法componentWillReceiveProps执行时机
+组件初次挂载，不执行组件挂载后接收新Props，执行componentDidMount执行网络请求
+虚拟DOM虚拟DOM是RN的基础：
+虚拟DOM机制导致最终的渲染步骤非常少</description>
+    </item>
     
     <item>
       <title>笔记 - 不二旅行 &amp; 创业 - 第三次大课</title>

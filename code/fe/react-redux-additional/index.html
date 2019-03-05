@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="//gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.46-DEV" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>React &amp; Redux基础知识补遗 &middot; 细胞的作战实验室</title>
+
+  
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/print.css" media="print">
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/poole.css">
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/syntax.css">
+  <link type="text/css" rel="stylesheet" href="http://azen.me/css/hyde.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Abril+Fatface|PT+Sans:400,400i,700">
+
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+  
+  <link href="" rel="alternate" type="application/rss+xml" title="细胞的作战实验室" />
+
+  
+</head>
+
+  <body class=" ">
+  <div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <a href="http://azen.me/"><h1>细胞的作战实验室</h1></a>
+      <p class="lead">
+      Power by <a href="http://hugo.spf13.com">hugo</a>
+      </p>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li><a href="http://azen.me/">Home</a> </li>
+      <li><a href="/code/fe/"> FE </a></li><li><a href="/code/crack/"> iOS逆向 </a></li><li><a href="/code/micro/"> 微服务 </a></li>
+    </ul>
+
+    <p>&copy; 2019. All rights reserved. </p>
+  </div>
+</div>
+
+    <div class="content container">
+    <div class="post">
+  <h1>React &amp; Redux基础知识补遗</h1>
+  <span class="post-date">Tue, Mar 5, 2019</span>
+  <p><body class="mceContentBody aui-theme-default wiki-content fullsize">
+        <p>&nbsp;</p>         <h1>0x0 React基础知识部分</h1><h3>React的定位：视图层框架</h3><p><img class="confluence-embedded-image confluence-external-resource" height="250" src="http://img.daker.wang/wiki/1540360681797.png" data-image-src="http://img.daker.wang/wiki/1540360681797.png"></p><p>当紫色的组件，希望和右边灰色的组件通信的时候，如果只有React框架：</p><ul><li>需要把数据传到根节点，然后再分发（单向数据流）</li><li>会造成大量冗余代码</li></ul><p>React把自己定位为「视图层框架」：</p><ul><li>只负责组件的渲染</li><li>数据的传递、通信之类的东东，通过其他「数据层框架」来实现</li></ul><h3>State、Props、render之间的关系</h3><ul><li>当组件的state或props发生改变的时候，render函数就会重新执行</li><li>父组件调render，子组件也会执行render<ul><li>优化：子组件实现shouldComponentUpdate(nextProps, nextState)方法，通过return true/false控制是否render</li></ul></li></ul><h3>生命周期方法</h3><p><img class="confluence-embedded-image confluence-external-resource" height="250" src="http://img.daker.wang/wiki/1540361679965.png" data-image-src="http://img.daker.wang/wiki/1540361679965.png"></p><p>componentWillReceiveProps执行时机</p><ul><li>组件初次挂载，不执行</li><li>组件挂载后接收新Props，执行</li></ul><p>componentDidMount执行网络请求</p><h3>虚拟DOM</h3><p>虚拟DOM是RN的基础：</p><p>虚拟DOM机制导致最终的渲染步骤非常少</p><ol><li>把虚拟DOM这个JS对象渲染到DOM中，就是React</li><li>渲染到Native端生成一个Native组件，就是RN</li></ol><h3>setState异步执行</h3><p>setState是异步的，连续调用3次state，实际上会只进行一次DOM比对</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="c08309fe-5fca-48a7-bb06-098bd14ae28d" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>this.setState(() =&gt; ({
+  stateKey1: stateValue1,
+  stateKey2: stateValue2,
+}), () =&gt; {
+  // setState异步执行完成后的回调函数
+})</pre></td></tr></table><p><br /></p><h3>Diff算法</h3><p>differ算法的本质：</p><ul><li>同层比对：先比较根节点，如果根节点不一致，下面的节点就不比较了，全部重新渲染</li><li>减少了differ算法的执行次数</li></ul><p>虚拟dom会给每个dom一个key，diff的时候相同key的进行比对，提升比对性能</p><p><img class="confluence-embedded-image confluence-external-resource" width="386" src="http://img.daker.wang/wiki/1540361161807.png" data-image-src="http://img.daker.wang/wiki/1540361161807.png"></p><p>数组型元素，不能用index作为key值的原因：</p><ul><li>同一个元素，因为数组中插入了新元素，index不同导致每次key不相同，会造成无法准确比对的问题</li></ul><h3>Ref的使用</h3><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="e0b75bb8-3820-4b7c-b461-c82b3e85f0e7" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>// 设置
+&lt;input
+  ref={(input) =&gt; {this.input = input}}
+/&gt;</p>
+
+<p>// 使用
+xxxfunc() {
+  const value = this.input.value
+  &hellip;
+}</pre></td></tr></table><h3>列表拷贝</h3><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="9b00fbe8-e4b7-435f-afa8-3f78abf9b8b6" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>const newList = [&hellip;oldList]</pre></td></tr></table><h3>动画相关</h3><p>方法一：通过切换组件的className控制动画</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="6ee60109-2ffe-4b1c-a2bf-20b464619b32" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>.show {
+  opacity: 1;
+  transition: all 1s ease-in;
+}</p>
+
+<p>.hide {
+  opacity: 0;
+  transition: all 1s ease-in;
+}</p>
+
+<p>// 调用
+&hellip;
+  render() {
+    &lt;div className={this.state.show ? &lsquo;show&rsquo; : &lsquo;hide&rsquo;} /&gt;
+  }
+&hellip;</pre></td></tr></table><p>方法二：css3关键帧动画</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="feb0b4fe-6737-4a19-be32-388c1b1470b4" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>@key-frames hide-item {
+  0% {
+    opacity: 1;
+    color: red;
+  }
+  50% {
+    opacity: 0.5;
+    color: green;
+  }
+  100% {
+    opacity: 0;
+    color: blue;
+  }
+}</p>
+
+<p>.hide {
+  animation: hide-item 2s ease-in forwards; // forwards关键字：动画结束之后保存css样式
+}</pre></td></tr></table><p>说明：百分比，是以「时间」为维度的</p><p>方法三：<a href="https://reactcommunity.org/react-transition-group/">react-transition-group</a>实现动画</p><ul><li>提供了hook函数</li><li>通过js操纵动画</li><li>一般动画使用CSSTransion就好，进阶需求使用更底层的Transion组件</li></ul><h1>0x1 Redux基础知识部分</h1><h2>1 Redux的简单使用</h2><h3>Redux思路</h3><p>将数据放在公共的数据存储区Store中，需要传值的时候，修改Store中的内容</p><p><img class="confluence-embedded-image confluence-external-resource" height="250" src="http://img.daker.wang/wiki/1540441049119.png" data-image-src="http://img.daker.wang/wiki/1540441049119.png"></p><h3>Redux数据流</h3><p><img class="confluence-embedded-image confluence-external-resource" height="250" src="http://img.daker.wang/wiki/1540441130632.png" data-image-src="http://img.daker.wang/wiki/1540441130632.png"></p><h3>Redux使用的一般步骤</h3><p>创建store</p><p>/src/store/index.js</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="f919f329-9398-422c-9c60-17e655b34cac" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>import { createStore } from &lsquo;redux&rsquo;
+import reducer from &lsquo;./reducer&rsquo;</p>
+
+<p>const store = createStore(reducer,
+    window.<strong>REDUX_DEVTOOLS_EXTENSION</strong> &amp;&amp; window.<strong>REDUX_DEVTOOLS_EXTENSION_COMPOSE</strong> // 配置chrome devTools插件
+);</p>
+
+<p>export default store;</pre></td></tr></table><p>说明：</p><ol><li><p>chrome的redux中间件插件配置，文档：<a href="https://github.com/zalmoxisus/redux-devtools-extension">https://github.com/zalmoxisus/redux-devtools-extension</a></p></li></ol><p>/src/store/reducer.js</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="dbca1def-5e35-4682-9360-c52563791c23" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>const defaultState = {
+    inputValue: &lsquo;ttt&rsquo;,
+    list: [1, 2],
+};</p>
+
+<p>export default (state = defaultState, action) =&gt; {
+    return state;
+}</pre></td></tr></table><p>store的基本使用</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="209153b6-e739-4acb-afe4-03e48136dbda" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>import store from &lsquo;./store&rsquo;</p>
+
+<p>class App extends Component {
+    constructor(props) {
+        super(props);
+        this.state = store.getState();
+    }
+    &hellip;
+}</pre></td></tr></table><p>action的创建和使用</p><p>App.js</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="be1ccf79-0c29-498f-8cf2-4850666cc5f5" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>handleEvent(e) {
+    const action = {
+        type: &lsquo;event_name&rsquo;,
+        value: e.target.value,
+    };
+    store.dispatch(action)
+}</pre></td></tr></table><p>根据action调整reducer</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="f934b7cf-123d-4084-a12d-4ba5b2cd1dfa" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>const defaultState = {
+    inputValue: &lsquo;ttt&rsquo;,
+    list: [1, 2],
+};</p>
+
+<p>export default (state = defaultState, action) =&gt; {
+    if (action.type === &lsquo;event_value&rsquo;) {
+        const newState = JSON.parse(JSON.stringify(state));
+        newState.inputValue = action.value;
+        return newState;
+    }
+    return state;
+}</pre></td></tr></table><p>注意：</p><ol><li>reducer的写法：只能创建一个新的state，不能改变state的属性值</li></ol><p><br /></p><p>组件订阅store改变事件</p><p>App.js</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="0922000a-d193-419f-9f45-59061ce593f7" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>store.subscribe(this.handleStoreChange);</pre></td></tr></table><p><br /></p><p>抽取文件管理所有action</p><p>actionTypes.js</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="492efde0-2b0b-438b-948b-91d09f85c452" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>export const EVENT_NAME = &lsquo;event_name&rsquo;;</pre></td></tr></table><p><br /></p><p>抽取文件管理action的创建</p><p>actionCreators.js</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="c32f874d-479a-4eb3-9cff-9fce72a6f8b8" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>getEventAction</pre></td></tr></table><h3>Redux使用三原则</h3><ol><li>store是唯一的<ul><li>整个app只能有一个store，表面上时reducer改变了store的内容，其实不是，reducer只是返回了一个新的state给store，最终stroe改变自己的内容</li></ul></li><li>只有store能改变自己的内容</li><li>Reducer必须是纯函数<ul><li>给定输入一定有指定的输出</li></ul></li></ol><h3>Redux相关API</h3><p>createStore</p><p>store.dispatch</p><p>store.getState</p><p>store.subscribe</p><h3>UI组件、容器组件、无状态组件</h3><p>UI组件：只负责渲染UI</p><p>容器组件：负责整个组件的功能实现 &amp; 数据传递的</p><p>无状态组件：一个组件只有render函数的时候，可以使用纯函数实现，叫无状态组件，没有生命周期方法，性能更优秀</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="50918026-db41-43c5-ad0c-c04fd4d62a9f" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>const component = (props) =&gt; {
+    return (
+        &lt;div&gt;xxx&lt;/div&gt;
+    )
+}</pre></td></tr></table><p><br /></p><h2>2 Redux中间件</h2><p>中间件：插入到xx和xx之间的东东</p><p>Redux中间件：本质是对dispatch方法的封装</p><p><img class="confluence-embedded-image confluence-external-resource" width="486" src="http://img.daker.wang/wiki/1540446058061.png" data-image-src="http://img.daker.wang/wiki/1540446058061.png"></p><ul><li>redux-thunk：之前的dispatch只能接收对象的传入，使用中间件升级dispatch后，可以接受一个函数了</li><li>logger中间件：每次发送action的时候，都会传给dispatch。为dispatch做下升级，每次接收到action就打印出来，就是一个Logger中间件了</li><li>Redux-saga：允许把异步逻辑拆到一个单独的文件中管理</li></ul><h3>Redux-thunk</h3><p>异步请求放在组件中做，组件会很臃肿 - Redux-thunk可以让这些逻辑放到action中</p><p><a href="https://github.com/reduxjs/redux-thunk">相关文档</a></p><p>未使用Redux-thunk时的网络请求，一般写在App.js文件中</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="3d497199-e75c-4cf1-bff6-b0da359ea8bd" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>componentDidMount() {
+    axios.get(&lsquo;xxx&rsquo;).then((res) =&gt; {
+        const action = xxxAction(res.data)
+        store.dispatch(action)
+    })
+}</pre></td></tr></table><p><br /></p><p>redux-thunk配置</p><p>相关文档：<a href="https://github.com/zalmoxisus/redux-devtools-extension#12-advanced-store-setup">https://github.com/zalmoxisus/redux-devtools-extension#12-advanced-store-setup</a></p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="c0ddefca-d60d-4bde-be53-757b0424f4e9" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>import { createStore, applyMiddleware, compose } from &lsquo;redux&rsquo;
+import reducer from &lsquo;./reducer&rsquo;
+import thunk from &lsquo;redux-thunk&rsquo;</p>
+
+<p>const composeEnhancers = window.<strong>REDUX_DEVTOOLS_EXTENSION_COMPOSE</strong> || compose;
+const enhancer = composeEnhancers(
+    applyMiddleware(thunk),
+);
+const store = createStore(reducer, enhancer);</p>
+
+<p>export default store;</pre></td></tr></table><p><br /></p><p>之后App.js</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="3092c3e0-e462-4727-a05a-f357675ce88d" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>componentDidMount() {
+    const action = xxxAction()
+    store.dispatch(action)
+}</pre></td></tr></table><p>说明：</p><ul><li>dispatch的时候，action的函数会自动执行</li></ul><p>之后的Action</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="ed7e4b5e-de20-48ad-a63a-f96ee985ff45" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>export const xxxAction = () =&gt; {
+    return (dispatch) =&gt; {
+        axios.get(&lsquo;xxx&rsquo;).then((res) =&gt; {
+            const action = xxxAction(res.data)
+            dispatch(action)
+        })
+    }
+}</pre></td></tr></table><h3>Redux-saga</h3><p><a href="https://github.com/redux-saga/redux-saga">文档</a></p><p>这个东东和thunk二选一就好，作用是，可以把异步逻辑抽离到一个单独的文件中管理</p><p>之前的App.js</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="c86c32dc-63e9-4dbb-81b7-3582c389c517" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>componentDidMount() {
+    axios.get(&lsquo;xxx&rsquo;).then((res) =&gt; {
+        const action = xxxAction(res.data)
+        store.dispatch(action)</p>
+
+<pre><code>})
+</code></pre>
+
+<p>}</pre></td></tr></table><p>saga.js</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="7365db77-efe6-4331-9447-e26ca1ef76ed" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>import { takeEvery, put } from &lsquo;redux-saga/effects&rsquo;
+import { EVENT_NAME } from &lsquo;./actionTypes&rsquo;
+import { getEventAction } from &lsquo;./actionCreators&rsquo;
+import axios from &lsquo;axios&rsquo;</p>
+
+<p>function* getXXXRequest() {
+    try {
+        const res = yield axios.get(&lsquo;xxx/xxx&rsquo;); // #1
+        const action = getEventAction(res.data);
+        yield put(action); // #2
+    } catch (e) {
+        console.log(&lsquo;失败&rsquo;);
+    }
+}</p>
+
+<p>function* mySaga() {
+    yield takeEvery(EVENT_NAME, getXXXRequest); // #3
+}</p>
+
+<p>export default mySaga;</pre></td></tr></table><p>说明：</p><ol><li>这样写异步请求：<strong>yield关键字</strong> - 异步请求执行完之后，再赋值给res<br /><ol><li>异步请求执行完之后，再执行put方法 - 以及处理网络请求失败</li><li>yield关键字是generator函数相关的语法</li></ol></li><li>saga内置的<strong>put函数</strong>可以实现把action丢给store - generator中不要用promise做异步处理</li><li>takeEvery可以捕获action &amp; 调用自定义方法</li></ol><p><br /></p><p>配置/store/index.js</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="bdb91603-b76b-4440-b9d8-c1600da7e604" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>import { createStore, applyMiddleware, compose } from &lsquo;redux&rsquo;
+import reducer from &lsquo;./reducer&rsquo;
+import createSagaMiddleware from &lsquo;redux-saga&rsquo;
+import mySagas from &lsquo;./saga&rsquo;</p>
+
+<p>const sagaMiddleware = createSagaMiddleware();
+const composeEnhancers = window.<strong>REDUX_DEVTOOLS_EXTENSION_COMPOSE</strong> || compose;
+const enhancer = composeEnhancers(
+    applyMiddleware(sagaMiddleware),
+);
+const store = createStore(reducer, enhancer);
+sagaMiddleware.run(mySagas);</p>
+
+<p>export default store;</pre></td></tr></table><p>说明：</p><ul><li>saga文件，必须要求返回一个generator函数</li><li>使用了saga之后，action不仅reducer会收到，saga文件也会收到一份</li></ul><h2>3 React-Redux</h2><p>入口文件：src/index.js</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="d5223cba-3f90-4faa-b25a-2e1d724a4028" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>import React from &lsquo;react&rsquo;;
+import ReactDOM from &lsquo;react-dom&rsquo;;
+import XXComponent from &lsquo;./XXComponent&rsquo;;
+import { Provider } from &lsquo;react-redux&rsquo;
+import store from &lsquo;./store&rsquo;</p>
+
+<p>const App = (
+    &lt;Provider store={store}&gt;
+        &lt;XXComponent /&gt;
+    &lt;/Provider&gt;
+);</p>
+
+<p>ReactDOM.render(App, document.getElementById(&lsquo;root&rsquo;));</pre></td></tr></table><p>说明：</p><ol><li>Provider组件 - react-redux提供的核心组件，Provider会把指定的store提供给里面所有的组件及子组件</li></ol><p>组件：XXComponent.js</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="31a27801-3b23-4aef-8196-0007b57267b5" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>import React from &lsquo;react&rsquo;;
+import { connect } from &lsquo;react-redux&rsquo;</p>
+
+<p>// class XXComponent extends Component { // #4
+//     render() {
+//         return (
+//             &lt;div&gt;
+//                 &lt;button onClick={this.props.clickEvent}&gt;
+//                     {this.props.oneProp}
+//                 &lt;/button&gt;
+//             &lt;/div&gt;
+//         )
+//     }
+// }</p>
+
+<p>const XXComponent = (props) =&gt; { // #4
+    const {clickEvent, oneProp} = props
+    return (
+        &lt;div&gt;
+            &lt;button onClick={clickEvent}&gt;
+                {oneProp}
+            &lt;/button&gt;
+        &lt;/div&gt;
+    )
+};</p>
+
+<p>const mapStateToProps = (state) =&gt; { // #2
+    return {
+        oneProp: state.oneValue
+    }
+};</p>
+
+<p>const mapDispatchToProps = (dispatch) =&gt; { // #3
+    return {
+        clickEvent(e) {
+            const action = {
+                type: &lsquo;some_action&rsquo;,
+                value: e.target.value,
+            };
+            dispatch(action)
+        }
+    }
+};</p>
+
+<p>export default connect(mapStateToProps, mapDispatchToProps)(XXComponent); // #1 #2 #3 #5</pre></td></tr></table><p>说明：</p><ol><li>通过connect方法，让组件和store做连接</li><li>mapStateToProps是用来把store转为当前组件的props的</li><li><p>mapDispatchToProps，可以把其中定义的函数，绑定给组件的prop中。组件直接调用this.props.xxxxx - 这里可以接收到dispatcher</p></li><li>由于业务逻辑被抽离了，组件可以做一个「<strong>无状态组件</strong>」</li><li>connect返回的内容，是一个容器组件。它把UI组件和业务逻辑结合</li></ol>
+        <p>&nbsp;</p>
+    </body></p>
+
+</div>
+
+
+    </div>
+
+    
+  </body>
+</html>
